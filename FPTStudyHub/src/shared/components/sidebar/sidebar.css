@@ -1,12 +1,14 @@
+/* ==========================================================================
+   Sidebar Styles
+   ========================================================================== */
 .sidebar {
   width: 250px;
-  background-color: #f5f7fb; /* Màu xám xanh nhạt */
-  border-right: 1px solid #e2e8f0;
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 24px 16px;
-  height: calc(100vh - 70px);
   overflow-y: auto;
 }
 
@@ -21,69 +23,69 @@
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  color: #64748b;
+  color: var(--text-muted);
   text-decoration: none;
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--transition-fast);
   position: relative;
 }
 
 .nav-item:hover {
   background-color: #eef2f6;
-  color: #1e293b;
+  color: var(--text-main);
 }
 
 .nav-item.active {
-  background-color: #fdf2e9; /* Cam nhạt */
-  color: #c2410c; /* Cam đậm */
+  background-color: var(--primary-light);
+  color: var(--primary-active-text);
   font-weight: 600;
 }
 
+/* Vạch màu cam dọc bên trái khi menu active */
 .nav-item.active::before {
   content: '';
   position: absolute;
   left: 0;
-  top: 15%;
-  height: 70%;
-  width: 4px;
-  background-color: #f27123; /* Vạch màu cam */
-  border-radius: 0 4px 4px 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background-color: var(--primary-color);
+  border-radius: 6px 0 0 6px;
 }
 
 .sidebar-footer {
   display: flex;
   flex-direction: column;
   gap: 16px;
-
-  margin-bottom: 30px;
 }
 
+/* Nút tải lên tài liệu */
 .upload-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background-color: #f27123; /* Màu cam FPT */
+  background-color: var(--primary-color);
   color: #ffffff;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--border-radius-md);
   padding: 12px 16px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: background-color var(--transition-fast);
   box-shadow: 0 2px 4px rgba(242, 113, 35, 0.2);
 }
 
 .upload-btn:hover {
-  background-color: #ea580c;
+  background-color: var(--primary-hover);
 }
 
 .sidebar-bottom-links {
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--border-color);
   padding-top: 16px;
   display: flex;
   flex-direction: column;

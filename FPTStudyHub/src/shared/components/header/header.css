@@ -1,3 +1,6 @@
+/* ==========================================================================
+   Header Styles
+   ========================================================================== */
 .header {
   height: 70px;
   display: flex;
@@ -5,7 +8,7 @@
   justify-content: space-between;
   padding: 0 24px;
   background-color: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -16,20 +19,22 @@
   align-items: center;
 }
 
+/* Logo FPT Study Hub màu cam */
 .logo {
   font-size: 24px;
   font-weight: 800;
-  color: #f27123;
+  color: var(--primary-color);
   text-decoration: none;
   letter-spacing: -0.5px;
 }
 
 .logo span {
-  color: #3b3a39;
+  color: var(--primary-color);
   font-weight: 700;
   margin-left: 4px;
 }
 
+/* Thanh tìm kiếm */
 .header-center {
   flex: 1;
   max-width: 600px;
@@ -46,7 +51,7 @@
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #94a3b8;
+  color: var(--text-light);
 }
 
 .search-input {
@@ -55,19 +60,21 @@
   padding: 0 16px 0 48px;
   background-color: #f1f5f9;
   border: 1px solid transparent;
-  border-radius: 9999px;
+  border-radius: var(--border-radius-pill);
   font-size: 14px;
-  color: #1e293b;
-  transition: all 0.15s ease;
+  font-family: inherit;
+  color: var(--text-main);
+  transition: all var(--transition-fast);
 }
 
 .search-input:focus {
   outline: none;
   background-color: #ffffff;
-  border-color: #f27123;
+  border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(242, 113, 35, 0.15);
 }
 
+/* Các biểu tượng bên phải */
 .header-right {
   display: flex;
   align-items: center;
@@ -80,15 +87,16 @@
   cursor: pointer;
   padding: 8px;
   border-radius: 50%;
-  color: #1e293b;
+  color: var(--text-main);
   position: relative;
-  transition: background-color 0.15s ease;
+  transition: background-color var(--transition-fast);
 }
 
 .icon-button:hover {
   background-color: #f1f5f9;
 }
 
+/* Dấu chấm đỏ thông báo */
 .badge {
   position: absolute;
   top: 6px;
@@ -99,6 +107,7 @@
   border-radius: 50%;
 }
 
+/* Avatar người dùng */
 .avatar-wrapper {
   cursor: pointer;
   border-radius: 50%;
@@ -108,12 +117,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #e2e8f0;
-  transition: border-color 0.15s ease;
+  border: 2px solid var(--border-color);
+  transition: border-color var(--transition-fast);
 }
 
 .avatar-wrapper:hover {
-  border-color: #f27123;
+  border-color: var(--primary-color);
 }
 
 .avatar-img {

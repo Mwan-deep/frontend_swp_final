@@ -1,6 +1,6 @@
-
-import './sidebar.css';
 import React from 'react';
+import { NavLink } from 'react-router-dom';
+import "./sidebar.css";
 import { 
   LayoutDashboard, 
   Folder, 
@@ -13,15 +13,14 @@ import {
   LogOut 
 } from 'lucide-react';
 
-
-const Sidebar = ({ activeTab = 'documents', setActiveTab }) => {
+const Sidebar = () => {
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'documents', label: 'Documents', icon: Folder },
-    { id: 'ai-features', label: 'AI Features', icon: Sparkles },
-    { id: 'learning', label: 'Learning', icon: BookOpen },
-    { id: 'community', label: 'Community', icon: Users },
-    { id: 'account', label: 'Account', icon: User },
+    { id: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'documents', path: '/documents', label: 'Documents', icon: Folder },
+    { id: 'ai-features', path: '/ai-features', label: 'AI Features', icon: Sparkles },
+    { id: 'learning', path: '/learning', label: 'Learning', icon: BookOpen },
+    { id: 'community', path: '/community', label: 'Community', icon: Users },
+    { id: 'account', path: '/account', label: 'Account', icon: User },
   ];
 
   return (
@@ -30,14 +29,14 @@ const Sidebar = ({ activeTab = 'documents', setActiveTab }) => {
         {menuItems.map((item) => {
           const Icon = item.icon;
           return (
-            <div
+            <NavLink
               key={item.id}
-              className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
-              onClick={() => setActiveTab && setActiveTab(item.id)}
+              to={item.path}
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
             >
               <Icon size={18} />
               <span>{item.label}</span>
-            </div>
+            </NavLink>
           );
         })}
       </div>
@@ -45,23 +44,23 @@ const Sidebar = ({ activeTab = 'documents', setActiveTab }) => {
       <div className="sidebar-footer">
         <button 
           className="upload-btn"
-          onClick={() => alert('Đang mở cổng tải lên tài liệu...')}
+          onClick={() => alert('Opening document upload portal...')}
         >
           <Upload size={16} />
           <span>Upload Document</span>
         </button>
 
         <div className="sidebar-bottom-links">
-          <div 
-            className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`}
-            onClick={() => setActiveTab && setActiveTab('settings')}
+          <NavLink 
+            to="/settings"
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
           >
             <Settings size={18} />
             <span>Settings</span>
-          </div>
+          </NavLink>
           <div 
             className="nav-item"
-            onClick={() => alert('Đang đăng xuất...')}
+            onClick={() => alert('Logging out...')}
           >
             <LogOut size={18} />
             <span>Logout</span>

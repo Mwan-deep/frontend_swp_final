@@ -26,7 +26,7 @@
     title: "Macroeconomics Lecture 04: Inflation and Monetary Policy",
     author: "Prof. Sarah Jenkins",
     date: "3 weeks ago",
-    format: "VIDEO",
+    format: "DOCX",
     image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&auto=format&fit=crop&q=80",
     views: "890",
     downloads: "120"
@@ -40,5 +40,25 @@
     image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&auto=format&fit=crop&q=80",
     views: "5.1k",
     downloads: "2.8k"
-  }
+  },
+  {
+    id: 5,
+    title: "Web Development Project Boilerplate (React + Node.js)",
+    author: "FPT IT Dept",
+    date: "1 month ago",
+    format: "ZIP",
+    image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&auto=format&fit=crop&q=80",
+    views: "5.1k",
+    downloads: "2.9k"
+  },
+  {
+    id: 6,
+    title: "Macroeconomics Lecture 04: Inflation and Monetary Policy",
+    author: "Prof. Sarah Jenkins",
+    date: "3 weeks ago",
+    format: "DOCX",
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&auto=format&fit=crop&q=80",
+    views: "1000",
+    downloads: "120"
+  },
 ];

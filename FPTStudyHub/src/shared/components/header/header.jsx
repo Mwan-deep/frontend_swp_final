@@ -1,14 +1,15 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Search, Bell } from 'lucide-react';
-import './header.css';
+import "./header.css";
 
 const Header = () => {
   return (
     <header className="header">
       <div className="header-left">
-        <a href="/" className="logo">
-          FPT<span>Study Hub</span>
-        </a>
+        <Link to="/" className="logo">
+          FPT <span>Study Hub</span>
+        </Link>
       </div>
       
       <div className="header-center">
