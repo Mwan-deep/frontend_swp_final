@@ -1,20 +1,17 @@
 import React, { useState } from 'react';
 import { LayoutGrid, List, ChevronDown, Sliders, Eye, Download, 
-         Heart, Share2, MoreVertical, ChevronLeft, ChevronRight 
+         Heart, Share2, MoreVertical 
         } from 'lucide-react';
 import './DocumentLibrary.css';
+import Pagination from '../../shared/components/Pagination/Pagination';
 
-
-import { mockDocuments } from "../../../../data/mockDocuments.js";
+import { mockDocuments } from "../../data/mockDocuments.js";
 
 //========= Component Thẻ Tài Liệu (Card) =============
 const DocumentCard = ({ doc }) => {
   const [liked, setLiked] = useState(false);
-  //*Ban đầu set là false khi người dùng bấm vào yêu thích thì chuyển thành true*/}
-   
 
   return (
-   
     <div className="doc-card">
       <div className="card-thumbnail">
         {doc.image ? (
@@ -38,7 +35,8 @@ const DocumentCard = ({ doc }) => {
         <p className="card-meta">
           By {doc.author.replace('By ', '')} • {doc.date}
         </p>
-{/*Gọi ra 2 icon hình Con mắt và hình Mũi tên tải xuống từ thư viện Lucide*/}
+
+        {/* Gọi ra 2 icon hình Con mắt và hình Mũi tên tải xuống từ thư viện Lucide */}
         <div className="card-footer">
           <div className="card-stats">
             <div className="stat-item">
@@ -50,17 +48,19 @@ const DocumentCard = ({ doc }) => {
               <span>{doc.downloads}</span>
             </div>
           </div>
-{/*PHẦN NÀY XỬ LÝ NÚT LIKE VÀ NÚT TYM============================*/}
 
+          {/* PHẦN NÀY XỬ LÝ NÚT LIKE VÀ NÚT TYM */}
           <div className="card-actions">
             <button
-              onClick={() => setLiked(!liked)} // LÚC ĐẦU LF FALSE CHUYỂN THÀNH TRUE
-              className={`action-btn ${liked ? 'liked' : ''}`} // TRUE THÌ CHUYỂN MÀU NÚT BẤM HOẶC NGUOC LẠI
-             
+              onClick={() => setLiked(!liked)}
+              className={`action-btn ${liked ? 'liked' : ''}`}
             >
               <Heart size={15} />
             </button>
-            <button className="action-btn" onClick={() => alert('Đã chia sẻ: ' + doc.title)}> {/*// THÔNG BÁO KHI CÓ AI SHARE*/}
+            <button 
+              className="action-btn" 
+              onClick={() => alert('Đã chia sẻ: ' + doc.title)}
+            >
               <Share2 size={15} />
             </button>
           </div>
@@ -70,42 +70,10 @@ const DocumentCard = ({ doc }) => {
   );
 };
 
-{/* Component Phân Trang (Pagination) */}
-const Pagination = ({ currentPage, totalPages = 20, onPageChange }) => (
-  <div className="library-pagination">
-   {/* //==== NÚT MŨI TÊN BÊN TRÁI=====*/}
-    <button
-      className="page-btn nav-arrow"
-      disabled={currentPage === 1}
-      onClick={() => onPageChange(currentPage - 1)}
-    >
-      <ChevronLeft size={16} />
-    </button>
-    {/* TRANG SỐ 1 , 2 , 3*/}
-
-    <button className={`page-btn ${currentPage === 1 ? 'active' : ''}`} onClick={() => onPageChange(1)}>1</button>
-    <button className={`page-btn ${currentPage === 2 ? 'active' : ''}`} onClick={() => onPageChange(2)}>2</button>
-    <button className={`page-btn ${currentPage === 3 ? 'active' : ''}`} onClick={() => onPageChange(3)}>3</button>
-
-    <span className="page-ellipsis">...</span>
-
-    <button className={`page-btn ${currentPage === totalPages ? 'active' : ''}`} onClick={() => onPageChange(totalPages)}>{totalPages}</button>
-{/* MŨI TÊN BÊN PHẢI*/}
-    <button
-      className="page-btn nav-arrow"
-      disabled={currentPage === totalPages}
-      onClick={() => onPageChange(currentPage + 1)}
-    >
-      <ChevronRight size={16} />
-    </button>
-  </div>
-);
-
-{/*Giao diện chính của Thư viện tài liệu */}
+//=========== Giao diện chính của Thư viện tài liệu ============
 const DocumentLibrary = () => {
   const [viewType, setViewType] = useState('grid');
   const [currentPage, setCurrentPage] = useState(1);
-  //viewType kiểu xem tài liệu ngang có thể chuyển sang dọc
 
   return (
     <div className="doc-library-container">
@@ -115,7 +83,8 @@ const DocumentLibrary = () => {
           <h1>Document Library</h1>
           <p>Explore and manage your study materials.</p>
         </div>
-{/* 2 nút chuyển đổi giữa ngang và dọc*/}
+        
+        {/* 2 nút chuyển đổi giữa ngang và dọc */}
         <div className="layout-toggle">
           <button
             className={`toggle-icon-btn ${viewType === 'grid' ? 'active' : ''}`}
@@ -131,8 +100,6 @@ const DocumentLibrary = () => {
           </button>
         </div>
       </div>
-    {/*Khối này tạo ra giao diện các nút để sau này bạn
-     làm tính năng tìm kiếm nâng cao (như tìm theo Môn học, tìm file PDF/DOCX, hoặc sắp xếp theo tài liệu mới nhất).*/}
 
       {/* Bộ Lọc (Filters) */}
       <div className="filters-container">
@@ -161,7 +128,6 @@ const DocumentLibrary = () => {
           </div>
         </div>
       </div>
-      {/*nếu đang ở dạng grid thì áp dunhj css cho nó ngược lại nếu list thì cx dùng css*/}
 
       {/* Hiển thị danh sách dạng Grid hoặc List */}
       {viewType === 'grid' ? (
@@ -190,10 +156,12 @@ const DocumentLibrary = () => {
         </div>
       )}
 
-      {/*Nó bàn giao số trang hiện tại (currentPage = 1) và cái nút bấm chuyển trang (onPageChange) 
-      cho khối này quản lý. Khi người dùng bấm nút sang 
-      trang 2  thi setCurrentPage sẽ đổi trang hiện tại là 2 ( currentPage là 2)
-        chuyển sang nội dung trang 2 */}
+      {/* GỌI BÀN GIAO COMPONENT PHÂN TRANG HIỂN THỊ Ở ĐÂY */}
+      <Pagination 
+        currentPage={currentPage} 
+        totalPages={20} 
+        onPageChange={setCurrentPage} 
+      />
     </div>
   );
 };

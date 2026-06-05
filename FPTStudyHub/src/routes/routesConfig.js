@@ -1,5 +1,5 @@
 
-import DocumentLibrary from "../features/auth/pages/DocumentLibrary/DocumentLibrary.jsx";
+import DocumentLibrary from "../features/DocumentLibrary/DocumentLibrary.jsx";
 //import Dashboard from "./features/auth/pages/Dashboard.jsx";
 //import AIFeatures from "./features/auth/pages/AIFeatures.jsx";
 //import Learning from "./features/auth/pages/Learning.jsx";

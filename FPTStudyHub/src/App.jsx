@@ -7,10 +7,10 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        {/* Trang mặc định khi vào app */}
-        <Route index element={<Navigate to="/documents" replace />} />
+        {/* Trang chủ mặc định khi mới vào - ĐỂ TRỐNG không ép chuyển hướng */}
+        <Route index element={<div />} />
         
-        {/* Vòng lặp này sẽ lấy dữ liệu bên routesConfif đọc và tạo routes tự động cho các page */}
+        {/* Vòng lặp tự động tạo các Routes từ routesConfig */}
         {publicRoutes.map((route, index) => {
           const Page = route.component;
           return (
@@ -22,8 +22,8 @@ function App() {
           );
         })}
         
-        {/* Đường dẫn bậy bạ tự động đá về trang chủ */}
-        <Route path="*" element={<Navigate to="/documents" replace />} />
+        {/* Đường dẫn lạ hoặc trang chưa khai báo - ĐỂ TRỐNG nội dung chính */}
+        <Route path="*" element={<div />} />
       </Route>
     </Routes>
   );
