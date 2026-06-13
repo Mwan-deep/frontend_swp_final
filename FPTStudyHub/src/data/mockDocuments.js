@@ -1,6 +1,6 @@
+import { FileText, Upload, Heart, MessageSquare, HelpCircle } from 'lucide-react';
 
-
- export const mockDocuments = [
+export const mockDocuments = [
   {
     id: 1,
     title: "Advanced Calculus Notes - Unit 3: Multiple Integrals",
@@ -60,5 +60,19 @@
     image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&auto=format&fit=crop&q=80",
     views: "1000",
     downloads: "120"
-  },
+  }
+];
+
+export const dashboardStats = [
+  { icon: FileText, value: "24", label: "Total Documents", iconBgClass: "bg-light-blue" },
+  { icon: Upload, value: "12", label: "Uploaded", iconBgClass: "bg-light-orange" },
+  { icon: Heart, value: "5", label: "Favorites", iconBgClass: "bg-light-red" },
+  { icon: MessageSquare, value: "42", label: "AI Conversations", iconBgClass: "bg-light-blue" },
+  { icon: HelpCircle, value: "15", label: "Quizzes Done", iconBgClass: "bg-light-orange" }
+];
+export const mockUsers = [
+  {
+    email: "student@fpt.edu.vn",
+    password: "password123"
+  }
 ];
