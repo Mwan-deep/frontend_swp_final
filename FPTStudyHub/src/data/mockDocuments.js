@@ -73,6 +73,17 @@ export const dashboardStats = [
 export const mockUsers = [
   {
     email: "student@fpt.edu.vn",
-    password: "password123"
+    password: "password123",
+    role: "user"
+  },
+  {
+    email: "son@gmail.com",
+    password: "123",
+    role: "user"
+  },
+  {
+    email: "admin@fpt.edu.vn",
+    password: "admin",
+    role: "admin"
   }
 ];

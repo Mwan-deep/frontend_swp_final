@@ -1,0 +1,125 @@
+.admin-sidebar {
+  width: 260px;
+  background-color: #1a1d2d;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.admin-sidebar-header {
+  padding: 32px 24px;
+}
+
+.admin-sidebar-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fce2c3; /* matching the logo text color */
+  margin: 0 0 4px 0;
+}
+
+.admin-sidebar-subtitle {
+  font-size: 12px;
+  color: #8a8d9e;
+  margin: 0;
+}
+
+.admin-sidebar-nav {
+  flex: 1;
+  padding: 0 0;
+}
+
+.admin-sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+  color: #98a2b3;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.admin-sidebar-item:hover {
+  background-color: #282b3d;
+  color: #fff;
+}
+
+.admin-sidebar-item.active {
+  background-color: #282b3d;
+  color: #fff;
+  border-left: 4px solid #ea8c42;
+  padding-left: 20px; /* account for border */
+}
+
+.admin-sidebar-footer {
+  padding: 24px;
+  border-top: 1px solid #282b3d;
+}
+
+.admin-sidebar-logout {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: none;
+  border: none;
+  color: #8a8d9e;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 24px;
+  transition: color 0.3s ease;
+}
+
+.admin-sidebar-logout:hover {
+  color: #fff;
+}
+
+.admin-sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #282b3d;
+}
+
+.admin-profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-profile-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  color: #fff;
+}
+
+.admin-profile-role {
+  font-size: 11px;
+  color: #8a8d9e;
+  margin: 0;
+}

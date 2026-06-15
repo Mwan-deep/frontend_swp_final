@@ -18,10 +18,17 @@ const Login = () => {
     const foundUser = mockUsers.find(
       (user) => user.email.toLowerCase() === cleanEmail && user.password === cleanPassword
     );
-// nếu mà có user đó thì vào trang dashboard ko thì ngược lai
+// nếu mà có user đó thì vào đúng trang theo phân quyền
     if (foundUser) {
       localStorage.setItem('isLoggedIn', 'true');
-      navigate('/dashboard');
+      localStorage.setItem('role', foundUser.role); // Lưu quyền của user vào local storage
+
+      // Kiểm tra quyền để đẩy đi đúng trang
+      if (foundUser.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
     } else {
       alert('Incorrect email or password!');
     }
@@ -41,7 +48,11 @@ const Login = () => {
         
         {/*Các nút đăng kí bằng gg và nút đki */}
         <LoginSocial 
-          onGoogleLogin={() => { localStorage.setItem('isLoggedIn', 'true'); navigate('/dashboard'); }} 
+          onGoogleLogin={() => { 
+            localStorage.setItem('isLoggedIn', 'true'); 
+            localStorage.setItem('role', 'user'); // Đăng nhập Google mặc định là Sinh viên
+            navigate('/dashboard'); 
+          }} 
           onRegisterClick={() => alert('Registration form will be available soon!')} 
         />
       </div>

@@ -1,0 +1,255 @@
+.user-table-container {
+  background-color: #fff;
+  border: 1px solid #eaebf0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.table-toolbar {
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eaebf0;
+}
+
+.table-search {
+  display: flex;
+  align-items: center;
+  border: 1px solid #eaebf0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  width: 320px;
+  transition: all 0.2s ease;
+}
+
+.table-search:focus-within {
+  border-color: #ea8c42;
+  box-shadow: 0 0 0 2px rgba(234, 140, 66, 0.1);
+}
+
+.admin-table-search-icon {
+  color: #667085;
+  position: static;
+  transform: none;
+}
+
+.table-search input {
+  border: none;
+  outline: none;
+  margin-left: 8px;
+  font-size: 14px;
+  width: 100%;
+  color: #101828;
+  font-family: 'Inter', sans-serif;
+}
+
+.table-search input::placeholder {
+  color: #667085;
+}
+
+.table-filters {
+  display: flex;
+  gap: 12px;
+}
+
+.filter-btn, .download-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #fff;
+  border: 1px solid #eaebf0;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #344054;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.filter-btn:hover, .download-btn:hover {
+  background-color: #f9fafb;
+}
+
+.download-btn {
+  padding: 8px;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-table th {
+  background-color: #f9fafb;
+  color: #475467;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-bottom: 1px solid #eaebf0;
+}
+
+.admin-table td {
+  padding: 16px 24px;
+  border-bottom: 1px solid #eaebf0;
+  vertical-align: middle;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tr:hover td {
+  background-color: #fcfcfd;
+}
+
+.th-checkbox, .td-checkbox {
+  width: 48px;
+  padding-right: 0 !important;
+}
+
+.admin-table input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid #d0d5dd;
+  cursor: pointer;
+  accent-color: #ea8c42;
+}
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-cell-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-cell-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-cell-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #101828;
+}
+
+.user-cell-email {
+  margin: 0;
+  font-size: 13px;
+  color: #667085;
+}
+
+.user-id-cell, .date-cell {
+  font-size: 14px;
+  color: #475467;
+}
+
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge-role-student {
+  background-color: #eff8ff;
+  color: #175cd3;
+}
+
+.badge-role-faculty {
+  background-color: #f9f5ff;
+  color: #6941c6;
+}
+
+.badge-role-admin {
+  background-color: #344054;
+  color: #fff;
+}
+
+.badge-status {
+  gap: 6px;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.badge-status-active {
+  color: #027a48;
+}
+.badge-status-active .status-dot { background-color: #12b76a; }
+
+.badge-status-inactive {
+  color: #344054;
+}
+.badge-status-inactive .status-dot { background-color: #98a2b3; }
+
+.badge-status-suspended {
+  color: #b42318;
+}
+.badge-status-suspended .status-dot { background-color: #f04438; }
+
+.td-actions {
+  text-align: left;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  color: #667085;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  background-color: #f2f4f7;
+  color: #101828;
+}
+
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-top: 1px solid #eaebf0;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #344054;
+}
+
+.pagination-info strong {
+  font-weight: 600;
+  color: #101828;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+}

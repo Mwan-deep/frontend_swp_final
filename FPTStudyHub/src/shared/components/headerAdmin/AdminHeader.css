@@ -1,0 +1,99 @@
+.admin-header {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  background-color: #fff;
+  border-bottom: 1px solid #eaebf0;
+}
+
+.admin-header-search {
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fc;
+  border: 1px solid #eaebf0;
+  border-radius: 24px;
+  padding: 8px 16px;
+  width: 360px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.admin-header-search:focus-within {
+  border-color: #ea8c42;
+  box-shadow: 0 0 0 2px rgba(234, 140, 66, 0.1);
+}
+
+.admin-search-icon {
+  color: #667085;
+  margin-right: 8px;
+  position: static; /* override any global absolute positioning */
+  transform: none;
+}
+
+.admin-search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  color: #1f2937;
+  font-family: 'Inter', sans-serif;
+}
+
+.admin-search-input::placeholder {
+  color: #98a2b3;
+}
+
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.admin-icon-btn {
+  background: transparent;
+  border: none;
+  color: #475467;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* important for absolute children */
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.admin-icon-btn:hover {
+  background-color: #f2f4f7;
+  color: #1f2937;
+}
+
+.admin-notif-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 6px;
+  height: 6px;
+  background-color: #f04438;
+  border-radius: 50%;
+}
+
+.header-profile {
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.header-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.header-profile:hover .header-avatar {
+  border-color: #ea8c42;
+}
