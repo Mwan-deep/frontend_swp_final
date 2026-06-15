@@ -1,0 +1,241 @@
+.report-table-container {
+  background-color: #fff;
+  border: 1px solid #eaebf0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.report-table-header {
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eaebf0;
+}
+
+.report-table-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #101828;
+  margin: 0;
+}
+
+.report-table-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.icon-btn-small {
+  background: transparent;
+  border: none;
+  color: #667085;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.icon-btn-small:hover {
+  background-color: #f2f4f7;
+  color: #101828;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+/* Reusing .admin-table from UserTable, but let's redefine safely */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-table th {
+  background-color: #f9fafb;
+  color: #475467;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-bottom: 1px solid #eaebf0;
+}
+
+.admin-table td {
+  padding: 16px 24px;
+  border-bottom: 1px solid #eaebf0;
+  vertical-align: middle;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tr:hover td {
+  background-color: #fcfcfd;
+}
+
+.report-id-cell {
+  font-size: 14px;
+  color: #667085;
+}
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-cell-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.doc-icon-wrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #f2f4f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475467;
+}
+
+.user-cell-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-cell-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #101828;
+}
+
+.user-cell-email {
+  margin: 0;
+  font-size: 12px;
+  color: #667085;
+}
+
+.date-cell {
+  font-size: 13px;
+  color: #475467;
+}
+
+.whitespace-pre-line {
+  white-space: pre-line;
+}
+
+/* Reason Badges */
+.reason-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.reason-badge.spam {
+  background-color: #f2f4f7;
+  color: #344054;
+}
+
+.reason-badge.harassment {
+  background-color: #f4f3ff;
+  color: #5925dc;
+}
+
+.reason-badge.inappropriate {
+  background-color: #eff8ff;
+  color: #175cd3;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-flex;
+  padding: 2px 10px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge.pending {
+  background-color: #fef3f2;
+  color: #b42318;
+}
+
+.status-badge.review {
+  background-color: #eff8ff;
+  color: #175cd3;
+}
+
+.status-badge.resolved {
+  background-color: #f2f4f7;
+  color: #475467;
+}
+
+.td-actions {
+  text-align: left;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  color: #344054;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #d0d5dd;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  background-color: #f9fafb;
+}
+
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-top: 1px solid #eaebf0;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #344054;
+}
+
+.simple-pagination-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-arrow-btn {
+  background: #fff;
+  border: 1px solid #d0d5dd;
+  color: #344054;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-arrow-btn:hover {
+  background-color: #f9fafb;
+}
