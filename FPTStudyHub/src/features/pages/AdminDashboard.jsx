@@ -1,10 +1,13 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import UserStats from '../adminDashboard/components/UserStats/UserStats';
 import UserTable from '../adminDashboard/components/UserTable/UserTable';
 import { UserPlus } from 'lucide-react';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <div className="admin-page-header">
@@ -15,7 +18,7 @@ const AdminDashboard = () => {
           </p>
         </div>
 
-        <button className="btn-add-user">
+        <button className="btn-add-user" onClick={() => navigate('/admin/create-account')}>
           <UserPlus size={18} />
           Add New User
         </button>

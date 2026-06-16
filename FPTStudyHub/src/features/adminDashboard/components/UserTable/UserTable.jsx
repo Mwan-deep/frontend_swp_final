@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, ChevronDown, Download, Edit2 } from 'lucide-react';
 import Pagination from '../../../../shared/components/Pagination/Pagination';
 import './UserTable.css';
@@ -48,6 +49,7 @@ const MOCK_USERS = [
 
 const UserTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
 
   const getRoleBadgeClass = (role) => {
     switch (role) {
@@ -133,7 +135,7 @@ const UserTable = () => {
                 </td>
                 <td className="date-cell">{user.date}</td>
                 <td className="td-actions">
-                  <button className="action-btn">
+                  <button className="action-btn" onClick={() => navigate('/admin/account-details')}>
                     <Edit2 size={16} />
                   </button>
                 </td>

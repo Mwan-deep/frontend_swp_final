@@ -1,8 +1,11 @@
 import React from 'react';
 import { Search, Bell, History, ShieldCheck } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import './AdminHeader.css';
 
 const AdminHeader = () => {
+  const navigate = useNavigate();
+
   return (
     <header className="admin-header">
       <div className="admin-header-search">
@@ -25,7 +28,7 @@ const AdminHeader = () => {
         <button className="admin-icon-btn">
           <ShieldCheck size={20} />
         </button>
-        <div className="header-profile">
+        <div className="header-profile" onClick={() => navigate('/admin/settings')}>
           <img
             src="https://ui-avatars.com/api/?name=Admin+Admin&background=random"
             alt="Profile"

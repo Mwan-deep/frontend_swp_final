@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, Filter, RefreshCcw, MoreVertical, Edit2, Mail, UserX, AlertTriangle, FileText } from 'lucide-react';
 import './ReportTable.css';
 
@@ -30,6 +31,7 @@ const MOCK_REPORTS = [
 ];
 
 const ReportTable = () => {
+  const navigate = useNavigate();
 
   const getReasonBadge = (reason) => {
     switch (reason) {
@@ -112,7 +114,7 @@ const ReportTable = () => {
                 <td className="date-cell whitespace-pre-line">{report.date}</td>
                 <td>{getStatusBadge(report.status)}</td>
                 <td className="td-actions">
-                  <button className="action-btn">
+                  <button className="action-btn" onClick={() => navigate('/admin/report-details')}>
                     <Edit2 size={18} />
                   </button>
                 </td>

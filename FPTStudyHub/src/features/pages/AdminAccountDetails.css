@@ -1,0 +1,269 @@
+/* Layout specific for Account Details */
+.breadcrumb-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sync-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #667085;
+}
+
+.sync-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #12b76a;
+  border-radius: 50%;
+}
+
+.details-header-card {
+  background-color: #fff;
+  border: 1px solid #eaebf0;
+  border-radius: 12px;
+  padding: 24px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
+}
+
+.details-header-profile {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.details-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.details-name {
+  font-size: 24px;
+  font-weight: 600;
+  color: #101828;
+  margin: 0 0 8px 0;
+}
+
+.details-badges {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.badge-id {
+  background-color: #f2f4f7;
+  color: #475467;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge-status-green {
+  background-color: #ecfdf3;
+  color: #027a48;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge-status-green .status-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #12b76a;
+  border-radius: 50%;
+}
+
+.details-header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Two column layout */
+.details-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.details-main {
+  flex: 2;
+}
+
+.details-sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Section Cards */
+.section-card {
+  background-color: #fff;
+  border: 1px solid #eaebf0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.section-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #eaebf0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-icon {
+  color: #ea8c42;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #101828;
+  margin: 0;
+}
+
+.section-meta {
+  font-size: 13px;
+  color: #667085;
+}
+
+.section-body {
+  padding: 24px;
+}
+
+/* Forms tweaks for Details */
+.d-flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.verified-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #0ba5ec;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.form-textarea {
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #101828;
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  background-color: #fff;
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.form-textarea:focus {
+  border-color: #ea8c42;
+  box-shadow: 0 0 0 2px rgba(234, 140, 66, 0.1);
+}
+
+/* Sidebar Cards overrides */
+.bg-light {
+  background-color: #f9fafb;
+}
+
+.border-bottom-0 {
+  border-bottom: none !important;
+}
+
+.pb-0 {
+  padding-bottom: 0 !important;
+}
+
+.pt-16 {
+  padding-top: 16px !important;
+}
+
+.form-input.disabled-dashed {
+  background-color: transparent;
+  border: 1px dashed #d0d5dd;
+  color: #667085;
+  cursor: not-allowed;
+}
+
+.metadata-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #eaebf0;
+}
+
+.metadata-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.metadata-label {
+  color: #667085;
+}
+
+.metadata-value {
+  color: #344054;
+  font-weight: 500;
+}
+
+/* Status Control overrides */
+.border-warning {
+  border-color: #fdb022;
+}
+
+.text-warning {
+  color: #d97706;
+}
+
+.text-warning .section-icon {
+  color: #d97706;
+}
+
+.mb-16 {
+  margin-bottom: 16px !important;
+}
+
+.mb-0 {
+  margin-bottom: 0 !important;
+}
+
+.status-desc {
+  font-size: 13px;
+  color: #667085;
+  margin: 0 0 20px 0;
+  line-height: 1.4;
+}
+
+.text-danger {
+  color: #d92d20;
+}

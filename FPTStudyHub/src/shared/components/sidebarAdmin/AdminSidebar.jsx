@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutGrid, FileText, LogOut } from 'lucide-react';
+import { LayoutGrid, FileText, LogOut, Settings } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import './AdminSidebar.css';
 
@@ -23,6 +23,12 @@ const AdminSidebar = () => {
             <NavLink to="/admin/reports" className={({ isActive }) => `admin-sidebar-item ${isActive ? 'active' : ''}`}>
               <FileText size={20} />
               <span>Report Management</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/admin/settings" className={({ isActive }) => `admin-sidebar-item ${isActive ? 'active' : ''}`}>
+              <Settings size={20} />
+              <span>Settings</span>
             </NavLink>
           </li>
         </ul>

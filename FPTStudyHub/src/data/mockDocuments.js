@@ -82,7 +82,7 @@ export const mockUsers = [
     role: "user"
   },
   {
-    email: "admin@fpt.edu.vn",
+    email: "admin@gmail.com",
     password: "admin",
     role: "admin"
   }
