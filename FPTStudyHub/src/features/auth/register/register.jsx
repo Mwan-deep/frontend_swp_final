@@ -1,24 +1,5 @@
 import React from 'react';
-<<<<<<< HEAD
-import { useNavigate } from 'react-router-dom';
-import './register.css';
 
-const Register = () => {
-  const navigate = useNavigate();
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', backgroundColor: '#f9fafb' }}>
-      <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '16px', color: '#111827' }}>Register Page</h2>
-        <p style={{ color: '#6b7280', marginBottom: '24px' }}>This page is currently under construction.</p>
-        <button 
-          onClick={() => navigate('/login')}
-          style={{ padding: '10px 20px', backgroundColor: '#f97316', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '500' }}
-        >
-          Back to Login
-        </button>
-      </div>
-=======
 import './register.css';
 
 // 1. Import các component từ Landing Pages (đã sửa đúng tên để gọi ở dưới)
@@ -43,7 +24,7 @@ const Register = () => {
         {/* Bên phải: Khung đăng ký tài khoản */}
         <div className="form-section-container">
           <RegisterCard />
-          
+
           {/* Ngôi sao lấp lánh trang trí góc dưới bên phải */}
           <svg className="sparkle-decorator" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 0L14.6 9.4L24 12L14.6 14.6L12 24L9.4 14.6L0 12L9.4 9.4L12 0Z" />
@@ -53,13 +34,11 @@ const Register = () => {
 
       {/* Chân trang dùng lại từ Landing Page */}
       <LandingFooter />
->>>>>>> origin/dev2
+
     </div>
   );
 };
 
-<<<<<<< HEAD
+
 export default Register;
-=======
-export default Register;
->>>>>>> origin/dev2
+

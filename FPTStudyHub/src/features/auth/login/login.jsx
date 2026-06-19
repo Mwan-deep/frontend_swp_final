@@ -53,18 +53,12 @@ const Login = () => {
         
         {/*Các nút đăng kí bằng gg và nút đki */}
         <LoginSocial 
-<<<<<<< HEAD
           onGoogleLogin={() => { 
             localStorage.setItem('isLoggedIn', 'true'); 
             localStorage.setItem('role', 'user'); // Đăng nhập Google mặc định là Sinh viên
             navigate('/dashboard'); 
           }} 
-          onRegisterClick={() => alert('Registration form will be available soon!')} 
-=======
-          onGoogleLogin={() => { localStorage.setItem('isLoggedIn', 'true'); navigate('/dashboard'); }} 
-          // DÒNG MỚI ĐÃ SỬA:
           onRegisterClick={() => navigate('/register')} 
->>>>>>> origin/dev2
         />
       </div>
 
