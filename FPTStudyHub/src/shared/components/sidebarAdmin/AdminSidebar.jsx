@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { LayoutGrid, FileText, LogOut, Settings } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import LogoutModal from '../LogoutModal/LogoutModal';
 import './AdminSidebar.css';
 
 const AdminSidebar = () => {
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('role');
+    navigate('/login');
+  };
+
   return (
     <aside className="admin-sidebar">
       <div className="admin-sidebar-header">
@@ -35,7 +45,7 @@ const AdminSidebar = () => {
       </nav>
 
       <div className="admin-sidebar-footer">
-        <button className="admin-sidebar-logout">
+        <button className="admin-sidebar-logout" onClick={() => setIsLogoutModalOpen(true)}>
           <LogOut size={20} />
           <span>Logout</span>
         </button>
@@ -51,6 +61,12 @@ const AdminSidebar = () => {
           </div>
         </div>
       </div>
+
+      <LogoutModal 
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={handleLogout}
+      />
     </aside>
   );
 };

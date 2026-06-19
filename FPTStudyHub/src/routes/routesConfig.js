@@ -9,6 +9,9 @@ import AdminSettings from "../features/pages/AdminSettings.jsx";
 import AdminCreateAccount from "../features/pages/AdminCreateAccount.jsx";
 import AdminAccountDetails from "../features/pages/AdminAccountDetails.jsx";
 import AdminReportDetails from "../features/pages/AdminReportDetails.jsx";
+import ManagerDashboard from "../features/pages/ManagerDashboard.jsx";
+import ManagerDocumentQueue from "../features/pages/ManagerDocumentQueue.jsx";
+import ManagerCommunity from "../features/pages/ManagerCommunity/ManagerCommunity.jsx";
 
 //import AIFeatures from "../features/pages/AIFeatures.jsx";
 //import Learning from "./features/auth/pages/Learning.jsx";
@@ -25,7 +28,7 @@ export const publicRoutes = [
   //{ path: "ai-features", component: AIFeatures },
   //{ path: "learning", component: Learning },
   //{ path: "community", component: Community },
- // { path: "account", component: Account },
+  // { path: "account", component: Account },
   //{ path: "settings", component: Settings },
 ];
 
@@ -37,4 +40,11 @@ export const adminRoutes = [
   { path: "admin/create-account", component: AdminCreateAccount, noLayout: true },
   { path: "admin/account-details", component: AdminAccountDetails, noLayout: true },
   { path: "admin/report-details", component: AdminReportDetails, noLayout: true },
+];
+
+// Danh sách các route dành riêng cho Manager
+export const managerRoutes = [
+  { path: "manager", component: ManagerDashboard, noLayout: true },
+  { path: "manager/documents", component: ManagerDocumentQueue, noLayout: true },
+  { path: "manager/community", component: ManagerCommunity, noLayout: true },
 ];

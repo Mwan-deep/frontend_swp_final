@@ -4,14 +4,16 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from "./layout/layout.jsx";
 import AdminLayout from "./layout/AdminLayout.jsx";
 import LandingPage from './features/pages/LandingPage';
-import { publicRoutes, adminRoutes } from './routes/routesConfig';
+import { publicRoutes, adminRoutes, managerRoutes } from './routes/routesConfig';
 import Login from './features/auth/login/login';
+import ManagerLayout from "./layout/ManagerLayout.jsx";
 
 // Hợp phần bảo vệ: Bắt buộc đăng nhập và kiểm tra quyền truy cập (Role)
 const RequireAuth = ({ children, allowedRole }) => {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
   // Mặc định là user nếu không có role
-  const userRole = localStorage.getItem('role') || 'user'; 
+  let userRole = (localStorage.getItem('role') || 'user').toLowerCase(); 
+  if (userRole === 'student') userRole = 'user';
 
   // Nếu chưa đăng nhập -> về trang login
   if (!isLoggedIn) {
@@ -20,8 +22,10 @@ const RequireAuth = ({ children, allowedRole }) => {
 
   // Nếu có yêu cầu về quyền (allowedRole) mà quyền hiện tại không khớp
   if (allowedRole && userRole !== allowedRole) {
-    // Điều hướng: Admin về admin, User về dashboard
-    return <Navigate to={userRole === 'admin' ? '/admin' : '/dashboard'} replace />;
+    // Điều hướng: Admin về admin, Manager về manager, User về dashboard
+    if (userRole === 'admin') return <Navigate to="/admin" replace />;
+    if (userRole === 'manager') return <Navigate to="/manager" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
@@ -83,7 +87,25 @@ function App() {
           })}
         </Route>
 
-        {/* 5. Chỉ chuyển hướng khi người dùng gõ bừa một đường dẫn hoàn toàn không tồn tại */}
+        {/* 5. Các trang dành riêng cho MANAGER (Có Layout riêng) */}
+        <Route element={<ManagerLayout />}>
+          {managerRoutes.map((route, index) => {
+            const Page = route.component;
+            return (
+              <Route
+                key={`manager-${index}`}
+                path={route.path}
+                element={
+                  <RequireAuth allowedRole="manager">
+                    <Page />
+                  </RequireAuth>
+                }
+              />
+            );
+          })}
+        </Route>
+
+        {/* 6. Chỉ chuyển hướng khi người dùng gõ bừa một đường dẫn hoàn toàn không tồn tại */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

@@ -20,12 +20,17 @@ const Login = () => {
     );
 // nếu mà có user đó thì vào đúng trang theo phân quyền
     if (foundUser) {
+      const roleStr = foundUser.role.toLowerCase();
+      const normalizedRole = roleStr === 'student' ? 'user' : roleStr;
+      
       localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('role', foundUser.role); // Lưu quyền của user vào local storage
+      localStorage.setItem('role', normalizedRole); // Lưu quyền của user vào local storage
 
       // Kiểm tra quyền để đẩy đi đúng trang
-      if (foundUser.role === 'admin') {
+      if (normalizedRole === 'admin') {
         navigate('/admin');
+      } else if (normalizedRole === 'manager') {
+        navigate('/manager');
       } else {
         navigate('/dashboard');
       }

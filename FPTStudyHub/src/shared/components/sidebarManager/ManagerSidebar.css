@@ -1,0 +1,97 @@
+.manager-sidebar {
+  width: 250px;
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  border-right: 1px solid #e0e0e0;
+}
+
+.manager-sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.manager-sidebar-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #794d2f; /* Matching the brown color from screenshot */
+  margin: 0 0 4px 0;
+}
+
+.manager-sidebar-subtitle {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+.manager-sidebar-nav {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.manager-sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.manager-sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 24px;
+  color: #555;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  gap: 12px;
+}
+
+.manager-sidebar-item:hover {
+  background-color: #f0f0f0;
+}
+
+.manager-sidebar-item.active {
+  background-color: #e6dfd8;
+  color: #794d2f;
+  border-left: 4px solid #794d2f;
+}
+
+.manager-sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.manager-sidebar-bottom-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 0;
+  background: none;
+  border: none;
+  color: #555;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.manager-sidebar-logout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 0;
+  background: none;
+  border: none;
+  color: #555;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.manager-sidebar-bottom-item:hover,
+.manager-sidebar-logout:hover {
+  color: #333;
+}
