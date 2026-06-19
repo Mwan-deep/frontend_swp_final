@@ -1,52 +1,78 @@
+/* Style for modular Login Page */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
+:root {
+  --primary-orange: #F26F21;
+  --primary-orange-hover: #E05D10;
+  --primary-orange-light: rgba(242, 111, 33, 0.1);
+  --text-dark: #1E293B;
+  --text-muted: #64748B;
+  --text-light: #94A3B8;
+  --bg-input: #F1F5F9;
+  --bg-input-focus: #FFFFFF;
+  --overlay-peach: rgba(227, 213, 197, 0.3);
+  --border-color: #E2E8F0;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
 
 .login-page-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   min-height: 100vh;
-  background-color: #f8fafc; /* Màu nền xám/xanh nhạt sạch sẽ */
+  background-image: linear-gradient(rgba(15, 23, 42, 0.35), rgba(15, 23, 42, 0.35)), url('/login.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   position: relative;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-family);
   padding: 40px 20px;
   box-sizing: border-box;
 }
 
-/* Nút back trang chủ */
+/* Back to Home Link */
 .back-to-home-nav {
   position: absolute;
-  top: 24px;
-  left: 24px;
+  top: 32px;
+  left: 32px;
   font-size: 14px;
-  font-weight: 600;
-  color: #64748b;
+  font-weight: 500;
+  color: #ffffff;
   cursor: pointer;
   transition: all 0.2s ease;
   user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .back-to-home-nav:hover {
-  color: #f27123;
+  opacity: 0.8;
   transform: translateX(-2px);
 }
 
-/* Card chứa nội dung đăng nhập */
+/* Main Login Card Wrapper */
 .login-card-wrapper {
   background-color: #ffffff;
-  border: 1px solid #e2e8f0; /* Viền mờ xung quanh card */
-  border-radius: 12px; /* Bo góc nhẹ */
-  padding: 40px;
+  border-radius: 20px; /* Rounded corners as mockup */
+  padding: 48px 40px;
   width: 100%;
-  max-width: 400px;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05); /* Bóng đổ mờ nhẹ */
+  max-width: 440px;
+  box-shadow: var(--shadow-premium);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  margin: auto; /* Centers card vertically in parent flex container */
+  border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
-/* 1. HEADER STYLE */
+/* 1. HEADER SECTION */
 .login-header-section {
   display: flex;
   flex-direction: column;
@@ -55,73 +81,74 @@
 }
 
 .login-sparkle-box {
-  background-color: #fff7ed; /* Nền hộp icon cam rất nhạt */
-  color: #c2410c; /* Màu icon lấp lánh cam đậm */
-  width: 52px;
-  height: 52px;
-  border-radius: 12px; /* Góc hộp bo nhẹ */
+  background-color: #fff1eb; /* Soft peach background */
+  color: var(--primary-orange);
+  width: 56px;
+  height: 56px;
+  border-radius: 16px; /* Squircle box */
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .login-welcome-title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-dark);
   margin: 0 0 8px 0;
   letter-spacing: -0.5px;
 }
 
 .login-subtitle {
   font-size: 14px;
-  color: #64748b;
+  color: var(--text-muted);
   margin: 0;
 }
 
-/* 2. FORM STYLE */
+/* 2. FORM SECTION */
 .login-form-content {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
 
 .form-group-item {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .form-group-item label {
   font-size: 13px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-dark);
 }
 
 .form-text-input {
   width: 100%;
-  padding: 12px 14px;
-  border-radius: 8px;
-  border: 1.5px solid #e2e8f0;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-input);
   font-size: 14px;
-  color: #0f172a;
-  background-color: #ffffff;
+  color: var(--text-dark);
   outline: none;
   box-sizing: border-box;
   transition: all 0.2s ease;
 }
 
 .form-text-input::placeholder {
-  color: #94a3b8;
+  color: var(--text-light);
 }
 
 .form-text-input:focus {
-  border-color: #f27123;
-  box-shadow: 0 0 0 3px rgba(242, 113, 35, 0.12); /* Focus viền sáng cam nhẹ */
+  background-color: var(--bg-input-focus);
+  border-color: var(--primary-orange);
+  box-shadow: 0 0 0 4px rgba(242, 111, 33, 0.15);
 }
 
-/* Password styles */
+/* Password inputs */
 .password-label-container {
   display: flex;
   justify-content: space-between;
@@ -131,13 +158,13 @@
 .forgot-link {
   font-size: 12px;
   font-weight: 600;
-  color: #c2410c;
+  color: var(--primary-orange);
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .forgot-link:hover {
-  color: #ea580c;
+  color: var(--primary-orange-hover);
   text-decoration: underline;
 }
 
@@ -148,49 +175,51 @@
 }
 
 .password-input-field {
-  padding-right: 44px;
+  padding-right: 46px; /* Space for the eye icon */
 }
 
 .password-visibility-toggle {
   position: absolute;
-  right: 12px;
+  right: 14px;
   background: none;
   border: none;
-  color: #94a3b8;
+  color: var(--text-light);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 4px;
   border-radius: 4px;
+  transition: color 0.2s ease;
 }
 
 .password-visibility-toggle:hover {
-  color: #64748b;
+  color: var(--text-muted);
 }
 
-/* Checkbox Remember Me */
+/* Remember me */
 .form-remember-container {
   display: flex;
   align-items: center;
+  margin-top: 4px;
 }
 
 .checkbox-custom-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
-  font-size: 13px;
-  color: #475569;
+  font-size: 14px;
+  color: var(--text-muted);
   user-select: none;
 }
 
 .checkbox-input {
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-  border: 1.5px solid #cbd5e1;
-  accent-color: #f27123;
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 1.5px solid var(--text-light);
+  accent-color: var(--primary-orange);
   cursor: pointer;
 }
 
@@ -198,33 +227,37 @@
   font-weight: 500;
 }
 
-/* Nút Submit Login */
+/* Login Submit Button */
 .login-submit-button {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background-color: #f27123; /* Màu cam thương hiệu giống hệt hình */
+  background-color: var(--primary-orange);
   color: #ffffff;
   border: none;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 14px;
+  border-radius: 10px;
   transition: all 0.2s ease;
   width: 100%;
+  margin-top: 8px;
+  box-shadow: 0 4px 12px rgba(242, 111, 33, 0.3);
 }
 
 .login-submit-button:hover {
-  background-color: #ea580c;
+  background-color: var(--primary-orange-hover);
+  box-shadow: 0 8px 20px rgba(242, 111, 33, 0.45);
+  transform: translateY(-2px);
 }
 
 .button-login-icon {
   margin-top: 1px;
 }
 
-/* 3. SOCIAL STYLE */
+/* 3. SOCIAL SECTION */
 .login-social-section {
   display: flex;
   flex-direction: column;
@@ -242,13 +275,13 @@
 .social-divider-line {
   flex-grow: 1;
   height: 1px;
-  background-color: #e2e8f0;
+  background-color: var(--border-color);
 }
 
 .social-divider-text {
   font-size: 11px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-muted);
   letter-spacing: 0.5px;
   white-space: nowrap;
 }
@@ -259,17 +292,19 @@
   justify-content: center;
   gap: 10px;
   background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 14px;
   width: 100%;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .google-signin-button:hover {
   background-color: #f8fafc;
   border-color: #cbd5e1;
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .google-logo-svg {
@@ -280,20 +315,20 @@
 .google-button-text {
   font-size: 14px;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--text-dark);
 }
 
-/* Dòng chuyển trang Đăng ký */
+/* Register redirect footer */
 .login-register-redirect {
   text-align: center;
-  font-size: 13px;
-  color: #64748b;
+  font-size: 14px;
+  color: var(--text-muted);
   margin-top: 8px;
 }
 
 .register-highlight-link {
   font-weight: 600;
-  color: #c2410c;
+  color: var(--primary-orange);
   cursor: pointer;
 }
 
@@ -301,25 +336,18 @@
   text-decoration: underline;
 }
 
-/* 4. COPYRIGHT FOOTER STYLE */
+/* 4. COPYRIGHT FOOTER */
 .login-copyright-footer {
   text-align: center;
-  margin-top: 24px;
+  width: 100%;
+  margin-top: auto; /* Pushes copyright footer to the bottom of the viewport */
+  padding-top: 24px;
 }
 
 .login-copyright-footer p {
-  font-size: 12px;
-  color: #94a3b8;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
   margin: 0;
-}
-
-/* Thiết bị nhỏ */
-@media (max-width: 480px) {
-  .login-card-wrapper {
-    padding: 24px;
-  }
-  .back-to-home-nav {
-    top: 16px;
-    left: 16px;
-  }
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }

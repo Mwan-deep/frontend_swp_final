@@ -20,7 +20,7 @@ const LandingNavbar = () => {
         </button>
         <button 
           className="btn-register"
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate('/register')}
         >
           Register
         </button>

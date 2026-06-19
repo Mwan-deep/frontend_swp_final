@@ -1,8 +1,15 @@
 import React from 'react';
 
-const DocumentLibraryRow = ({ doc }) => {
+const DocumentLibraryRow = ({ doc, onMarkAsRead }) => {
+  const handleRowClick = () => {
+    if (onMarkAsRead) {
+      onMarkAsRead(doc.id);
+    }
+    alert(`Xem chi tiết thành công tài liệu: ${doc.title}`);
+  };
+
   return (
-    <div className="list-row-item">
+    <div className="list-row-item clickable" onClick={handleRowClick}>
       <div className="list-left-info">
         <span className="list-format-tag">{doc.format}</span>
         <div>

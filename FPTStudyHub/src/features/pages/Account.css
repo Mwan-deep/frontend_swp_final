@@ -1,0 +1,827 @@
+/* Account.css */
+
+.settings-page-container {
+  padding: 40px;
+  background-color: #F8FAFC;
+  min-height: 100%;
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* 1. SETTINGS HEADER */
+.settings-header {
+  margin-bottom: 32px;
+}
+
+.settings-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.settings-subtitle {
+  font-size: 15px;
+  color: #64748B;
+  margin: 0;
+}
+
+/* 2. LAYOUT GRID */
+.settings-layout-grid {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+/* 3. SIDEBAR TABS */
+.settings-tabs-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tab-btn-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: #64748B;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tab-btn-item:hover {
+  background-color: #F1F5F9;
+  color: #0F172A;
+}
+
+.tab-btn-item.active {
+  background-color: #FFF7ED; /* Light orange background */
+  color: #F26F21; /* Brand FPT Orange */
+}
+
+.tab-icon {
+  flex-shrink: 0;
+}
+
+/* 4. RIGHT PANE HEADERS */
+.tab-pane-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0F172A;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.3px;
+}
+
+.tab-pane-subtitle {
+  font-size: 15px;
+  color: #64748B;
+  margin: 0 0 24px 0;
+}
+
+/* 5. CONTENT CARD */
+.settings-content-card {
+  background-color: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 36px;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Profile Picture Section */
+.profile-pic-section {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding-bottom: 28px;
+  border-bottom: 1.5px solid #F1F5F9;
+}
+
+.profile-large-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #E2E8F0;
+  background-color: #F8FAFC;
+}
+
+.profile-pic-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.upload-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0;
+}
+
+.upload-subtitle {
+  font-size: 13px;
+  color: #64748B;
+  margin: 0;
+}
+
+.upload-buttons-wrapper {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.upload-btn-new {
+  background-color: #F26F21;
+  color: #FFFFFF;
+  border: none;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upload-btn-new:hover {
+  background-color: #E05D10;
+  box-shadow: 0 2px 8px rgba(242, 111, 33, 0.2);
+}
+
+.upload-btn-remove {
+  background-color: #FFFFFF;
+  color: #334155;
+  border: 1.5px solid #CBD5E1;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upload-btn-remove:hover {
+  background-color: #F8FAFC;
+  border-color: #94A3B8;
+}
+
+/* Form inputs & grid */
+.form-grid-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.input-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.input-field-group label {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.input-field-group input,
+.input-field-group select {
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: #0F172A;
+  background-color: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.input-field-group input:focus,
+.input-field-group select:focus,
+.input-field-group textarea:focus {
+  border-color: #F26F21;
+  box-shadow: 0 0 0 3px rgba(242, 111, 33, 0.12);
+}
+
+.input-field-group textarea {
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: #0F172A;
+  background-color: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  width: 100%;
+  resize: vertical;
+}
+
+.char-counter {
+  text-align: right;
+  font-size: 12px;
+  color: #64748B;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.select-wrapper::after {
+  content: "▼";
+  font-size: 10px;
+  color: #64748B;
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.input-field-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+/* Save & Cancel Footer Actions */
+.form-actions-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  padding-top: 20px;
+  border-top: 1.5px solid #F1F5F9;
+  margin-top: 8px;
+}
+
+.form-cancel-btn {
+  background: none;
+  border: none;
+  color: #64748B;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 10px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.form-cancel-btn:hover {
+  color: #0F172A;
+  background-color: #F1F5F9;
+}
+
+.form-save-btn {
+  background-color: #F26F21;
+  color: #FFFFFF;
+  border: none;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(242, 111, 33, 0.15);
+}
+
+.form-save-btn:hover {
+  background-color: #E05D10;
+  box-shadow: 0 8px 16px rgba(242, 111, 33, 0.25);
+  transform: translateY(-1px);
+}
+
+.form-save-btn:active {
+  transform: translateY(0);
+}
+
+/* 6. SECURITY TAB COMPONENT STYLES */
+.security-card {
+  padding: 24px 36px 36px 36px;
+}
+
+.security-tab-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.security-section-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 0;
+  border-bottom: 1.5px solid #F1F5F9;
+}
+
+.security-section-row.two-fa-row {
+  align-items: flex-start;
+}
+
+.security-section-left {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.security-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background-color: #F8FAFC;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #E2E8F0;
+}
+
+.security-icon-box.plain-icon {
+  background-color: transparent;
+  border: none;
+  width: 44px;
+  height: 44px;
+  color: #475569;
+}
+
+.sec-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.security-text-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.security-item-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0;
+}
+
+.security-item-subtitle {
+  font-size: 14px;
+  color: #64748B;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.security-item-subtitle.desc-text {
+  max-width: 440px;
+}
+
+.sec-action-btn {
+  border: 1.5px solid #F26F21;
+  background-color: transparent;
+  color: #F26F21;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.sec-action-btn:hover {
+  background-color: #FFF7ED;
+  box-shadow: 0 1px 2px rgba(242, 111, 33, 0.05);
+}
+
+.setup-2fa-btn {
+  margin-top: 10px;
+  align-self: flex-start;
+}
+
+/* 2FA Toggle switch styling */
+.toggle-container-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #E2E8F0;
+  transition: .3s;
+  border-radius: 34px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: #CBD5E1;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(22px);
+}
+
+.toggle-state-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: #334155;
+  min-width: 24px;
+}
+
+.sec-card-divider {
+  height: 1.5px;
+  background-color: #F1F5F9;
+  margin: 28px 0;
+}
+
+/* Recent Login Activity */
+.security-activity-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.activity-section-header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.sessions-list-container {
+  border: 1.5px solid #E2E8F0;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #FFFFFF;
+}
+
+.session-device-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  border-bottom: 1.5px solid #F1F5F9;
+  transition: background-color 0.2s ease;
+}
+
+.session-device-row:hover {
+  background-color: #FCFDFE;
+}
+
+.session-device-row:last-child {
+  border-bottom: none;
+}
+
+.device-info-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.device-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background-color: #F1F5F9;
+  color: #64748B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.device-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.device-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.device-name {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.device-location {
+  font-size: 12.5px;
+  color: #64748B;
+}
+
+.device-info-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.device-time {
+  font-size: 13px;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.logout-device-btn {
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+.no-sessions-fallback {
+  padding: 24px;
+  text-align: center;
+  color: #94A3B8;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Support Help Footer */
+.security-support-footer {
+  margin-top: 28px;
+  font-size: 13.5px;
+  color: #64748B;
+  text-align: left;
+  font-weight: 500;
+}
+
+.security-support-footer a {
+  color: #F26F21;
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.security-support-footer a:hover {
+  text-decoration: underline;
+  color: #E05D10;
+}
+
+/* 7. RESPONSIVE MEDIA QUERIES */
+@media (max-width: 992px) {
+  .settings-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .settings-page-container {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .form-grid-columns {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .profile-pic-section {
+    flex-direction: column;
+    text-align: center;
+  }
+  .upload-buttons-wrapper {
+    justify-content: center;
+  }
+  .security-section-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .security-section-row.two-fa-row {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .session-device-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px;
+  }
+  .device-info-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* 8. SETTINGS COLUMN TITLE & TABS BLOCK */
+.settings-tabs-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.settings-column-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0F172A;
+  margin: 0;
+  padding-left: 16px;
+  letter-spacing: -0.5px;
+}
+
+/* 9. CHANGE PASSWORD SUB-VIEW STYLES */
+.change-password-subview {
+  display: flex;
+  flex-direction: column;
+}
+
+.back-breadcrumb-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #64748B;
+  padding: 0;
+  margin-bottom: 20px;
+  transition: all 0.2s ease;
+  width: fit-content;
+}
+
+.back-breadcrumb-btn:hover {
+  color: #0F172A;
+  transform: translateX(-2px);
+}
+
+.back-breadcrumb-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.change-password-header {
+  margin-bottom: 24px;
+}
+
+.change-password-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0F172A;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.3px;
+}
+
+.change-password-subtitle {
+  font-size: 15px;
+  color: #64748B;
+  margin: 0;
+}
+
+.password-form-card {
+  padding: 36px;
+}
+
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-input-relative {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-relative input {
+  padding-right: 46px !important;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  color: #94A3B8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color 0.2s ease;
+  border-radius: 4px;
+}
+
+.password-toggle-btn:hover {
+  color: #475569;
+  background-color: #F1F5F9;
+}
+
+.password-requirement-hint {
+  font-size: 13.5px;
+  color: #64748B;
+  margin: 8px 0 0 0;
+  line-height: 1.45;
+}
+
+.form-actions-footer.no-border-padding {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 12px;
+}
+
+.update-password-btn {
+  background-color: #F26F21;
+}
+
+/* Security Tips Box */
+.security-tips-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background-color: #FFF7ED;
+  border: 1.5px solid #FFEDD5;
+  border-radius: 12px;
+  margin-top: 24px;
+  box-sizing: border-box;
+}
+
+.tips-shield-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #FFEDD5;
+  color: #F26F21;
+  flex-shrink: 0;
+}
+
+.tips-text-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tips-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.tips-desc {
+  font-size: 13.5px;
+  color: #475569;
+  font-weight: 500;
+}

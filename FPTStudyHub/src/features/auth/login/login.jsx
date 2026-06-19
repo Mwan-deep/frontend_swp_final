@@ -42,7 +42,8 @@ const Login = () => {
         {/*Các nút đăng kí bằng gg và nút đki */}
         <LoginSocial 
           onGoogleLogin={() => { localStorage.setItem('isLoggedIn', 'true'); navigate('/dashboard'); }} 
-          onRegisterClick={() => alert('Registration form will be available soon!')} 
+          // DÒNG MỚI ĐÃ SỬA:
+          onRegisterClick={() => navigate('/register')} 
         />
       </div>
 

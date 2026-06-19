@@ -21,7 +21,7 @@ const LoginForm = ({ onSubmit }) => {
           id="email-input"
           type="email"
           className="form-text-input"
-          placeholder="student@fpt.edu.vn"
+          placeholder="student@gmail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required

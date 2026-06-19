@@ -4,6 +4,8 @@ import Layout from "./layout/layout.jsx";
 import LandingPage from './features/pages/LandingPage';
 import { publicRoutes } from './routes/routesConfig';
 import Login from './features/auth/login/login'; 
+import Register from './features/auth/register/register';
+
 
 // Hợp phần bảo vệ: Bắt buộc đăng nhập với các trang quản trị
 const RequireAuth = ({ children }) => {
@@ -20,7 +22,7 @@ function App() {
         
         {/* 2. Đường dẫn /login độc lập không bọc trong Layout bảo mật */}
         <Route path="/login" element={<Login />} />
-
+          <Route path="/register" element={<Register/>} />
         {/* 3. Layout bọc các trang quản trị */}
         <Route element={<Layout />}>
           {publicRoutes
@@ -28,7 +30,7 @@ function App() {
             .map((route, index) => {
               const Page = route.component;
               
-              // 👉 SỬA TẠI ĐÂY: Dùng .includes để nhận diện chính xác kể cả path có dấu '/' hay không
+              // SỬA TẠI ĐÂY: Dùng .includes để nhận diện chính xác kể cả path có dấu '/' hay không
               const isDocumentsRoute = route.path.includes('documents');
               
               return (
