@@ -6,6 +6,7 @@ import AdminLayout from "./layout/AdminLayout.jsx";
 import LandingPage from './features/pages/LandingPage';
 import { publicRoutes, adminRoutes, managerRoutes } from './routes/routesConfig';
 import Login from './features/auth/login/login';
+import Register from './features/auth/register/register';
 import ManagerLayout from "./layout/ManagerLayout.jsx";
 
 // Hợp phần bảo vệ: Bắt buộc đăng nhập và kiểm tra quyền truy cập (Role)
@@ -40,6 +41,7 @@ function App() {
 
         {/* 2. Đường dẫn /login độc lập không bọc trong Layout bảo mật */}
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register/>} />
 
         {/* 3. Layout bọc các trang dành cho USER */}
         <Route element={<Layout />}>

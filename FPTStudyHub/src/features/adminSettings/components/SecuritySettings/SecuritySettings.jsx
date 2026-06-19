@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Laptop, Smartphone, Eye, EyeOff } from 'lucide-react';
-import { adminSettings, mockUsers } from '../../../../data/mockDocuments';
+import { adminSettings, accounts } from '../../../../data/mockDocuments';
 import './SecuritySettings.css';
 
 const SecuritySettings = () => {
@@ -13,7 +13,7 @@ const SecuritySettings = () => {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const adminUser = mockUsers.find(u => u.role === 'admin') || mockUsers[2];
+  const adminUser = accounts.find(u => u.role === 'admin') || accounts[2];
 
   const handlePasswordUpdate = () => {
     if (!passwords.current || !passwords.new || !passwords.confirm) {

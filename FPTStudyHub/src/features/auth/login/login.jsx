@@ -4,7 +4,7 @@ import LoginHeader from './components/LoginHeader';
 import LoginForm from './components/LoginForm';
 import LoginSocial from './components/LoginSocial';
 import LoginFooter from './components/LoginFooter';
-import { mockUsers } from '../../../data/mockDocuments';
+import { accounts } from '../../../data/mockDocuments';
 import './login.css';
 
 const Login = () => {
@@ -15,7 +15,7 @@ const Login = () => {
     const cleanEmail = email.trim().toLowerCase();
     const cleanPassword = password.trim();
 //đi xem trong data coi có ai có email và pass mới nhập ko
-    const foundUser = mockUsers.find(
+    const foundUser = accounts.find(
       (user) => user.email.toLowerCase() === cleanEmail && user.password === cleanPassword
     );
 // nếu mà có user đó thì vào đúng trang theo phân quyền

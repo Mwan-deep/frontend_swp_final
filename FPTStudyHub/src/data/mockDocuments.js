@@ -1,4 +1,4 @@
-import { FileText, Upload, Heart, MessageSquare, HelpCircle } from 'lucide-react';
+import { FileText, Upload, Heart, HelpCircle, Database } from 'lucide-react';
 
 export const mockDocuments = [
   {
@@ -197,7 +197,7 @@ export const dashboardStats = [
   { icon: FileText, value: "24", label: "Total Documents", iconBgClass: "bg-light-blue" },
   { icon: Upload, value: "12", label: "Uploaded", iconBgClass: "bg-light-orange" },
   { icon: Heart, value: "5", label: "Favorites", iconBgClass: "bg-light-red" },
-  { icon: MessageSquare, value: "42", label: "AI Conversations", iconBgClass: "bg-light-blue" },
+  { icon: Database, value: "3GB", label: "Storage Remaining", iconBgClass: "bg-light-blue" },
   { icon: HelpCircle, value: "15", label: "Quizzes Done", iconBgClass: "bg-light-orange" }
 ];
 
@@ -406,10 +406,25 @@ export const accounts = [
     role: "Manager",
     twoFactorEnabled: true,
     notifications: { loginAlerts: true, passwordChange: true }
+  },
+  {
+    account_id: 14, id: 14,
+    user_name: "abctest", userId: "abctest",
+    password_hash: "abc@123", password: "abc@123",
+    full_name: "ABC Test User", name: "ABC Test", fullName: "ABC Test",
+    email: "abc@gmail.com",
+    dob: "2000-01-01",
+    gender: "Other",
+    avatar_url: "https://ui-avatars.com/api/?name=ABC+Test&background=random", avatar: "https://ui-avatars.com/api/?name=ABC+Test&background=random",
+    bio: "Test account",
+    account_status: "Active", status: "Active",
+    created_at: "2023-01-01T00:00:00Z", date: "Jan 01, 2023",
+    updated_at: "2023-01-01T00:00:00Z",
+    role: "Student",
+    twoFactorEnabled: false,
+    notifications: { loginAlerts: true, passwordChange: true }
   }
 ];
-
-export const mockUsers = accounts;
 export const mockTableUsers = accounts;
 
 export const mockReports = [
@@ -590,7 +605,7 @@ export const INITIAL_NOTES = [
 
 export const adminSettings = {
   get profile() {
-    const admin = mockUsers.find(u => u.role === 'Admin') || mockUsers[2];
+    const admin = accounts.find(u => u.role === 'Admin') || accounts[2];
     return {
       fullName: admin.fullName,
       email: admin.email,
@@ -600,18 +615,18 @@ export const adminSettings = {
     };
   },
   set profile(newProfile) {
-    const admin = mockUsers.find(u => u.role === 'Admin') || mockUsers[2];
+    const admin = accounts.find(u => u.role === 'Admin') || accounts[2];
     Object.assign(admin, newProfile);
   },
   get security() {
-    const admin = mockUsers.find(u => u.role === 'Admin') || mockUsers[2];
+    const admin = accounts.find(u => u.role === 'Admin') || accounts[2];
     return {
       twoFactorEnabled: admin.twoFactorEnabled,
       notifications: admin.notifications
     };
   },
   set security(newSecurity) {
-    const admin = mockUsers.find(u => u.role === 'Admin') || mockUsers[2];
+    const admin = accounts.find(u => u.role === 'Admin') || accounts[2];
     admin.twoFactorEnabled = newSecurity.twoFactorEnabled;
     admin.notifications = { ...newSecurity.notifications };
   }

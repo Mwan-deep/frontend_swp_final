@@ -22,14 +22,19 @@ import ManagerCommunity from "../features/pages/ManagerCommunity/ManagerCommunit
 export const publicRoutes = [
   { path: "dashboard", component: Dashboard },
   { path: "documents", component: DocumentLibrary },
-  { path: "/", component: LandingPage ,noLayout: true  },  
+  { path: "/", component: LandingPage, noLayout: true },
   { path: "login", component: Login, noLayout: true },
+  // { path: "/register", component: Register, noLayout: true },
+  // { path: "/ai-features", component: AIFeatures },
+  // { path: "/learning", component: Learning },
+  // { path: "/community", component: Community },
+  // { path: "/account", component: Account },
+  // { path: "/settings", component: Account },
+  // { path: "/updatedocument", component: UploadDocument },
+  // { path: "/notifications", component: Notifications },
+  // { path: "/my-quizzes", component: Quizzes },
+  // { path: "/create-quiz", component: CreateQuiz },
 
-  //{ path: "ai-features", component: AIFeatures },
-  //{ path: "learning", component: Learning },
-  //{ path: "community", component: Community },
-  // { path: "account", component: Account },
-  //{ path: "settings", component: Settings },
 ];
 
 // Danh sách các route dành riêng cho Admin
