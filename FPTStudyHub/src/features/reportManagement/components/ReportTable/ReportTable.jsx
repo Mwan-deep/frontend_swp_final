@@ -3,35 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Filter, RefreshCcw, MoreVertical, Edit2, Mail, UserX, AlertTriangle, FileText } from 'lucide-react';
 import './ReportTable.css';
 
-const MOCK_REPORTS = [
-  {
-    id: '#REP-8992',
-    reporter: { name: 'Sarah Jenkins', handle: '@sjenkins', avatar: 'https://ui-avatars.com/api/?name=Sarah+Jenkins&background=random' },
-    reported: { name: 'Unknown User', handle: '@crypto_bot99', avatar: 'https://ui-avatars.com/api/?name=Unknown+User&background=random', type: 'user' },
-    reason: 'Spam',
-    date: 'Oct 24, 2023\n10:45 AM',
-    status: 'Pending'
-  },
-  {
-    id: '#REP-8991',
-    reporter: { name: 'Prof. Alan Turing', handle: '@aturing', avatar: 'https://ui-avatars.com/api/?name=Alan+Turing&background=random' },
-    reported: { name: 'Mike Ross', handle: '@mikeross', avatar: 'https://ui-avatars.com/api/?name=Mike+Ross&background=random', type: 'user' },
-    reason: 'Harassment',
-    date: 'Oct 24, 2023\n09:12 AM',
-    status: 'Under Review'
-  },
-  {
-    id: '#REP-8988',
-    reporter: { name: 'Elena Gilbert', handle: '@egilbert', avatar: 'https://ui-avatars.com/api/?name=Elena+Gilbert&background=random' },
-    reported: { name: 'Doc Share #102', handle: 'Document', type: 'document' },
-    reason: 'Inappropriate Content',
-    date: 'Oct 23, 2023\n04:30 PM',
-    status: 'Resolved'
-  }
-];
+import { mockReports } from '../../../../data/mockDocuments';
 
-const ReportTable = () => {
+const ReportTable = ({ searchTerm = '' }) => {
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = React.useState(1);
+
+  const filteredReports = mockReports.filter(report => {
+    const term = searchTerm.toLowerCase();
+    return report.id.toLowerCase().includes(term) ||
+           report.reporter.name.toLowerCase().includes(term) ||
+           report.reported.name.toLowerCase().includes(term);
+  });
+
+  const itemsPerPage = 10;
+  const totalItems = filteredReports.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentReports = filteredReports.slice(startIndex, endIndex);
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const getReasonBadge = (reason) => {
     switch (reason) {
@@ -85,7 +79,7 @@ const ReportTable = () => {
             </tr>
           </thead>
           <tbody>
-            {MOCK_REPORTS.map((report) => (
+            {currentReports.map((report) => (
               <tr key={report.id}>
                 <td className="report-id-cell">{report.id}</td>
                 <td>
@@ -114,7 +108,7 @@ const ReportTable = () => {
                 <td className="date-cell whitespace-pre-line">{report.date}</td>
                 <td>{getStatusBadge(report.status)}</td>
                 <td className="td-actions">
-                  <button className="action-btn" onClick={() => navigate('/admin/report-details')}>
+                  <button className="action-btn" onClick={() => navigate('/admin/report-details', { state: { reportId: report.id } })}>
                     <Edit2 size={18} />
                   </button>
                 </td>
@@ -127,11 +121,11 @@ const ReportTable = () => {
       {/* Pagination Footer */}
       <div className="table-footer">
         <div className="pagination-info">
-          Showing 1-3 of 142 reports
+          Showing {totalItems === 0 ? 0 : startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} reports
         </div>
         <div className="simple-pagination-controls">
-          <button className="nav-arrow-btn">&lt;</button>
-          <button className="nav-arrow-btn">&gt;</button>
+          <button className="nav-arrow-btn" disabled={currentPage === 1} onClick={() => setCurrentPage(p => Math.max(1, p - 1))}>&lt;</button>
+          <button className="nav-arrow-btn" disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}>&gt;</button>
         </div>
       </div>
     </div>

@@ -1,10 +1,47 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronRight, Clock, User, AlertTriangle, FileText, Download } from 'lucide-react';
+import { mockReports, mockTableUsers } from '../../data/mockDocuments';
 import './AdminReportDetails.css';
 
 const AdminReportDetails = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const reportId = location.state?.reportId;
+  const report = mockReports.find(r => r.id === reportId) || mockReports[0];
+
+  const [status, setStatus] = useState(report.status);
+  
+  const reportedUser = mockTableUsers.find(u => u.userId === report.reported.userId);
+  const initialUserStatus = reportedUser ? reportedUser.status : 'Active';
+  const [userStatus, setUserStatus] = useState(initialUserStatus);
+  
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = () => {
+    setIsSaving(true);
+    setTimeout(() => {
+      setIsSaving(false);
+      const idx = mockReports.findIndex(r => r.id === report.id);
+      if (idx !== -1) {
+        mockReports[idx].status = status;
+      }
+      
+      if (report.reported.type === 'user') {
+        const userIdx = mockTableUsers.findIndex(u => u.userId === report.reported.userId);
+        if (userIdx !== -1) {
+          mockTableUsers[userIdx].status = userStatus;
+          alert(`Changes saved successfully!\nReport Status: ${status}\nUser Status (${report.reported.userId}): ${userStatus}\n\nTip: Search by User ID in the Dashboard to find this exact user.`);
+        } else {
+          alert('Changes saved successfully! (User not found in dashboard)');
+        }
+      } else {
+        alert('Changes saved successfully!');
+      }
+
+      navigate('/admin/reports');
+    }, 800);
+  };
 
   return (
     <div className="admin-page-container">
@@ -20,8 +57,8 @@ const AdminReportDetails = () => {
       {/* Page Header */}
       <div className="report-details-header">
         <div className="report-title-wrapper">
-          <h1 className="admin-page-title mb-0">Report #REP-1024</h1>
-          <span className="badge-under-review">Under Review</span>
+          <h1 className="admin-page-title mb-0">Report {report.id}</h1>
+          <span className={`badge-under-review ${status.toLowerCase().replace(' ', '-')}`}>{status}</span>
         </div>
         <button className="btn-export">
           <Download size={16} />
@@ -40,15 +77,15 @@ const AdminReportDetails = () => {
               <div className="metadata-grid">
                 <div className="metadata-item">
                   <span className="metadata-label">Report ID</span>
-                  <span className="metadata-value">#REP-1024</span>
+                  <span className="metadata-value">{report.id}</span>
                 </div>
                 <div className="metadata-item">
                   <span className="metadata-label">Material ID</span>
-                  <span className="metadata-value text-primary cursor-pointer">DOC-8832</span>
+                  <span className="metadata-value text-primary cursor-pointer">{report.reported.type === 'document' ? report.reported.userId : 'N/A'}</span>
                 </div>
                 <div className="metadata-item">
                   <span className="metadata-label">Submitted On</span>
-                  <span className="metadata-value">Oct 24, 2023</span>
+                  <span className="metadata-value">{report.date.split('\n')[0]}</span>
                 </div>
                 <div className="metadata-item">
                   <span className="metadata-label">Deadline</span>
@@ -70,14 +107,14 @@ const AdminReportDetails = () => {
               </div>
               <div className="user-card-body">
                 <img 
-                  src="https://ui-avatars.com/api/?name=Sarah+Jenkins&background=random" 
+                  src={report.reporter.avatar} 
                   alt="Reporter" 
                   className="user-avatar-md"
                 />
                 <div className="user-info">
-                  <h4 className="user-name">Sarah Jenkins</h4>
-                  <p className="user-email">sarah.j@student.fpt.edu.vn</p>
-                  <p className="user-id">ID: USR-4421</p>
+                  <h4 className="user-name">{report.reporter.name}</h4>
+                  <p className="user-email">{report.reporter.email}</p>
+                  <p className="user-id">ID: {report.reporter.userId}</p>
                 </div>
               </div>
             </div>
@@ -93,14 +130,14 @@ const AdminReportDetails = () => {
               </div>
               <div className="user-card-body">
                 <img 
-                  src="https://ui-avatars.com/api/?name=Michael+Chen&background=random" 
+                  src={report.reported.avatar} 
                   alt="Reported User" 
                   className="user-avatar-md"
                 />
                 <div className="user-info">
-                  <h4 className="user-name">Michael Chen</h4>
-                  <p className="user-email">m.chen2@student.fpt.edu.vn</p>
-                  <p className="user-id">ID: USR-9902</p>
+                  <h4 className="user-name">{report.reported.name}</h4>
+                  <p className="user-email">{report.reported.email}</p>
+                  <p className="user-id">ID: {report.reported.userId}</p>
                 </div>
               </div>
             </div>
@@ -113,15 +150,15 @@ const AdminReportDetails = () => {
                 <FileText size={18} className="text-warning" />
                 <h3 className="section-title">Investigation Details</h3>
               </div>
-              <span className="section-meta">Submitted 10:42 AM EST</span>
+              <span className="section-meta">Submitted {report.date.split('\n')[1]}</span>
             </div>
             <div className="section-body bg-light-gray">
               <p className="investigation-text">
-                "The study material uploaded under DOC-8832 contains several sections that appear to be directly copied from the Fall 2022 final exam without any attribution. Furthermore, the accompanying AI-generated summary includes completely fabricated references that don't exist in the course syllabus. This violates the academic integrity guidelines for shared content."
+                "{report.details}"
               </p>
             </div>
             <div className="section-footer align-right">
-              <span className="char-count">324 characters</span>
+              <span className="char-count">{report.details.length} characters</span>
             </div>
           </div>
         </div>
@@ -138,15 +175,25 @@ const AdminReportDetails = () => {
             
             <div className="section-body pt-16">
               <div className="form-group">
-                <label className="form-label">Update Status</label>
-                <select className="form-select" defaultValue="Under Review">
+                <label className="form-label">Update Report Status</label>
+                <select className="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
                   <option value="Pending">Pending</option>
                   <option value="Under Review">Under Review</option>
                   <option value="Resolved">Resolved</option>
                 </select>
               </div>
 
-              <div className="form-group mb-24">
+              {report.reported.type === 'user' && (
+                <div className="form-group mt-16">
+                  <label className="form-label">Update User Status</label>
+                  <select className="form-select" value={userStatus} onChange={(e) => setUserStatus(e.target.value)}>
+                    <option value="Active">Active</option>
+                    <option value="Suspended">Suspended</option>
+                  </select>
+                </div>
+              )}
+
+              <div className="form-group mb-24 mt-16">
                 <div className="d-flex-between mb-8">
                   <label className="form-label mb-0">Internal Notes</label>
                   <span className="text-muted text-xs">Admin only</span>
@@ -159,16 +206,12 @@ const AdminReportDetails = () => {
               </div>
 
               <div className="action-buttons-group">
-                <button className="btn-action-warning">
+                <button className="btn-action-warning" onClick={handleSave} disabled={isSaving}>
                   <AlertTriangle size={16} />
-                  Issue Warning
+                  {isSaving ? 'Saving...' : 'Save Changes'}
                 </button>
-                <button className="btn-action-danger">
-                  <User size={16} />
-                  Suspend User
-                </button>
-                <button className="btn-action-secondary">
-                  Dismiss Report
+                <button className="btn-action-secondary" onClick={() => navigate('/admin/reports')}>
+                  Cancel
                 </button>
               </div>
             </div>

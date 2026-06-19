@@ -1,10 +1,59 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronRight, User, Shield, CheckCircle } from 'lucide-react';
+import { mockTableUsers } from '../../data/mockDocuments';
 import './AdminAccountDetails.css';
 
 const AdminAccountDetails = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const userId = location.state?.userId || 1;
+  const initialUser = mockTableUsers.find(u => u.id === userId) || mockTableUsers[0];
+
+  const [formData, setFormData] = useState({
+    id: initialUser.id,
+    fullName: initialUser.name,
+    email: initialUser.email,
+    dob: initialUser.dob || '2001-05-14',
+    gender: initialUser.gender || 'Female',
+    bio: initialUser.bio || 'Computer Science major, focusing on AI ethics. Actively participating in the spring hackathon.',
+    status: initialUser.status,
+    reason: ''
+  });
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = () => {
+    if (formData.status !== 'Active' && !formData.reason.trim()) {
+      alert('Please provide a reason for changing the status.');
+      return;
+    }
+    
+    setIsSaving(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsSaving(false);
+      
+      // Update mockTableUsers array
+      const userIndex = mockTableUsers.findIndex(u => u.id === formData.id);
+      if (userIndex !== -1) {
+        mockTableUsers[userIndex].name = formData.fullName;
+        mockTableUsers[userIndex].email = formData.email;
+        mockTableUsers[userIndex].status = formData.status;
+        mockTableUsers[userIndex].dob = formData.dob;
+        mockTableUsers[userIndex].gender = formData.gender;
+        mockTableUsers[userIndex].bio = formData.bio;
+      }
+
+      alert('Account details saved successfully!');
+      navigate('/admin');
+    }, 800);
+  };
 
   return (
     <div className="admin-page-container">
@@ -24,21 +73,23 @@ const AdminAccountDetails = () => {
       <div className="details-header-card">
         <div className="details-header-profile">
           <img 
-            src="https://ui-avatars.com/api/?name=Sarah+Jenkins&background=random" 
-            alt="Sarah Jenkins" 
+            src={initialUser.avatar} 
+            alt={formData.fullName} 
             className="details-avatar"
           />
           <div className="details-header-info">
-            <h2 className="details-name">Sarah Jenkins</h2>
+            <h2 className="details-name">{formData.fullName}</h2>
             <div className="details-badges">
-              <span className="badge-id">ID: USR-88492A</span>
-              <span className="badge-status-green"><span className="status-dot"></span> Active</span>
+              <span className="badge-id">ID: {initialUser.userId}</span>
+              <span className="badge-status-green"><span className="status-dot"></span> {formData.status}</span>
             </div>
           </div>
         </div>
         <div className="details-header-actions">
-          <button className="btn-cancel" onClick={() => navigate('/admin')}>Cancel</button>
-          <button className="btn-save">Save Changes</button>
+          <button className="btn-cancel" onClick={() => navigate('/admin')} disabled={isSaving}>Cancel</button>
+          <button className="btn-save" onClick={handleSave} disabled={isSaving}>
+            {isSaving ? 'Saving...' : 'Save Changes'}
+          </button>
         </div>
       </div>
 
@@ -58,25 +109,25 @@ const AdminAccountDetails = () => {
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label">Full Name</label>
-                  <input type="text" className="form-input" defaultValue="Sarah Jenkins" />
+                  <input type="text" name="fullName" className="form-input" value={formData.fullName} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                   <label className="form-label d-flex-between">
                     Email Address
                     <span className="verified-badge"><CheckCircle size={12} /> Verified</span>
                   </label>
-                  <input type="email" className="form-input" defaultValue="sarah.jenkins@student.fpt.edu.vn" />
+                  <input type="email" name="email" className="form-input" value={formData.email} onChange={handleChange} />
                 </div>
               </div>
 
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label">Date of Birth</label>
-                  <input type="date" className="form-input" defaultValue="2001-05-14" />
+                  <input type="date" name="dob" className="form-input" value={formData.dob} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Gender</label>
-                  <select className="form-select" defaultValue="Female">
+                  <select name="gender" className="form-select" value={formData.gender} onChange={handleChange}>
                     <option value="Female">Female</option>
                     <option value="Male">Male</option>
                     <option value="Other">Other</option>
@@ -87,9 +138,11 @@ const AdminAccountDetails = () => {
               <div className="form-group">
                 <label className="form-label">Bio / Notes</label>
                 <textarea 
+                  name="bio"
                   className="form-textarea" 
                   rows="4" 
-                  defaultValue="Computer Science major, focusing on AI ethics. Actively participating in the spring hackathon."
+                  value={formData.bio}
+                  onChange={handleChange}
                 ></textarea>
               </div>
             </div>
@@ -109,7 +162,7 @@ const AdminAccountDetails = () => {
             <div className="section-body pt-16">
               <div className="form-group">
                 <label className="form-label">System Username</label>
-                <input type="text" className="form-input disabled-dashed" value="sjenkins_cs" readOnly />
+                <input type="text" className="form-input disabled-dashed" value={initialUser.email.split('@')[0]} readOnly />
               </div>
               <div className="form-group">
                 <label className="form-label">Authentication String</label>
@@ -119,11 +172,11 @@ const AdminAccountDetails = () => {
               <div className="metadata-list">
                 <div className="metadata-row">
                   <span className="metadata-label">Created At</span>
-                  <span className="metadata-value">Oct 12, 2023, 09:41 AM</span>
+                  <span className="metadata-value">{initialUser.date}, 09:41 AM</span>
                 </div>
                 <div className="metadata-row">
                   <span className="metadata-label">Updated At</span>
-                  <span className="metadata-value">Mar 04, 2024, 14:22 PM</span>
+                  <span className="metadata-value">Just now</span>
                 </div>
               </div>
             </div>
@@ -140,19 +193,22 @@ const AdminAccountDetails = () => {
               
               <div className="form-group">
                 <label className="form-label">Target Status</label>
-                <select className="form-select">
-                  <option>🟢 Active (Normal Access)</option>
-                  <option>🟡 Suspended</option>
-                  <option>🔴 Inactive</option>
+                <select name="status" className="form-select" value={formData.status} onChange={handleChange}>
+                  <option value="Active">🟢 Active (Normal Access)</option>
+                  <option value="Suspended">🟡 Suspended</option>
+                  <option value="Inactive">🔴 Inactive</option>
                 </select>
               </div>
               
               <div className="form-group mb-0">
                 <label className="form-label">Reason for Change <span className="text-danger">*</span></label>
                 <textarea 
+                  name="reason"
                   className="form-textarea" 
                   rows="3" 
                   placeholder="Required if changing status from Active..."
+                  value={formData.reason}
+                  onChange={handleChange}
                 ></textarea>
               </div>
             </div>

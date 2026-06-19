@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReportStats from '../reportManagement/components/ReportStats/ReportStats';
 import ReportTable from '../reportManagement/components/ReportTable/ReportTable';
 import { Search, Filter } from 'lucide-react';
 import './ReportManagement.css';
 
 const ReportManagement = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+
   return (
     <>
       <div className="admin-page-header report-page-header">
@@ -22,6 +24,8 @@ const ReportManagement = () => {
               type="text" 
               placeholder="Search by Report ID or User..." 
               className="report-search-input"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <button className="btn-filter">
@@ -32,7 +36,7 @@ const ReportManagement = () => {
       </div>
 
       <ReportStats />
-      <ReportTable />
+      <ReportTable searchTerm={searchTerm} />
     </>
   );
 };

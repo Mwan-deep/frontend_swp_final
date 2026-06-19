@@ -1,15 +1,21 @@
 import React from 'react';
 import { Users, Radio, UserX, AlertCircle, TrendingUp } from 'lucide-react';
+import { mockTableUsers, mockReports } from '../../../../data/mockDocuments';
 import './UserStats.css';
 
 const UserStats = () => {
+  const totalUsers = mockTableUsers.length;
+  const activeUsers = mockTableUsers.filter(u => u.status === 'Active').length;
+  const inactiveUsers = mockTableUsers.filter(u => u.status === 'Inactive' || u.status === 'Suspended').length;
+  const totalReports = mockReports.length;
+
   return (
     <div className="user-stats-container">
       <div className="stat-card">
         <div className="stat-card-header">
           <div className="stat-card-content">
             <p className="stat-label">TOTAL USERS</p>
-            <h2 className="stat-value">12,482</h2>
+            <h2 className="stat-value">{totalUsers}</h2>
           </div>
           <div className="stat-icon-wrapper orange-bg">
             <Users size={20} className="stat-icon orange-text" />
@@ -27,7 +33,7 @@ const UserStats = () => {
         <div className="stat-card-header">
           <div className="stat-card-content">
             <p className="stat-label">ACTIVE NOW</p>
-            <h2 className="stat-value">1,204</h2>
+            <h2 className="stat-value">{activeUsers}</h2>
           </div>
           <div className="stat-icon-wrapper blue-bg">
             <Radio size={20} className="stat-icon blue-text" />
@@ -42,7 +48,7 @@ const UserStats = () => {
         <div className="stat-card-header">
           <div className="stat-card-content">
             <p className="stat-label">INACTIVE</p>
-            <h2 className="stat-value">43</h2>
+            <h2 className="stat-value">{inactiveUsers}</h2>
           </div>
           <div className="stat-icon-wrapper gray-bg">
             <UserX size={20} className="stat-icon gray-text" />
@@ -60,7 +66,7 @@ const UserStats = () => {
         <div className="stat-card-header">
           <div className="stat-card-content">
             <p className="stat-label">TOTAL REPORTS</p>
-            <h2 className="stat-value">156</h2>
+            <h2 className="stat-value">{totalReports}</h2>
           </div>
           <div className="stat-icon-wrapper red-bg">
             <AlertCircle size={20} className="stat-icon red-text" />

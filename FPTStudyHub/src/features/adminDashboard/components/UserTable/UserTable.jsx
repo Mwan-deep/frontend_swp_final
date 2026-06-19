@@ -1,60 +1,53 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ChevronDown, Download, Edit2 } from 'lucide-react';
+import { Search, Edit2 } from 'lucide-react';
 import Pagination from '../../../../shared/components/Pagination/Pagination';
+import { mockTableUsers } from '../../../../data/mockDocuments';
 import './UserTable.css';
-
-const MOCK_USERS = [
-  {
-    id: 1,
-    name: 'Sarah Jenkins',
-    email: 's.jenkins@fpt.edu.vn',
-    userId: 'SE140293',
-    role: 'Student',
-    status: 'Active',
-    date: 'Oct 12, 2023',
-    avatar: 'https://ui-avatars.com/api/?name=Sarah+Jenkins&background=random'
-  },
-  {
-    id: 2,
-    name: 'Dr. Minh Tran',
-    email: 'minhtran@fpt.edu.vn',
-    userId: 'FA00214',
-    role: 'Faculty',
-    status: 'Active',
-    date: 'Jan 05, 2021',
-    avatar: 'https://ui-avatars.com/api/?name=Minh+Tran&background=random'
-  },
-  {
-    id: 3,
-    name: 'Alex Rivera',
-    email: 'a.rivera@fpt.edu.vn',
-    userId: 'SE130988',
-    role: 'Student',
-    status: 'Inactive',
-    date: 'Sep 10, 2022',
-    avatar: 'https://ui-avatars.com/api/?name=Alex+Rivera&background=random'
-  },
-  {
-    id: 4,
-    name: 'Jordan Lee',
-    email: 'jlee.admin@fpt.edu.vn',
-    userId: 'AD00042',
-    role: 'Admin',
-    status: 'Suspended',
-    date: 'Nov 22, 2019',
-    avatar: 'https://ui-avatars.com/api/?name=Jordan+Lee&background=random'
-  }
-];
 
 const UserTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [filterRole, setFilterRole] = useState('All');
+  const [filterStatus, setFilterStatus] = useState('All');
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+
+  const filteredUsers = mockTableUsers.filter(user => {
+    const matchRole = filterRole === 'All' || user.role === filterRole;
+    const matchStatus = filterStatus === 'All' || user.status === filterStatus;
+    const matchSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        user.userId.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchRole && matchStatus && matchSearch;
+  });
+
+  const itemsPerPage = 10;
+  const totalItems = filteredUsers.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+  
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentUsers = filteredUsers.slice(startIndex, endIndex);
+
+  const handleRoleChange = (e) => {
+    setFilterRole(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleStatusChange = (e) => {
+    setFilterStatus(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
 
   const getRoleBadgeClass = (role) => {
     switch (role) {
       case 'Student': return 'badge-role-student';
-      case 'Faculty': return 'badge-role-faculty';
+      case 'Manager': return 'badge-role-faculty';
       case 'Admin': return 'badge-role-admin';
       default: return '';
     }
@@ -75,18 +68,26 @@ const UserTable = () => {
       <div className="table-toolbar">
         <div className="table-search">
           <Search size={18} className="admin-table-search-icon" />
-          <input type="text" placeholder="Search users..." />
+          <input 
+            type="text" 
+            placeholder="Search users..." 
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
         </div>
         <div className="table-filters">
-          <button className="filter-btn">
-            All Roles <ChevronDown size={16} />
-          </button>
-          <button className="filter-btn">
-            All States <ChevronDown size={16} />
-          </button>
-          <button className="download-btn">
-            <Download size={18} />
-          </button>
+          <select className="filter-btn" value={filterRole} onChange={handleRoleChange}>
+            <option value="All">All Roles</option>
+            <option value="Student">Student</option>
+            <option value="Manager">Manager</option>
+            <option value="Admin">Admin</option>
+          </select>
+          <select className="filter-btn" value={filterStatus} onChange={handleStatusChange}>
+            <option value="All">All States</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+            <option value="Suspended">Suspended</option>
+          </select>
         </div>
       </div>
 
@@ -107,7 +108,7 @@ const UserTable = () => {
             </tr>
           </thead>
           <tbody>
-            {MOCK_USERS.map((user) => (
+            {currentUsers.map((user) => (
               <tr key={user.id}>
                 <td className="td-checkbox">
                   <input type="checkbox" />
@@ -135,7 +136,7 @@ const UserTable = () => {
                 </td>
                 <td className="date-cell">{user.date}</td>
                 <td className="td-actions">
-                  <button className="action-btn" onClick={() => navigate('/admin/account-details')}>
+                  <button className="action-btn" onClick={() => navigate('/admin/account-details', { state: { userId: user.id } })}>
                     <Edit2 size={16} />
                   </button>
                 </td>
@@ -148,12 +149,12 @@ const UserTable = () => {
       {/* Pagination Footer */}
       <div className="table-footer">
         <div className="pagination-info">
-          Showing <strong>1</strong> to <strong>10</strong> of <strong>12,482</strong> results
+          Showing <strong>{totalItems === 0 ? 0 : startIndex + 1}</strong> to <strong>{Math.min(endIndex, totalItems)}</strong> of <strong>{totalItems}</strong> results
         </div>
         <div className="pagination-controls">
           <Pagination
             currentPage={currentPage}
-            totalPages={1248}
+            totalPages={totalPages}
             onPageChange={setCurrentPage}
           />
         </div>
