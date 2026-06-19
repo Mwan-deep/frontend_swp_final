@@ -1,3 +1,4 @@
+
 export const MAJORS_DATA = {
   "Software Engineering": ["Web Development", "Mobile Development", "AI & Machine Learning", "Cloud Computing"],
   "Information Assurance": ["Network Security", "Cryptography", "Digital Forensics", "Ethical Hacking"],
@@ -26,4 +27,6 @@ export const RECENT_DOCS = [
     timeAgo: "Uploaded Yesterday",
     views: 0
   }
+
 ];
+

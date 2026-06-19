@@ -1,16 +1,17 @@
+
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import "./sidebar.css";
-import { 
-  LayoutDashboard, 
-  Folder, 
-  Sparkles, 
-  BookOpen, 
-  Users, 
-  HelpCircle, 
-  Upload, 
-  Settings, 
-  LogOut 
+import {
+  LayoutDashboard,
+  Folder,
+  Sparkles,
+  BookOpen,
+  Users,
+  HelpCircle,
+  Upload,
+  Settings,
+  LogOut
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -52,7 +53,7 @@ const Sidebar = () => {
         </div>
 
         <div className="sidebar-footer">
-          <button 
+          <button
             className="upload-btn"
             onClick={() => navigate('/updatedocument')}
           >
@@ -61,17 +62,17 @@ const Sidebar = () => {
           </button>
 
           <div className="sidebar-bottom-links">
-            <NavLink 
+            <NavLink
               to="/settings"
               className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
             >
               <Settings size={18} />
               <span>Settings</span>
             </NavLink>
-            
+
             {/* Chỉ hiển thị nút Logout khi đã đăng nhập */}
             {isLoggedIn && (
-              <div 
+              <div
                 className="nav-item"
                 onClick={() => setShowLogoutModal(true)}
                 style={{ cursor: 'pointer' }}
@@ -91,22 +92,22 @@ const Sidebar = () => {
             <div className="modal-icon-wrapper">
               <LogOut size={24} className="modal-icon" />
             </div>
-            
+
             <h3 className="modal-title">Are you sure you want to log out?</h3>
             <p className="modal-description">
               Your current session will end.<br />
               Hope to see you back soon!
             </p>
-            
+
             <div className="modal-actions">
-              <button 
-                className="modal-btn btn-cancel" 
+              <button
+                className="modal-btn btn-cancel"
                 onClick={() => setShowLogoutModal(false)}
               >
                 Cancel
               </button>
-              <button 
-                className="modal-btn btn-confirm" 
+              <button
+                className="modal-btn btn-confirm"
                 onClick={handleConfirmLogout}
               >
                 Log Out

@@ -1,5 +1,3 @@
-// mockQuizzes.js
-// Mock data for FPT Study Hub Knowledge Check Quizzes with Access Modes, Questions, and Management Stats
 
 export const INITIAL_QUIZZES = [
   {
@@ -453,4 +451,6 @@ export const MOCK_DOCUMENTS = [
     course: "MAI201",
     uploadDate: "08/10/2023"
   }
+
 ];
+

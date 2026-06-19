@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+/* Header.jsx */
+>>>>>>> origin/dev2
 import React, { useState, useEffect } from 'react';
 import { Search, Bell } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';

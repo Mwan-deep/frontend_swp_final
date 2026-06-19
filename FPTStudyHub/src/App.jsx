@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from "./layout/layout.jsx";
 import AdminLayout from "./layout/AdminLayout.jsx";
@@ -13,7 +12,7 @@ import ManagerLayout from "./layout/ManagerLayout.jsx";
 const RequireAuth = ({ children, allowedRole }) => {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
   // Mặc định là user nếu không có role
-  let userRole = (localStorage.getItem('role') || 'user').toLowerCase(); 
+  let userRole = (localStorage.getItem('role') || 'user').toLowerCase();
   if (userRole === 'student') userRole = 'user';
 
   // Nếu chưa đăng nhập -> về trang login
@@ -41,14 +40,18 @@ function App() {
 
         {/* 2. Đường dẫn /login độc lập không bọc trong Layout bảo mật */}
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register/>} />
+
+        <Route path="/register" element={<Register />} />
 
         {/* 3. Layout bọc các trang dành cho USER */}
+
         <Route element={<Layout />}>
           {publicRoutes
             .filter((route) => !route.noLayout) // Lọc bỏ các trang độc lập (Landing, Login)
             .map((route, index) => {
               const Page = route.component;
+
+
               const isDocumentsRoute = route.path.includes('documents');
 
               return (

@@ -192,7 +192,6 @@ export const mockDocuments = [
     downloads: "2.0k"
   }
 ];
-
 export const dashboardStats = [
   { icon: FileText, value: "24", label: "Total Documents", iconBgClass: "bg-light-blue" },
   { icon: Upload, value: "12", label: "Uploaded", iconBgClass: "bg-light-orange" },
@@ -200,6 +199,7 @@ export const dashboardStats = [
   { icon: Database, value: "3GB", label: "Storage Remaining", iconBgClass: "bg-light-blue" },
   { icon: HelpCircle, value: "15", label: "Quizzes Done", iconBgClass: "bg-light-orange" }
 ];
+
 
 export const Community_data = {
   weekly: [
@@ -423,6 +423,7 @@ export const accounts = [
     role: "Student",
     twoFactorEnabled: false,
     notifications: { loginAlerts: true, passwordChange: true }
+
   }
 ];
 export const mockTableUsers = accounts;

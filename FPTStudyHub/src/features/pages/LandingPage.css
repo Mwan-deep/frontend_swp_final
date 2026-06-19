@@ -1,12 +1,33 @@
 /* Styling for FPT Study Hub Landing Page */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --primary-color: #F26F21;
+  --primary-hover: #E05D10;
+  --primary-light: rgba(242, 111, 33, 0.1);
+  --text-main: #1E293B;
+  --text-muted: #64748B;
+  --text-light: #94A3B8;
+  --border-color: #E2E8F0;
+  --border-radius-md: 12px;
+  --border-radius-pill: 9999px;
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
 
 .landing-page-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f8fafc; /* Slate 50 */
+  background-image: linear-gradient(rgba(248, 250, 252, 0.4), rgba(248, 250, 252, 0.5)), url('/landing.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   color: var(--text-main);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-family);
   overflow-x: hidden;
 }
 
@@ -15,7 +36,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 48px;
+  padding: 8px 48px; /* Thu nhỏ padding trên-dưới từ 20px xuống 8px */
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border-color);
@@ -35,7 +56,7 @@
 }
 
 .logo-text {
-  font-size: 20px;
+  font-size: 18px; /* Giảm font chữ logo từ 20px xuống 18px */
   font-weight: 800;
   color: #0f172a;
   letter-spacing: -0.5px;
@@ -54,11 +75,11 @@
 .btn-login {
   background: none;
   border: none;
-  font-size: 14px;
+  font-size: 13px; /* Giảm font-size từ 14px xuống 13px */
   font-weight: 600;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 8px 16px;
+  padding: 6px 12px; /* Giảm padding từ 8px 16px xuống 6px 12px */
   border-radius: var(--border-radius-md);
   transition: all var(--transition-fast);
 }
@@ -72,10 +93,10 @@
   background-color: var(--primary-color);
   color: #ffffff;
   border: none;
-  font-size: 14px;
+  font-size: 13px; /* Giảm font-size từ 14px xuống 13px */
   font-weight: 600;
   cursor: pointer;
-  padding: 10px 20px;
+  padding: 8px 16px; /* Giảm padding từ 10px 20px xuống 8px 16px */
   border-radius: var(--border-radius-md);
   box-shadow: 0 4px 6px -1px rgba(242, 113, 35, 0.2);
   transition: all var(--transition-fast);
@@ -109,8 +130,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background-color: #f0f7ff; /* Soft sky blue */
-  color: #0284c7; /* Sky 600 */
+  background-color: #f0f7ff;
+  color: #0284c7;
   padding: 6px 14px;
   border-radius: var(--border-radius-pill);
   font-size: 13px;
@@ -153,7 +174,8 @@
 
 .hero-description {
   font-size: 17px;
-  color: var(--text-muted);
+  color: #1e293b;
+  font-weight: 600;
   line-height: 1.6;
   margin-bottom: 36px;
   max-width: 540px;
@@ -297,7 +319,7 @@
 .mock-device-frame {
   width: 100%;
   height: 85%;
-  background-color: #1e293b; /* Slate 800 (device bezel) */
+  background-color: #1e293b;
   border-radius: 24px;
   padding: 12px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -307,7 +329,7 @@
 
 .device-screen {
   flex: 1;
-  background-color: #f1f5f9; /* Slate 100 (screen bg) */
+  background-color: #f1f5f9;
   border-radius: 14px;
   padding: 24px;
   display: flex;
@@ -480,7 +502,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 48px;
+  padding: 12px 48px; /* Thu nhỏ padding trên-dưới từ 24px xuống 12px */
   background-color: #ffffff;
   border-top: 1px solid var(--border-color);
   margin-top: auto;
@@ -562,7 +584,7 @@
 /* RESPONSIVE LAYOUTS */
 @media (max-width: 960px) {
   .landing-navbar {
-    padding: 16px 24px;
+    padding: 10px 20px; /* Thu nhỏ padding ở chế độ tablet từ 16px 24px xuống 10px 20px */
   }
   
   .landing-hero {
@@ -587,7 +609,7 @@
   .landing-footer {
     flex-direction: column;
     gap: 16px;
-    padding: 24px;
+    padding: 16px; /* Thu nhỏ padding ở chế độ tablet từ 24px xuống 16px */
     text-align: center;
   }
 }

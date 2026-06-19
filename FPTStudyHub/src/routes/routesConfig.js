@@ -52,4 +52,5 @@ export const managerRoutes = [
   { path: "manager", component: ManagerDashboard, noLayout: true },
   { path: "manager/documents", component: ManagerDocumentQueue, noLayout: true },
   { path: "manager/community", component: ManagerCommunity, noLayout: true },
+
 ];

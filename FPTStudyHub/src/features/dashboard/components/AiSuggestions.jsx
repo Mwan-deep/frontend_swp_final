@@ -18,7 +18,7 @@ const SuggestionCard = ({ badge, title, desc, badgeClass }) => {
 
 const AiSuggestions = () => {
   const suggestions = [
-    { badge: "Âocument", title: "Advanced Neural Networks Guide", desc: "A comprehensive overview of deep learning architectures...", badgeClass: "badge-blue" },
+    { badge: "Document", title: "Advanced Neural Networks Guide", desc: "A comprehensive overview of deep learning architectures...", badgeClass: "badge-blue" },
     { badge: "Quiz Prep", title: "Practice: Binary Trees", desc: "Generate a quick 10-question quiz based on the Data Structures...", badgeClass: "badge-yellow" }
   ];
 

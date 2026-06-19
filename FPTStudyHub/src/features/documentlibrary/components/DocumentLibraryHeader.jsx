@@ -9,19 +9,18 @@ const DocumentLibraryHeader = ({ viewType, setViewType }) => {
         <p>Explore and manage your study materials.</p>
       </div>
       
-      {/* 2 nút chuyển đổi giữa ngang và dọc */}
+      {/* 2 nút chuyển đổi giữa hiển thị Grid và List */}
       <div className="layout-toggle">
         <button
-        onClick={() => setViewType('grid')}
+          onClick={() => setViewType('grid')}
           className={`toggle-icon-btn ${viewType === 'grid' ? 'active' : ''}`}
-          
           aria-label="Grid view"
         >
           <LayoutGrid size={18} />
         </button>
         <button
-          className={`toggle-icon-btn ${viewType === 'list' ? 'active' : ''}`}
           onClick={() => setViewType('list')}
+          className={`toggle-icon-btn ${viewType === 'list' ? 'active' : ''}`}
           aria-label="List view"
         >
           <List size={18} />

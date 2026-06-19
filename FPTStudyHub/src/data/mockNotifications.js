@@ -1,3 +1,7 @@
+
+/* mockNotifications.js */
+
+
 export const mockNotifications = [
   {
     id: 1,
@@ -31,4 +35,5 @@ export const mockNotifications = [
     timeAgo: 'Oct 24',
     read: true,
   }
+
 ];
