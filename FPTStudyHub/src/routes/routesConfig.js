@@ -12,6 +12,7 @@ import AdminReportDetails from "../features/pages/AdminReportDetails.jsx";
 import ManagerDashboard from "../features/pages/ManagerDashboard.jsx";
 import ManagerDocumentQueue from "../features/pages/ManagerDocumentQueue.jsx";
 import ManagerCommunity from "../features/pages/ManagerCommunity/ManagerCommunity.jsx";
+import ManagerSettings from "../features/pages/ManagerSettings.jsx";
 
 import AIFeatures from "../features/pages/AIFeatures.jsx";
 import Learning from "../features/pages/Learning.jsx";
@@ -55,5 +56,5 @@ export const managerRoutes = [
   { path: "manager", component: ManagerDashboard, noLayout: true },
   { path: "manager/documents", component: ManagerDocumentQueue, noLayout: true },
   { path: "manager/community", component: ManagerCommunity, noLayout: true },
-
+  { path: "manager/settings", component: ManagerSettings, noLayout: true },
 ];

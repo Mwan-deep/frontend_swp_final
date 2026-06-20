@@ -1,10 +1,24 @@
 .manager-dashboard {
   animation: fadeIn 0.3s ease-in-out;
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 24px;
+  min-height: calc(100vh - 134px);
 }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-left-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-right-column {
+  display: flex;
+  flex-direction: column;
 }
 
 .dashboard-header {
@@ -25,8 +39,7 @@
 }
 
 .dashboard-top-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
   gap: 24px;
   margin-bottom: 24px;
 }
@@ -37,6 +50,7 @@
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   border: 1px solid #eef0f2;
+  flex: 1; /* Allow cards to stretch evenly */
 }
 
 .stat-card-header {
@@ -86,47 +100,13 @@
   margin: 0;
 }
 
-.alert-card {
-  background-color: #c62828;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.alert-card:hover {
-  transform: translateY(-2px);
-}
-
-.alert-content {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.alert-content h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.dashboard-main-content {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 24px;
-}
-
 .leaderboard-section {
   background: white;
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   border: 1px solid #eef0f2;
+  height: 100%; /* Stretch to fill right column */
 }
 
 .leaderboard-header {
@@ -249,6 +229,7 @@
   border: 1px solid #eef0f2;
   display: flex;
   flex-direction: column;
+  flex: 1; /* Stretch to fill remaining height */
 }
 
 .report-queue-header {

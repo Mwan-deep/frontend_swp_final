@@ -9,7 +9,7 @@
   flex-direction: column;
   justify-content: space-between;
   padding: 24px 16px;
-  height: 100vh; /* Đảm bảo sidebar chiếm hết chiều cao màn hình */
+  height: 100%; /* Sửa từ 100vh thành 100% để nằm vừa vặn dưới Header */
   box-sizing: border-box;
 }
 

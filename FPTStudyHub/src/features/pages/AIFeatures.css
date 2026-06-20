@@ -1,9 +1,13 @@
 /* AIFeatures.css */
 
 .ai-features-page-wrapper {
-  height: calc(100vh - 72px); /* Chiều cao thích ứng dưới Header */
+  height: calc(100vh - 120px);
+  /* 100vh - Header(80px) - Padding Trên/Dưới(64px) */
   margin: 0;
   padding: 0;
+  border-radius: 16px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   overflow: hidden;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background-color: #FFFFFF;
@@ -264,9 +268,13 @@
 }
 
 @keyframes wave {
-  0%, 60%, 100% {
+
+  0%,
+  60%,
+  100% {
     transform: translateY(0);
   }
+
   30% {
     transform: translateY(-4px);
   }
@@ -675,7 +683,9 @@
   .ai-features-grid-layout {
     grid-template-columns: 1fr;
   }
-  .sidebar-column, .notebook-column {
+
+  .sidebar-column,
+  .notebook-column {
     display: none;
   }
 }
