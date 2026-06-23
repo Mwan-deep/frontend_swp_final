@@ -32,7 +32,7 @@ const Dashboard = () => {
       <div className="stats-grid">
         {/* Render danh sách chỉ số động bằng cách map qua dashboardStats */}
         {dashboardStats.map((item, index) => (
-          <StatCard 
+          <StatCard
             key={index}
             icon={item.icon}
             value={item.value}
@@ -40,14 +40,13 @@ const Dashboard = () => {
             iconBgClass={item.iconBgClass}
           />
         ))}
-        {/* Component Tiến độ Học tập */}
-        <ProgressCard value="75%" label="Learning Progress" />
+
       </div>
 
       {/* Grid Đồ thị & Hoạt động */}
       <div className="dashboard-main-content">
         <div className="dashboard-left-column">
-          
+
           {/* Đồ thị Tuần */}
           <div className="dashboard-card weekly-activity-card">
             <div className="card-header">
@@ -61,8 +60,8 @@ const Dashboard = () => {
               <svg viewBox="0 0 600 200" className="activity-svg">
                 <defs>
                   <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#f27123" stopOpacity="0.25"/>
-                    <stop offset="100%" stopColor="#f27123" stopOpacity="0.0"/>
+                    <stop offset="0%" stopColor="#f27123" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#f27123" stopOpacity="0.0" />
                   </linearGradient>
                 </defs>
 
@@ -82,16 +81,16 @@ const Dashboard = () => {
                   <text x="15" y="175">0</text>
                 </g>
 
-                <path 
-                  d="M 40,138 C 90,120 100,82 130,82 C 160,82 190,105 220,98 C 250,90 280,122 310,122 C 340,122 370,22 400,22 C 430,22 460,130 490,130 C 520,130 550,30 580,30 L 580,170 L 40,170 Z" 
+                <path
+                  d="M 40,138 C 90,120 100,82 130,82 C 160,82 190,105 220,98 C 250,90 280,122 310,122 C 340,122 370,22 400,22 C 430,22 460,130 490,130 C 520,130 550,30 580,30 L 580,170 L 40,170 Z"
                   fill="url(#chartGradient)"
                 />
 
-                <path 
-                  d="M 40,138 C 90,120 100,82 130,82 C 160,82 190,105 220,98 C 250,90 280,122 310,122 C 340,122 370,22 400,22 C 430,22 460,130 490,130 C 520,130 550,30 580,30" 
-                  fill="none" 
-                  stroke="#f27123" 
-                  strokeWidth="4" 
+                <path
+                  d="M 40,138 C 90,120 100,82 130,82 C 160,82 190,105 220,98 C 250,90 280,122 310,122 C 340,122 370,22 400,22 C 430,22 460,130 490,130 C 520,130 550,30 580,30"
+                  fill="none"
+                  stroke="#f27123"
+                  strokeWidth="4"
                   strokeLinecap="round"
                 />
 
@@ -123,19 +122,19 @@ const Dashboard = () => {
                 <div className="bars-wrapper">
                   <div className="bar-column">
                     <div className="bar-track"><div className="bar-fill bg-blue" style={{ height: '35%' }}></div></div>
-                    <span className="bar-label">ư 1</span>
+                    <span className="bar-label">Week 1</span>
                   </div>
                   <div className="bar-column">
                     <div className="bar-track"><div className="bar-fill bg-blue" style={{ height: '55%' }}></div></div>
-                    <span className="bar-label">ư 2</span>
+                    <span className="bar-label">Week 2</span>
                   </div>
                   <div className="bar-column">
                     <div className="bar-track"><div className="bar-fill bg-blue" style={{ height: '25%' }}></div></div>
-                    <span className="bar-label">ư 3</span>
+                    <span className="bar-label">WeeK 3</span>
                   </div>
                   <div className="bar-column">
                     <div className="bar-track"><div className="bar-fill bg-orange" style={{ height: '80%' }}></div></div>
-                    <span className="bar-label">ư 4</span>
+                    <span className="bar-label">WeeK 4</span>
                   </div>
                 </div>
               </div>

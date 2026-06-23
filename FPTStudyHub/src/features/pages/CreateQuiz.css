@@ -529,6 +529,7 @@
   margin: 0;
   line-height: 1.4;
   height: 40px;
+  min-height: 46px;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
