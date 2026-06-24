@@ -6,7 +6,9 @@ import './ReportManagement.css';
 
 const ReportManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
+
   const [statusFilter, setStatusFilter] = useState('all');
+
 
   return (
     <>
@@ -21,23 +23,24 @@ const ReportManagement = () => {
         <div className="report-header-actions">
           <div className="report-search-wrapper">
             <Search size={18} className="report-search-icon" />
-            <input 
-              type="text" 
-              placeholder="Search by Report ID or User..." 
+            <input
+              type="text"
+              placeholder="Search by Report ID or User..."
               className="report-search-input"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+
         </div>
       </div>
 
       <ReportStats />
-      
+
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
         <div className="filter-dropdown-container">
           <Filter size={16} className="filter-dropdown-icon" />
-          <select 
+          <select
             className="btn-filter select-filter-with-icon"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -51,6 +54,7 @@ const ReportManagement = () => {
       </div>
 
       <ReportTable searchTerm={searchTerm} statusFilter={statusFilter} />
+
     </>
   );
 };

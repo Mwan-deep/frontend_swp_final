@@ -449,6 +449,7 @@ export const mockReports = [
     }
   },
   {
+
     report_id: 11, id: "#REP-9011",
     material_id: 1,
     account_id: 2,
@@ -544,6 +545,7 @@ export const mockReports = [
     }
   },
   {
+
     report_id: 2, id: "#REP-9002",
     material_id: 2,
     account_id: 2,
@@ -761,10 +763,12 @@ export const mockDocumentQueue = Object.values(mockReports.reduce((acc, report) 
       size: "2.4 MB",
       pages: "18 Pages",
       format: "PDF",
+
       author: (() => {
         const uploader = mockTableUsers[Math.max(0, parseInt(docId.replace('DOC-', '')) - 1000) % mockTableUsers.length];
         return { name: uploader.name, handle: `@${uploader.user_name}`, avatar: uploader.avatar, userId: uploader.userId };
       })(),
+
       creationTime: "Oct 24, 2023 14:32",
       views: "1.2k",
       downloads: "450"

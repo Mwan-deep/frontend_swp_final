@@ -1,27 +1,30 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { Search, Filter, RefreshCcw, MoreVertical, Edit2, Mail, UserX, AlertTriangle, FileText, ExternalLink } from 'lucide-react';
+
 import './ReportTable.css';
 
 import { mockReports } from '../../../../data/mockDocuments';
-
 const ReportTable = ({ searchTerm = '', statusFilter = 'all' }) => {
+
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = React.useState(1);
 
   const filteredReports = mockReports.filter(report => {
     const term = searchTerm.toLowerCase();
+
     const matchesSearch = report.id.toLowerCase().includes(term) ||
-           report.reporter.name.toLowerCase().includes(term) ||
-           report.reported.name.toLowerCase().includes(term);
-           
+      report.reporter.name.toLowerCase().includes(term) ||
+      report.reported.name.toLowerCase().includes(term);
+
     let matchesStatus = true;
     if (statusFilter === 'all') {
       matchesStatus = report.status !== 'Resolved';
     } else {
       matchesStatus = report.status === statusFilter;
     }
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -52,13 +55,15 @@ const ReportTable = ({ searchTerm = '', statusFilter = 'all' }) => {
       return <span className="reason-badge spam">© Copyright</span>;
     }
     if (reason === 'Inaccurate Information' || reason === 'Inappropriate Content' || reason.includes('Inappropriate')) {
-      return <span className="reason-badge inappropriate"><AlertTriangle size={14}/> Inappropriate</span>;
+      return <span className="reason-badge inappropriate"><AlertTriangle size={14} /> Inappropriate</span>;
     }
+
     switch (reason) {
       case 'Spam':
-        return <span className="reason-badge spam"><Mail size={14}/> Spam</span>;
+        return <span className="reason-badge spam"><Mail size={14} /> Spam</span>;
       case 'Harassment':
-        return <span className="reason-badge harassment"><UserX size={14}/> Harassment</span>;
+        return <span className="reason-badge harassment"><UserX size={14} /> Harassment</span>;
+
       default:
         return <span className="reason-badge">{reason}</span>;
     }
@@ -67,11 +72,13 @@ const ReportTable = ({ searchTerm = '', statusFilter = 'all' }) => {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'Pending':
+
         return <span className="status-badge pending">High Priority</span>;
       case 'Under Review':
         return <span className="status-badge review">Under Review</span>;
       case 'Resolved':
         return <span className="status-badge resolved">Resolved</span>;
+
       default:
         return <span className="status-badge">{status}</span>;
     }
@@ -83,8 +90,8 @@ const ReportTable = ({ searchTerm = '', statusFilter = 'all' }) => {
       <div className="report-table-header">
         <h2 className="report-table-title">Active Reports</h2>
         <div className="report-table-actions">
-          <button className="icon-btn-small"><RefreshCcw size={18}/></button>
-          <button className="icon-btn-small"><MoreVertical size={18}/></button>
+          <button className="icon-btn-small"><RefreshCcw size={18} /></button>
+          <button className="icon-btn-small"><MoreVertical size={18} /></button>
         </div>
       </div>
 
@@ -104,58 +111,66 @@ const ReportTable = ({ searchTerm = '', statusFilter = 'all' }) => {
             </tr>
           </thead>
           <tbody>
+
             {currentReports.map((report) => {
               const reportCount = report.groupCount;
               return (
-              <tr key={report.id}>
-                <td className="report-id-cell">{report.id}</td>
-                <td>
-                  <div className="user-cell">
-                    <img src={report.reporter.avatar} alt={report.reporter.name} className="user-cell-avatar" />
-                    <div className="user-cell-info">
-                      <p className="user-cell-name">{reportCount > 1 ? 'Multiple Reporters' : report.reporter.name}</p>
-                      <p className="user-cell-email">{reportCount > 1 ? `${reportCount} unique users` : report.reporter.handle}</p>
+
+                <tr key={report.id}>
+                  <td className="report-id-cell">{report.id}</td>
+                  <td>
+                    <div className="user-cell">
+                      <img src={report.reporter.avatar} alt={report.reporter.name} className="user-cell-avatar" />
+                      <div className="user-cell-info">
+
+                        <p className="user-cell-name">{reportCount > 1 ? 'Multiple Reporters' : report.reporter.name}</p>
+                        <p className="user-cell-email">{reportCount > 1 ? `${reportCount} unique users` : report.reporter.handle}</p>
+
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td>
-                  <div className="user-cell">
-                    {report.reported.type === 'user' ? (
-                      <img src={report.reported.avatar} alt={report.reported.name} className="user-cell-avatar" />
-                    ) : (
-                      <div className="doc-icon-wrapper"><FileText size={20} className="doc-icon"/></div>
-                    )}
-                    <div className="user-cell-info">
-                      <p className="user-cell-name">{report.reported.name}</p>
-                      <p className="user-cell-email">Document</p>
+                  </td>
+                  <td>
+                    <div className="user-cell">
+                      {report.reported.type === 'user' ? (
+                        <img src={report.reported.avatar} alt={report.reported.name} className="user-cell-avatar" />
+                      ) : (
+                        <div className="doc-icon-wrapper"><FileText size={20} className="doc-icon" /></div>
+                      )}
+                      <div className="user-cell-info">
+                        <p className="user-cell-name">{report.reported.name}</p>
+
+                        <p className="user-cell-email">Document</p>
+
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td>{getReasonBadge(report.reason)}</td>
-                <td>
-                  <span className="total-reports-badge">
-                    {reportCount} Report{reportCount > 1 ? 's' : ''} <ExternalLink size={12} style={{marginLeft: '2px'}}/>
-                  </span>
-                </td>
-                <td className="date-cell whitespace-pre-line">{report.date.split('\n')[0]}</td>
-                <td>{getStatusBadge(report.status)}</td>
-                <td className="td-actions">
-                  <button 
-                    className={`text-action-btn ${reportCount > 1 ? 'review-all' : 'view-record'}`} 
-                    onClick={() => {
-                      if (reportCount > 1) {
-                        navigate('/admin/investigate-document', { state: { materialId: report.reported.userId } });
-                      } else {
-                        navigate('/admin/report-details', { state: { reportId: report.id } });
-                      }
-                    }}
-                  >
-                    {reportCount > 1 ? 'Review All' : 'View Record'}
-                  </button>
-                </td>
-              </tr>
+                  </td>
+                  <td>{getReasonBadge(report.reason)}</td>
+
+                  <td>
+                    <span className="total-reports-badge">
+                      {reportCount} Report{reportCount > 1 ? 's' : ''} <ExternalLink size={12} style={{ marginLeft: '2px' }} />
+                    </span>
+                  </td>
+                  <td className="date-cell whitespace-pre-line">{report.date.split('\n')[0]}</td>
+                  <td>{getStatusBadge(report.status)}</td>
+                  <td className="td-actions">
+                    <button
+                      className={`text-action-btn ${reportCount > 1 ? 'review-all' : 'view-record'}`}
+                      onClick={() => {
+                        if (reportCount > 1) {
+                          navigate('/admin/investigate-document', { state: { materialId: report.reported.userId } });
+                        } else {
+                          navigate('/admin/report-details', { state: { reportId: report.id } });
+                        }
+                      }}
+                    >
+                      {reportCount > 1 ? 'Review All' : 'View Record'}
+                    </button>
+                  </td>
+                </tr>
               );
             })}
+
           </tbody>
         </table>
       </div>

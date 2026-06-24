@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { 
-  Archive, 
-  CheckCircle, 
-  Users, 
-  Plus, 
-  ChevronLeft, 
-  ChevronRight 
+import {
+  Archive,
+  CheckCircle,
+  Users,
+  Plus,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'; // Thêm useNavigate để điều hướng trang
 import QuizStatsCard from '../quizzes/components/QuizStatsCard';
@@ -42,12 +42,12 @@ const Quizzes = () => {
   const [userAnswers, setUserAnswers] = useState({});
 
   const filteredQuizzes = quizzes.filter(quiz => {
-    const matchesSearch = (quiz.title?.toLowerCase().includes(searchQuery.toLowerCase()) || false) || 
-                          (quiz.code?.toLowerCase().includes(searchQuery.toLowerCase()) || false);
-    
+    const matchesSearch = (quiz.title?.toLowerCase().includes(searchQuery.toLowerCase()) || false) ||
+      (quiz.code?.toLowerCase().includes(searchQuery.toLowerCase()) || false);
+
     const quizPublishStatus = quiz.publishStatus || quiz.status;
     const matchesStatus = selectedStatus === 'all' || quizPublishStatus === selectedStatus;
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -91,12 +91,15 @@ const Quizzes = () => {
     }
   };
 
+
+  // 🚨 ĐÃ SỬA CHỖ NÀY: Dùng navigate để điều hướng thay vì alert
   const handleShowStats = (id) => {
-    alert(`Viewing statistics for quiz ID: ${id}`);
+    navigate('/analytics');
   };
 
   const handleCreateNewQuiz = () => {
-    navigate('/create-quiz'); // Thực hiện điều hướng sang trang tạo quiz mới
+    navigate('/question-sets');
+
   };
 
   // --- CÁC HÀM XỬ LÝ CHUYỂN TIẾP TRẠNG THÁI THI ---
@@ -120,9 +123,9 @@ const Quizzes = () => {
 
   const handleQuizFinish = (score) => {
     // Cập nhật điểm thi và đánh dấu hoàn thành cục bộ
-    const updatedQuizzes = quizzes.map(q => 
-      q.id === activeQuiz.id 
-        ? { ...q, status: 'completed', score: score } 
+    const updatedQuizzes = quizzes.map(q =>
+      q.id === activeQuiz.id
+        ? { ...q, status: 'completed', score: score }
         : q
     );
     setQuizzes(updatedQuizzes);
@@ -133,39 +136,39 @@ const Quizzes = () => {
   // --- HIỂN THỊ CÁC MÀN HÌNH THEO TIẾN TRÌNH LUỒNG LÀM BÀI ---
   if (quizFlowStage === 'auth' && activeQuiz) {
     return (
-      <SecureQuizAuth 
-        activeQuiz={activeQuiz} 
-        onAuthSuccess={handleAuthSuccess} 
-        onCancel={handleCancelFlow} 
+      <SecureQuizAuth
+        activeQuiz={activeQuiz}
+        onAuthSuccess={handleAuthSuccess}
+        onCancel={handleCancelFlow}
       />
     );
   }
 
   if (quizFlowStage === 'intro' && activeQuiz) {
     return (
-      <QuizIntro 
-        activeQuiz={activeQuiz} 
-        onStartQuiz={handleStartQuestions} 
-        onCancel={handleCancelFlow} 
+      <QuizIntro
+        activeQuiz={activeQuiz}
+        onStartQuiz={handleStartQuestions}
+        onCancel={handleCancelFlow}
       />
     );
   }
 
   if (quizFlowStage === 'taking' && activeQuiz) {
     return (
-      <QuizTaking 
-        activeQuiz={activeQuiz} 
-        onSubmit={handleQuizSubmit} 
+      <QuizTaking
+        activeQuiz={activeQuiz}
+        onSubmit={handleQuizSubmit}
       />
     );
   }
 
   if (quizFlowStage === 'results' && activeQuiz) {
     return (
-      <QuizResults 
-        activeQuiz={activeQuiz} 
-        userAnswers={userAnswers} 
-        onFinish={handleQuizFinish} 
+      <QuizResults
+        activeQuiz={activeQuiz}
+        userAnswers={userAnswers}
+        onFinish={handleQuizFinish}
       />
     );
   }
@@ -249,7 +252,7 @@ const Quizzes = () => {
               >
                 <ChevronLeft size={16} />
               </button>
-              
+
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                 <button
                   key={page}

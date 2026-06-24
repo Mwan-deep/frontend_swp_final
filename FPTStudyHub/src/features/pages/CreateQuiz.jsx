@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { ChevronRight, ArrowLeft } from 'lucide-react'; // Import thêm ArrowLeft icon
+
+import { ChevronRight, ArrowLeft } from 'lucide-react';
+
 import { useNavigate } from 'react-router-dom';
 import DocumentSelector from '../createquiz/components/DocumentSelector';
 import QuizConfigurator from '../createquiz/components/QuizConfigurator';
 import RecentQuizzesGrid from '../createquiz/components/RecentQuizzesGrid';
 import './CreateQuiz.css';
+
 
 import { MOCK_DOCUMENTS } from "../../data/mockQuizzes";
 
@@ -36,11 +39,14 @@ const CreateQuiz = ({ onBack }) => {
   const navigate = useNavigate();
   const [selectedDocId, setSelectedDocId] = useState("doc2"); // default selected CSD201
 
+
   const handleBack = () => {
     if (onBack) {
       onBack();
     } else {
-      navigate('/my-quizzes'); // Quay về trang quản lý /my-quizzes
+
+      navigate('/my-quizzes');
+
     }
   };
 
@@ -51,46 +57,42 @@ const CreateQuiz = ({ onBack }) => {
       return;
     }
 
-    alert(
-      `AI is generating a quiz!\n` +
-      `- Document: ${selectedDoc.name}\n` +
-      `- Questions: ${formData.questionsCount}\n` +
-      `- Difficulty: ${formData.difficulty}\n` +
-      `- Time Limit: ${formData.startDate || 'N/A'} to ${formData.endDate || 'N/A'}\n` +
-      `- Prompt Hint: ${formData.customPrompt || 'None'}`
-    );
-    handleBack();
+
+    // Chuyển hướng sang trang Generate Quiz mới
+    navigate('/generate-quiz');
+
   };
 
   return (
     <div className="create-quiz-page-wrapper">
-      {/* 1. Breadcrumbs */}
+
       <div className="create-quiz-breadcrumbs">
         <span className="breadcrumb-item link" onClick={handleBack}>Dashboard</span>
         <ChevronRight size={14} className="breadcrumb-separator" />
         <span className="breadcrumb-item active">Create Quiz</span>
       </div>
 
-     
 
-      {/* 3. Columns Section */}
       <div className="create-quiz-columns">
-        {/* Left Side: Select Document */}
-        <DocumentSelector 
+
+        <DocumentSelector
           documents={MOCK_DOCUMENTS}
           selectedDocId={selectedDocId}
           onSelectDoc={setSelectedDocId}
         />
 
-        {/* Right Side: Quiz Configurator */}
-        <QuizConfigurator 
+
+
+        <QuizConfigurator
           onSubmit={handleConfigSubmit}
         />
       </div>
 
-      {/* 4. Recent Quizzes Grid Section */}
-      <RecentQuizzesGrid 
-        recentQuizzes={MOCK_RECENT_QUIZZES}
+
+      {/* Truyền MOCK_QUIZ_DATA vào thay vì MOCK_RECENT_QUIZZES */}
+      <RecentQuizzesGrid
+        recentQuizzes={MOCK_QUIZ_DATA}
+
         onViewAll={handleBack}
       />
     </div>
