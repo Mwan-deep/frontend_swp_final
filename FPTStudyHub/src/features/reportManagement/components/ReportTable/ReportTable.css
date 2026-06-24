@@ -239,3 +239,37 @@
 .nav-arrow-btn:hover {
   background-color: #f9fafb;
 }
+
+.total-reports-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background-color: #f9fafb;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #344054;
+}
+
+.text-action-btn {
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  padding: 0;
+}
+
+.text-action-btn:hover {
+  opacity: 0.8;
+}
+
+.text-action-btn.review-all {
+  color: #c0392b;
+}
+
+.text-action-btn.view-record {
+  color: #475467;
+}

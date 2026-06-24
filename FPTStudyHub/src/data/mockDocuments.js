@@ -449,6 +449,101 @@ export const mockReports = [
     }
   },
   {
+    report_id: 11, id: "#REP-9011",
+    material_id: 1,
+    account_id: 2,
+    description: "Nội dung này vi phạm nghiêm trọng.",
+    reason: "Inappropriate Content", details: "Có chứa thông tin không phù hợp với chuẩn mực giáo dục.",
+    report_token: "TOK-1011",
+    expired_at: "2023-12-05T00:00:00Z",
+    created_at: "2023-10-21T09:30:00Z", date: "Oct 21, 2023\n09:30 AM",
+    status: "Pending",
+    reporter: {
+      name: "Minh Tran", handle: "@minhtran", email: "minh.tran@fpt.edu.vn",
+      userId: "SE100002", avatar: "https://ui-avatars.com/api/?name=Minh+Tran&background=random"
+    },
+    reported: {
+      name: "Advanced Calculus Notes", handle: "DOC-1001", email: "",
+      userId: "DOC-1001", type: "document", avatar: "https://ui-avatars.com/api/?name=Document&background=random"
+    }
+  },
+  {
+    report_id: 12, id: "#REP-9012",
+    material_id: 1,
+    account_id: 3,
+    description: "Tôi thấy tài liệu này copy từ một nguồn khác trên mạng.",
+    reason: "Plagiarism", details: "Tôi thấy tài liệu này copy từ một nguồn khác trên mạng.",
+    report_token: "TOK-1012",
+    expired_at: "2023-12-06T00:00:00Z",
+    created_at: "2023-10-22T14:15:00Z", date: "Oct 22, 2023\n02:15 PM",
+    status: "Under Review",
+    reporter: {
+      name: "Alex Rivera", handle: "@alexr", email: "alex.rivera@fpt.edu.vn",
+      userId: "SE100003", avatar: "https://ui-avatars.com/api/?name=Alex+Rivera&background=random"
+    },
+    reported: {
+      name: "Advanced Calculus Notes", handle: "DOC-1001", email: "",
+      userId: "DOC-1001", type: "document", avatar: "https://ui-avatars.com/api/?name=Document&background=random"
+    }
+  },
+  {
+    report_id: 13, id: "#REP-9013",
+    material_id: 1,
+    account_id: 4,
+    description: "Một số công thức trong tài liệu bị sai.",
+    reason: "Inaccurate Information", details: "Một số công thức trong tài liệu bị sai.",
+    report_token: "TOK-1013",
+    expired_at: "2023-12-07T00:00:00Z",
+    created_at: "2023-10-23T11:00:00Z", date: "Oct 23, 2023\n11:00 AM",
+    status: "Pending",
+    reporter: {
+      name: "Jordan Lee", handle: "@jordanl", email: "jordan.lee@fpt.edu.vn",
+      userId: "MA200001", avatar: "https://ui-avatars.com/api/?name=Jordan+Lee&background=random"
+    },
+    reported: {
+      name: "Advanced Calculus Notes", handle: "DOC-1001", email: "",
+      userId: "DOC-1001", type: "document", avatar: "https://ui-avatars.com/api/?name=Document&background=random"
+    }
+  },
+  {
+    report_id: 14, id: "#REP-9014",
+    material_id: 1,
+    account_id: 5,
+    description: "Tài liệu này không thuộc nội dung môn học.",
+    reason: "Spam", details: "Tài liệu này không thuộc nội dung môn học.",
+    report_token: "TOK-1014",
+    expired_at: "2023-12-08T00:00:00Z",
+    created_at: "2023-10-24T16:20:00Z", date: "Oct 24, 2023\n04:20 PM",
+    status: "Resolved",
+    reporter: {
+      name: "Emma Smith", handle: "@emmas", email: "emma.smith@fpt.edu.vn",
+      userId: "MA200002", avatar: "https://ui-avatars.com/api/?name=Emma+Smith&background=random"
+    },
+    reported: {
+      name: "Advanced Calculus Notes", handle: "DOC-1001", email: "",
+      userId: "DOC-1001", type: "document", avatar: "https://ui-avatars.com/api/?name=Document&background=random"
+    }
+  },
+  {
+    report_id: 15, id: "#REP-9015",
+    material_id: 1,
+    account_id: 10,
+    description: "Tác giả cố tình đưa thông tin lừa đảo vào tài liệu.",
+    reason: "Harassment", details: "Tác giả cố tình đưa thông tin lừa đảo vào tài liệu.",
+    report_token: "TOK-1015",
+    expired_at: "2023-12-09T00:00:00Z",
+    created_at: "2023-10-25T08:45:00Z", date: "Oct 25, 2023\n08:45 AM",
+    status: "Pending",
+    reporter: {
+      name: "FPT Student", handle: "@fptstudent", email: "student@fpt.edu.vn",
+      userId: "fptstudent", avatar: "https://ui-avatars.com/api/?name=FPT+Student&background=random"
+    },
+    reported: {
+      name: "Advanced Calculus Notes", handle: "DOC-1001", email: "",
+      userId: "DOC-1001", type: "document", avatar: "https://ui-avatars.com/api/?name=Document&background=random"
+    }
+  },
+  {
     report_id: 2, id: "#REP-9002",
     material_id: 2,
     account_id: 2,
@@ -666,7 +761,10 @@ export const mockDocumentQueue = Object.values(mockReports.reduce((acc, report) 
       size: "2.4 MB",
       pages: "18 Pages",
       format: "PDF",
-      author: { name: "Lê Minh Tuấn", handle: "HE150xxx", avatar: report.reported.avatar },
+      author: (() => {
+        const uploader = mockTableUsers[Math.max(0, parseInt(docId.replace('DOC-', '')) - 1000) % mockTableUsers.length];
+        return { name: uploader.name, handle: `@${uploader.user_name}`, avatar: uploader.avatar, userId: uploader.userId };
+      })(),
       creationTime: "Oct 24, 2023 14:32",
       views: "1.2k",
       downloads: "450"

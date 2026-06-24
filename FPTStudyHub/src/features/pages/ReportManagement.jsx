@@ -6,6 +6,7 @@ import './ReportManagement.css';
 
 const ReportManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   return (
     <>
@@ -28,15 +29,28 @@ const ReportManagement = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button className="btn-filter">
-            <Filter size={16} />
-            Filter
-          </button>
         </div>
       </div>
 
       <ReportStats />
-      <ReportTable searchTerm={searchTerm} />
+      
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+        <div className="filter-dropdown-container">
+          <Filter size={16} className="filter-dropdown-icon" />
+          <select 
+            className="btn-filter select-filter-with-icon"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="all">Filter</option>
+            <option value="Pending">Pending</option>
+            <option value="Under Review">Under Review</option>
+            <option value="Resolved">Resolved</option>
+          </select>
+        </div>
+      </div>
+
+      <ReportTable searchTerm={searchTerm} statusFilter={statusFilter} />
     </>
   );
 };

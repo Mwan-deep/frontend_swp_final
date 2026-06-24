@@ -9,6 +9,7 @@ import AdminSettings from "../features/pages/AdminSettings.jsx";
 import AdminCreateAccount from "../features/pages/AdminCreateAccount.jsx";
 import AdminAccountDetails from "../features/pages/AdminAccountDetails.jsx";
 import AdminReportDetails from "../features/pages/AdminReportDetails.jsx";
+import AdminDocumentInvestigation from "../features/pages/AdminDocumentInvestigation.jsx";
 import ManagerDashboard from "../features/pages/ManagerDashboard.jsx";
 import ManagerDocumentQueue from "../features/pages/ManagerDocumentQueue.jsx";
 import ManagerCommunity from "../features/pages/ManagerCommunity/ManagerCommunity.jsx";
@@ -49,6 +50,7 @@ export const adminRoutes = [
   { path: "admin/create-account", component: AdminCreateAccount, noLayout: true },
   { path: "admin/account-details", component: AdminAccountDetails, noLayout: true },
   { path: "admin/report-details", component: AdminReportDetails, noLayout: true },
+  { path: "admin/investigate-document", component: AdminDocumentInvestigation, noLayout: true },
 ];
 
 // Danh sách các route dành riêng cho Manager
