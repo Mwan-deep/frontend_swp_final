@@ -1,0 +1,18 @@
+/* Cú pháp mới của Tailwind v4 */
+@import "tailwindcss";
+
+/* Custom scrollbar mỏng, thanh lịch */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

@@ -1,0 +1,510 @@
+/* Community.css */
+
+.community-page-container {
+  padding: 40px;
+  background-color: #F8FAFC;
+  min-height: 100%;
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* 1. HEADER & FILTER TABS */
+.community-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.community-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.community-subtitle {
+  font-size: 15px;
+  color: #64748B;
+  margin: 0;
+}
+
+/* Time Filter Pill Container */
+.time-filter-container {
+  display: flex;
+  background-color: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.time-filter-btn {
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748B;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.time-filter-btn:hover {
+  color: #0F172A;
+}
+
+.time-filter-btn.active {
+  background-color: #E0F2FE; /* Soft light blue */
+  color: #0369A1; /* Deep blue-sky */
+}
+
+/* 2. LAYOUT GRID */
+.community-main-grid {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* 3. LEADERBOARD TABLE CARD */
+.leaderboard-table-card {
+  background-color: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.leaderboard-table th {
+  padding: 18px 24px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1.5px solid #F1F5F9;
+  background-color: #FCFDFE;
+}
+
+.rank-th { width: 10%; text-align: center; }
+.student-th { width: 45%; }
+.points-th { width: 25%; }
+.badges-th { width: 20%; }
+
+.leaderboard-row {
+  border-bottom: 1px solid #F1F5F9;
+  transition: background-color 0.2s ease;
+}
+
+.leaderboard-row:hover {
+  background-color: #F8FAFC;
+}
+
+.leaderboard-row:last-child {
+  border-bottom: none;
+}
+
+.rank-cell {
+  padding: 16px 24px;
+  text-align: center;
+}
+
+/* Rank Circle styles matching mock exactly */
+.rank-number {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 46px;
+  margin: 0;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.rank-first {
+  background-color: #FEF08A; /* Soft yellow */
+  color: #A16207; /* Dark yellow/gold */
+}
+
+.rank-second {
+  background-color: #F1F5F9; /* Slate grey */
+  color: #475569;
+}
+
+.rank-third {
+  background-color: #FFEDD5; /* Soft orange/bronze */
+  color: #C2410C;
+}
+
+.rank-normal {
+  background-color: transparent;
+  color: #64748B;
+}
+
+/* Student Profile styling */
+.student-cell {
+  padding: 16px 24px;
+}
+
+.student-info-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.student-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #E2E8F0;
+}
+
+.student-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.student-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.student-major {
+  font-size: 13px;
+  color: #64748B;
+}
+
+/* Points column */
+.points-cell {
+  padding: 16px 24px;
+}
+
+.points-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #F26F21; /* Brand orange color for points highlights */
+}
+
+/* Badges column styling */
+.badges-cell {
+  padding: 16px 24px;
+}
+
+.badges-list {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.badge-svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.badge-svg:hover {
+  transform: scale(1.15);
+}
+
+.badge-svg.gold { color: #EAB308; }
+.badge-svg.silver { color: #94A3B8; }
+.badge-svg.bronze { color: #D97706; }
+.badge-svg.cap { color: #0EA5E9; }
+.badge-svg.fire { color: #EF4444; }
+
+/* 4. USER RANK ROW (bottom row highlight) */
+.user-rank-row-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background-color: #F0F9FF; /* Soft blue tint */
+  border-top: 2px solid #E0F2FE;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+.user-rank-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.user-rank-number {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0369A1;
+  width: 32px;
+  text-align: center;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.user-avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.user-avatar-wrapper .user-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #38BDF8;
+}
+
+.user-avatar-wrapper .status-dot {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 10px;
+  height: 10px;
+  background-color: #22C55E; /* Online green */
+  border: 2px solid #F0F9FF;
+  border-radius: 50%;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.user-trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0284C7; /* Trend info color */
+}
+
+.trend-arrow {
+  color: #0284C7;
+}
+
+.user-rank-right {
+  text-align: right;
+}
+
+.user-points-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-points {
+  font-size: 16px;
+  font-weight: 800;
+  color: #F26F21;
+}
+
+.user-percentile {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* 5. RIGHT CARD COLUMN */
+.cards-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.community-card {
+  background-color: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+}
+
+/* Monthly Reward Card */
+.monthly-reward-card {
+  border-left: 4px solid #F26F21; /* Accent FPT Orange border */
+}
+
+.card-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 8px;
+  letter-spacing: -0.3px;
+}
+
+.card-subtitle {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #64748B;
+  margin-bottom: 24px;
+}
+
+.reward-badge-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.reward-icon-wrapper {
+  background-color: #FFF7ED; /* Soft orange bg */
+  color: #F26F21;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reward-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reward-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.reward-expiry {
+  font-size: 12px;
+  color: #F26F21;
+  font-weight: 600;
+}
+
+/* How to Earn Points Card */
+.card-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 20px;
+}
+
+.guide-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.guide-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.guide-icon-box {
+  background-color: #EFF6FF;
+  color: #0284C7;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Give guide icons distinct background tints */
+.guide-item:nth-child(2) .guide-icon-box { background-color: #F0FDF4; color: #16A34A; }
+.guide-item:nth-child(3) .guide-icon-box { background-color: #FAF5FF; color: #9333EA; }
+.guide-item:nth-child(4) .guide-icon-box { background-color: #FFF7ED; color: #EA580C; }
+
+.guide-text {
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.points-highlight {
+  font-weight: 700;
+  color: #64748B;
+  margin-left: 2px;
+}
+
+.view-guidelines-btn {
+  width: 100%;
+  border: 1.5px solid #F26F21;
+  background-color: transparent;
+  color: #F26F21;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.view-guidelines-btn:hover {
+  background-color: #F26F21;
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(242, 111, 33, 0.15);
+}
+
+/* 6. RESPONSIVE ADJUSTMENTS */
+@media (max-width: 1024px) {
+  .community-page-container {
+    padding: 24px;
+  }
+  .community-main-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .community-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .time-filter-container {
+    width: 100%;
+  }
+  .time-filter-btn {
+    flex: 1;
+    text-align: center;
+    padding: 8px 10px;
+  }
+}

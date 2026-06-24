@@ -1,0 +1,460 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --primary-orange: #F26F21;
+  --primary-orange-hover: #E05D10;
+  --primary-orange-light: rgba(242, 111, 33, 0.1);
+  --text-dark: #1E293B;
+  --text-muted: #64748B;
+  --text-light: #94A3B8;
+  --bg-input: #F1F5F9;
+  --bg-input-focus: #FFFFFF;
+  --overlay-peach: rgba(227, 213, 197, 0.3); /* 👉 Hạ xuống 0.3 để siêu trong suốt */
+  --border-color: #E2E8F0;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+
+
+/* Page Layout chính */
+.register-page-container {
+  min-height: 100vh;
+  position: relative;
+  display: block; /* Tránh dùng flex trực tiếp ở đây để không bị co navbar */
+  background-image: linear-gradient(rgba(15, 23, 42, 0.35), rgba(15, 23, 42, 0.35)), url('/bg-fpt.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* Layout chia đôi hai cột */
+.register-main-content {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Cột trái: Kính mờ màu cam/peach kéo dài từ đầu đến cuối trang */
+.hero-section-overlay {
+  width: 45%;
+  background: var(--overlay-peach);
+  backdrop-filter: blur(2px); /* 👉 Giảm xuống 2px để nét căng hình nền đằng sau */
+  -webkit-backdrop-filter: blur(2px);
+  padding: 120px 60px 80px 60px; /* Thêm padding-top để chừa khoảng trống cho navbar nổi ở trên */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  animation: slideInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-content {
+  max-width: 480px;
+  margin: auto 0;
+}
+
+.hero-title {
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.15;
+  color: #2D1A10;
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
+}
+
+.hero-description {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #4A3325;
+  margin-bottom: 40px;
+  font-weight: 400;
+}
+
+/* Feature Cards */
+.features-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(45, 26, 16, 0.05);
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 10px 25px rgba(45, 26, 16, 0.08);
+}
+
+.feature-icon-wrapper {
+  background: rgba(255, 255, 255, 0.8);
+  color: #8C4315;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.feature-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.feature-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.feature-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2D1A10;
+}
+
+.feature-desc {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #5C4334;
+}
+
+/* Cột phải: Form Đăng ký nổi trên nền ảnh */
+.form-section-container {
+  width: 55%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 40px 80px 40px; /* Thêm padding-top để tránh che khuất bởi navbar */
+  position: relative;
+}
+
+/* Thẻ Form đăng ký màu trắng */
+.register-card {
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 40px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: var(--shadow-premium);
+  animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.register-card-header {
+  margin-bottom: 24px;
+}
+
+.register-card-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.register-card-subtitle {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* Social Buttons */
+.social-signup-container {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.social-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  outline: none;
+}
+
+.social-button:hover {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+/* Divider */
+.register-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.register-divider::before,
+.register-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.register-divider span {
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: lowercase;
+}
+
+/* Form Fields */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-grid-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: var(--bg-input);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font-family: var(--font-family);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-dark);
+  transition: all 0.25s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  background-color: var(--bg-input-focus);
+  border-color: var(--primary-orange);
+  box-shadow: 0 0 0 4px rgba(242, 111, 33, 0.15);
+}
+
+.field-hint-text {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #B45309;
+}
+
+/* Checkbox */
+.checkbox-field-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.custom-checkbox-input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 6px;
+  background-color: #FFFFFF;
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  transition: all 0.2s ease;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.custom-checkbox-input:checked {
+  background-color: var(--primary-orange);
+  border-color: var(--primary-orange);
+}
+
+.custom-checkbox-input::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  background-color: white;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.custom-checkbox-input:checked::before {
+  transform: scale(1);
+}
+
+.checkbox-label {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.checkbox-label a {
+  color: #8C4315;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Submit Button */
+.submit-button {
+  width: 100%;
+  padding: 14px 24px;
+  background-color: var(--primary-orange);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(242, 111, 33, 0.3);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 8px;
+}
+
+.submit-button:hover {
+  background-color: var(--primary-orange-hover);
+  box-shadow: 0 8px 20px rgba(242, 111, 33, 0.45);
+  transform: translateY(-2px);
+}
+
+/* Badges dưới chân card */
+.card-footer-badges {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.badge-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.badge-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--text-light);
+}
+
+/* Ngôi sao lấp lánh */
+.sparkle-decorator {
+  position: absolute;
+  bottom: 80px;
+  right: 60px;
+  width: 32px;
+  height: 32px;
+  color: rgba(255, 255, 255, 0.4);
+  opacity: 0.8;
+  animation: pulseSparkle 3s infinite ease-in-out;
+}
+
+/* Animations */
+@keyframes fadeInPage {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulseSparkle {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.2) rotate(45deg);
+    opacity: 0.8;
+  }
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .register-main-content {
+    flex-direction: column;
+  }
+  .hero-section-overlay {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 120px 40px 40px 40px;
+  }
+  .hero-content {
+    max-width: 100%;
+  }
+  .form-section-container {
+    width: 100%;
+    padding: 40px 20px 120px 20px;
+  }
+  .sparkle-decorator {
+    display: none;
+  }
+}

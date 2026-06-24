@@ -1,0 +1,105 @@
+.manager-header {
+  height: 70px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+}
+
+.manager-header-search {
+  position: relative;
+  width: 350px;
+}
+
+.manager-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+.manager-search-input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  font-size: 14px;
+  background-color: #f8f9fa;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.manager-search-input:focus {
+  border-color: #ccc;
+}
+
+.manager-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.manager-icon-btn {
+  background: none;
+  border: none;
+  color: #794d2f;
+  cursor: pointer;
+  position: relative;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.manager-icon-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.manager-notif-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  background-color: #e53e3e;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+
+.manager-header-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding-left: 16px;
+  border-left: 1px solid #e0e0e0;
+}
+
+.manager-profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.manager-profile-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.manager-profile-role {
+  font-size: 12px;
+  color: #888;
+}
+
+.manager-header-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}

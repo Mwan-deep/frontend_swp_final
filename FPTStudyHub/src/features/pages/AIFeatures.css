@@ -1,0 +1,691 @@
+/* AIFeatures.css */
+
+.ai-features-page-wrapper {
+  height: calc(100vh - 120px);
+  /* 100vh - Header(80px) - Padding Trên/Dưới(64px) */
+  margin: 0;
+  padding: 0;
+  border-radius: 16px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #FFFFFF;
+}
+
+.ai-features-grid-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr 340px;
+  height: 100%;
+  width: 100%;
+}
+
+.ai-grid-column {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 1. SIDEBAR SESSIONS COLUMN */
+.sidebar-column {
+  border-right: 1.5px solid #E2E8F0;
+  background-color: #FFFFFF;
+}
+
+.ai-chat-sessions-sidebar {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.ai-new-chat-btn {
+  background-color: #FFFFFF;
+  border: 1.5px solid #F26F21;
+  color: #F26F21;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 28px;
+  transition: all 0.2s ease;
+}
+
+.ai-new-chat-btn:hover {
+  background-color: #FFF7ED;
+  box-shadow: 0 1px 3px rgba(242, 111, 33, 0.05);
+}
+
+.session-group {
+  margin-bottom: 28px;
+}
+
+.session-group-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: #94A3B8;
+  letter-spacing: 1px;
+  margin: 0 0 12px 14px;
+}
+
+.session-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.session-item-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  color: #475569;
+}
+
+.session-item-btn:hover {
+  background-color: #F8FAFC;
+  color: #0F172A;
+}
+
+.session-item-btn.active {
+  background-color: #EFF6FF;
+  color: #1E3A8A;
+  font-weight: 600;
+}
+
+.session-item-icon {
+  flex-shrink: 0;
+  color: #64748B;
+  transition: color 0.2s ease;
+}
+
+.session-item-btn.active .session-item-icon {
+  color: #3B82F6;
+}
+
+.session-item-title-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13.5px;
+}
+
+/* 2. MIDDLE CHAT PANEL COLUMN */
+.chat-column {
+  background-color: #F8FAFC;
+  border-right: 1.5px solid #E2E8F0;
+}
+
+.ai-chat-window-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px;
+  text-align: center;
+  color: #64748B;
+}
+
+.empty-chat-icon {
+  color: #94A3B8;
+  margin-bottom: 16px;
+}
+
+.ai-chat-window-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.ai-chat-messages-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Cột mốc thời gian */
+.chat-date-separator {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0;
+}
+
+.chat-date-separator span {
+  background-color: #EFF6FF;
+  color: #1E40AF;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  letter-spacing: 0.2px;
+}
+
+/* Tin nhắn */
+.chat-message-row {
+  display: flex;
+  width: 100%;
+}
+
+.user-row {
+  justify-content: flex-end;
+}
+
+.ai-row {
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.ai-sparkle-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #F26F21;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(242, 111, 33, 0.25);
+}
+
+.chat-message-bubble {
+  max-width: 580px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.chat-message-bubble p {
+  margin: 0 0 10px 0;
+}
+
+.chat-message-bubble p:last-child {
+  margin-bottom: 0;
+}
+
+.user-bubble {
+  background-color: #DBEAFE;
+  color: #1E3A8A;
+  border-bottom-right-radius: 2px;
+  border: 1px solid #BFDBFE;
+}
+
+.ai-bubble {
+  background-color: #FFFFFF;
+  color: #0F172A;
+  border-bottom-left-radius: 2px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+}
+
+/* Chấm gõ tin nhắn nhấp nháy */
+.typing-bubble {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 20px;
+}
+
+.typing-bubble .dot {
+  width: 6px;
+  height: 6px;
+  background-color: #94A3B8;
+  border-radius: 50%;
+  display: inline-block;
+  animation: wave 1.2s infinite ease-in-out;
+}
+
+.typing-bubble .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-bubble .dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes wave {
+
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+
+  30% {
+    transform: translateY(-4px);
+  }
+}
+
+/* Nút Chuyển trang tài liệu nổi */
+.ai-chat-page-switcher-floating {
+  position: absolute;
+  bottom: 86px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  background-color: #1E293B;
+  border-radius: 24px;
+  padding: 4px 6px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.15);
+  z-index: 10;
+}
+
+.page-switch-btn {
+  border: none;
+  background: none;
+  color: #94A3B8;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-switch-btn:hover {
+  color: #FFFFFF;
+  background-color: #334155;
+}
+
+.page-switch-divider {
+  width: 1.5px;
+  height: 14px;
+  background-color: #475569;
+}
+
+/* Khung Nhập tin nhắn */
+.ai-chat-input-area {
+  padding: 16px 24px 24px 24px;
+  background-color: #F8FAFC;
+  border-top: 1px solid #E2E8F0;
+}
+
+.ai-chat-input-form {
+  display: flex;
+  gap: 12px;
+  background-color: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 24px;
+  padding: 4px 8px 4px 18px;
+  align-items: center;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02);
+  transition: all 0.2s ease;
+}
+
+.ai-chat-input-form:focus-within {
+  border-color: #F26F21;
+  box-shadow: 0 0 0 3px rgba(242, 111, 33, 0.1);
+}
+
+.ai-chat-input-form input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+  padding: 10px 0;
+  color: #0F172A;
+}
+
+.ai-chat-input-form input::placeholder {
+  color: #94A3B8;
+}
+
+.ai-send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #F26F21;
+  color: #FFFFFF;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.ai-send-btn:hover:not(:disabled) {
+  background-color: #E05D10;
+  transform: scale(1.02);
+}
+
+.ai-send-btn:disabled {
+  background-color: #E2E8F0;
+  color: #94A3B8;
+  cursor: not-allowed;
+}
+
+/* 3. RIGHT NOTEBOOK COLUMN */
+.notebook-column {
+  background-color: #FFFFFF;
+}
+
+.ai-notebook-container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.notebook-header {
+  margin-bottom: 20px;
+}
+
+.notebook-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0F172A;
+  margin: 0;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.notebook-subtitle {
+  font-size: 12px;
+  color: #64748B;
+  font-weight: 600;
+}
+
+/* Ô tìm kiếm Note */
+.notebook-search-wrapper {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.notebook-search-wrapper .search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94A3B8;
+  pointer-events: none;
+}
+
+.notebook-search-wrapper input {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 24px;
+  outline: none;
+  font-family: inherit;
+  font-size: 13px;
+  color: #0F172A;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.notebook-search-wrapper input:focus {
+  border-color: #F26F21;
+}
+
+/* Khung soạn thảo note */
+.notebook-textarea-wrapper {
+  margin-bottom: 20px;
+}
+
+.notebook-textarea-wrapper textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 12px;
+  outline: none;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: #0F172A;
+  box-sizing: border-box;
+  resize: none;
+  transition: all 0.2s ease;
+}
+
+.notebook-textarea-wrapper textarea:focus {
+  border-color: #F26F21;
+}
+
+/* Danh sách note */
+.notebook-notes-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding-right: 2px;
+}
+
+.notebook-note-card {
+  background-color: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.notebook-note-card:hover {
+  border-color: #CBD5E1;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+}
+
+.note-card-text {
+  font-size: 13.5px;
+  color: #334155;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+  word-break: break-word;
+}
+
+.note-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.note-card-time {
+  font-size: 11.5px;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.note-card-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.note-action-btn {
+  border: none;
+  background: none;
+  color: #94A3B8;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.note-action-btn:hover {
+  background-color: #F1F5F9;
+}
+
+.note-action-btn.edit:hover {
+  color: #3B82F6;
+}
+
+.note-action-btn.delete:hover {
+  color: #EF4444;
+}
+
+/* Nhập chỉnh sửa Note */
+.note-card-edit-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.note-edit-textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1.5px solid #3B82F6;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  resize: none;
+  outline: none;
+  margin-bottom: 10px;
+}
+
+.note-edit-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.note-save-edit-btn {
+  background-color: #EFF6FF;
+  color: #2563EB;
+  border: none;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.note-save-edit-btn:hover {
+  background-color: #DBEAFE;
+}
+
+.note-cancel-edit-btn {
+  background: none;
+  border: none;
+  color: #64748B;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.note-cancel-edit-btn:hover {
+  background-color: #F1F5F9;
+  color: #0F172A;
+}
+
+.notebook-notes-empty {
+  padding: 30px;
+  text-align: center;
+  color: #94A3B8;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1.5px dashed #E2E8F0;
+  border-radius: 12px;
+}
+
+/* Nút tạo Note to tròn ở dưới cùng */
+.notebook-add-btn {
+  background-color: #1E293B;
+  color: #FFFFFF;
+  border: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.notebook-add-btn:hover:not(:disabled) {
+  background-color: #0F172A;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+}
+
+.notebook-add-btn:disabled {
+  background-color: #E2E8F0;
+  color: #94A3B8;
+  cursor: not-allowed;
+}
+
+/* Thanh cuốn scrollbar */
+.ai-chat-sessions-sidebar::-webkit-scrollbar,
+.ai-chat-messages-area::-webkit-scrollbar,
+.notebook-notes-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ai-chat-sessions-sidebar::-webkit-scrollbar-track,
+.ai-chat-messages-area::-webkit-scrollbar-track,
+.notebook-notes-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ai-chat-sessions-sidebar::-webkit-scrollbar-thumb,
+.ai-chat-messages-area::-webkit-scrollbar-thumb,
+.notebook-notes-list::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+.ai-chat-sessions-sidebar::-webkit-scrollbar-thumb:hover,
+.ai-chat-messages-area::-webkit-scrollbar-thumb:hover,
+.notebook-notes-list::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* 4. RESPONSIVE LAYOUT */
+@media (max-width: 1024px) {
+  .ai-features-grid-layout {
+    grid-template-columns: 220px 1fr 280px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ai-features-grid-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-column,
+  .notebook-column {
+    display: none;
+  }
+}

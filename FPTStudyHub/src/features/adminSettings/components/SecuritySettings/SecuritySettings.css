@@ -1,0 +1,103 @@
+.security-section {
+  padding-bottom: 32px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid #eaebf0;
+}
+
+.security-section.no-border {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.split-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mb-0 {
+  margin-bottom: 0 !important;
+}
+
+.btn-secondary-light {
+  background-color: #f2f4f7;
+  color: #344054;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-secondary-light:hover {
+  background-color: #e4e7ec;
+}
+
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.session-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f9fafb;
+}
+
+.session-icon {
+  color: #667085;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.session-info {
+  flex: 1;
+}
+
+.session-title {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #344054;
+}
+
+.session-meta {
+  margin: 0;
+  font-size: 13px;
+  color: #667085;
+}
+
+.btn-text-danger {
+  background: transparent;
+  border: none;
+  color: #b42318;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.btn-text-danger:hover {
+  text-decoration: underline;
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.notification-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #344054;
+}

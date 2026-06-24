@@ -1,0 +1,43 @@
+.settings-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+}
+
+.settings-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #475467;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  text-align: left;
+}
+
+.settings-nav-btn:hover {
+  background-color: #f2f4f7;
+  color: #101828;
+}
+
+.settings-nav-btn.active {
+  background-color: #f2f4f7; /* From screenshot, active tab has light grey bg */
+  color: #c25b16; /* From screenshot, active text is orange, or is it? The icon is orange. Wait, let's use the primary orange #ea8c42 or similar */
+  color: #ea8c42;
+  font-weight: 600;
+}

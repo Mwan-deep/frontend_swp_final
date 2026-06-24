@@ -1,0 +1,214 @@
+/* ==========================================================================
+   Sidebar Styles
+   ========================================================================== */
+.sidebar {
+  width: 250px;
+  background-color: var(--bg-sidebar, #f8fafc); /* Fallback màu sáng nếu biến chưa định nghĩa */
+  border-right: 1px solid var(--border-color, #e2e8f0);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px 16px;
+  height: 100%; /* Sửa từ 100vh thành 100% để nằm vừa vặn dưới Header */
+  box-sizing: border-box;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: var(--text-muted, #64748b);
+  text-decoration: none;
+  border-radius: var(--border-radius-md, 8px);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast, 0.2s);
+  position: relative;
+}
+
+.nav-item:hover {
+  background-color: #eef2f6;
+  color: var(--text-main, #0f172a);
+}
+
+.nav-item.active {
+  background-color: var(--primary-light, #fdf2e9);
+  color: var(--primary-active-text, #f27123);
+  font-weight: 600;
+}
+
+/* Orange vertical bar on the left when menu item is active */
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background-color: var(--primary-color, #f27123);
+  border-radius: 6px 0 0 6px;
+}
+
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Upload document button */
+.upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--primary-color, #f27123);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--border-radius-md, 8px);
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast, 0.2s);
+  box-shadow: 0 2px 4px rgba(242, 113, 35, 0.2);
+}
+
+.upload-btn:hover {
+  background-color: var(--primary-hover, #ea580c);
+}
+
+.sidebar-bottom-links {
+  border-top: 1px solid var(--border-color, #e2e8f0);
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ==========================================================================
+   Logout Confirmation Modal
+   ========================================================================== */
+
+/* Animation keyframes for premium feel */
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalScaleUp {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Dark overlay + blur behind modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+/* Modal content container */
+.modal-content {
+  background-color: #ffffff;
+  padding: 40px 32px 32px 32px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: modalScaleUp 0.2s ease-out;
+}
+
+/* Light red circle wrapping icon */
+.modal-icon-wrapper {
+  background-color: #fee2e2;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* Red icon */
+.modal-icon {
+  color: #dc2626;
+}
+
+/* Modal title */
+.modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+/* Modal description */
+.modal-description {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+/* Action button group */
+.modal-actions {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Cancel button */
+.btn-cancel {
+  background-color: #ffffff;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+}
+
+.btn-cancel:hover {
+  background-color: #f9fafb;
+  border-color: #cbd5e1;
+}
+
+/* Confirm/Logout button (FPT Orange) */
+.btn-confirm {
+  background-color: var(--primary-color, #f27024);
+  color: #ffffff;
+  border: none;
+}
+
+.btn-confirm:hover {
+  background-color: var(--primary-hover, #ea580c);
+}
