@@ -24,7 +24,7 @@
 }
 
 .breadcrumb-current {
-  color: #c25b16; /* Orange color matching screenshot */
+  color: #c25b16; 
   font-weight: 600;
 }
 
@@ -82,18 +82,10 @@
   gap: 24px;
 }
 
-.card-footer {
-  padding: 24px;
-  border-top: 1px dashed #eaebf0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 /* Forms */
 .form-row {
   display: flex;
-  gap: 24px;
+  gap: 20px;
 }
 
 .form-group {
@@ -109,10 +101,12 @@
   margin-bottom: 8px;
 }
 
+/* Đồng bộ Input và Select */
 .form-input, .form-select {
   border: 1px solid #d0d5dd;
   border-radius: 8px;
-  padding: 10px 14px;
+  padding: 0 14px;
+  height: 42px; /* Fixed height cho đều nhau */
   font-size: 14px;
   color: #101828;
   outline: none;
@@ -128,88 +122,43 @@
   box-shadow: 0 0 0 2px rgba(234, 140, 66, 0.1);
 }
 
-.form-input.disabled {
-  background-color: #f9fafb;
-  color: #667085;
-  cursor: not-allowed;
-}
-
-.input-with-icon {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.input-icon-left {
-  position: absolute;
-  left: 14px;
-  color: #667085;
-}
-
-.input-icon-right {
-  position: absolute;
-  right: 14px;
-  color: #667085;
-}
-
-.input-icon-right.clickable {
+.form-select {
   cursor: pointer;
 }
 
-.has-icon-left {
-  padding-left: 40px;
-}
-
-.has-icon-right {
-  padding-right: 40px;
-}
-
-.input-hint {
-  font-size: 12px;
-  color: #667085;
-  margin-top: 6px;
-}
-
-/* Password Strength */
-.password-strength {
-  display: flex;
-  gap: 4px;
-  margin-top: 8px;
-}
-
-.strength-bar {
-  flex: 1;
-  height: 4px;
-  background-color: #eaebf0;
-  border-radius: 2px;
-}
-
-.strength-bar.filled {
-  background-color: #e0e7ff; /* light blue */
-}
-
 /* Footer Actions */
-.footer-meta {
+.card-footer {
+  padding: 24px;
+  border-top: 1px solid #eaebf0;
   display: flex;
-  gap: 16px;
-  color: #667085;
-  font-size: 13px;
-}
-
-.meta-item {
-  display: flex;
+  justify-content: flex-end; /* Căn góc phải */
   align-items: center;
-  gap: 6px;
-}
-
-.meta-item strong {
-  color: #344054;
-  font-weight: 500;
-}
-
-.footer-actions {
-  display: flex;
   gap: 12px;
+}
+
+.btn-save {
+  background-color: #c25b16; /* Màu cam chủ đạo */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-save:hover {
+  background-color: #a04a10;
+}
+
+.btn-cancel {
+  background-color: transparent;
+  border: 1px solid #d0d5dd;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: #344054;
+  cursor: pointer;
+  font-weight: 500;
 }
 
 /* Sidebar Cards */
@@ -225,7 +174,7 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 16px;
-  color: #b93815; /* dark orange/brown */
+  color: #b93815; 
 }
 
 .info-icon {

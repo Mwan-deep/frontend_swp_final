@@ -1,199 +1,192 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ChevronRight, ArrowLeft, Download, FileText, CheckCircle, Trash2, ShieldAlert, CheckSquare, X, Filter } from 'lucide-react';
-import { mockReports, mockDocumentQueue, mockTableUsers } from '../../data/mockDocuments';
+import { ChevronRight, ArrowLeft, Download, FileText, Trash2, ShieldAlert, CheckSquare, X, Filter } from 'lucide-react';
+import axiosClient from '../../utils/axiosClient';
+import { getDirectImageUrl } from '../../utils/imageHelper'; // ĐÃ THÊM IMPORT HÀM XỬ LÝ ẢNH
 import './AdminDocumentInvestigation.css';
 
 const AdminDocumentInvestigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const materialId = location.state?.materialId || 'DOC-1001';
   
-  // Find document info
-  const documentInfo = mockDocumentQueue.find(d => d.id === materialId) || {
-    id: materialId,
-    name: 'Unknown Document',
-    author: { name: 'Unknown', avatar: '' }
-  };
-
-  // Find all reports for this material
-  const allRelatedReports = mockReports.filter(r => r.reported.userId === materialId);
-  const totalReports = allRelatedReports.length;
-
-  const [selectedReport, setSelectedReport] = useState(null);
+  // Lấy materialId nếu được truyền từ trang khác sang (nếu không có thì hiển thị tất cả báo cáo)
+  const filterMaterialId = location.state?.materialId || null;
+  
+  const [reports, setReports] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
-
-  const filteredReports = allRelatedReports.filter(report => {
-    if (statusFilter === 'all') {
-      return report.status !== 'Resolved';
-    }
-    return report.status === statusFilter;
-  });
   
-  // Moderation states for selected report
+  const [selectedReport, setSelectedReport] = useState(null);
   const [reportStatus, setReportStatus] = useState('');
   const [userStatus, setUserStatus] = useState('');
+  const [internalNotes, setInternalNotes] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
+  // 1. GỌI API LẤY DANH SÁCH BÁO CÁO
+  const fetchReports = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axiosClient.get('/api/reports');
+      let data = response.result || response;
+
+      // Nếu có filterMaterialId, chỉ hiển thị báo cáo của tài liệu đó
+      if (filterMaterialId) {
+        data = data.filter(r => r.material?.materialId === filterMaterialId);
+      }
+      setReports(data);
+    } catch (error) {
+      console.error("Lỗi tải danh sách báo cáo:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchReports();
+  }, [filterMaterialId]);
+
+  // 2. LỌC BÁO CÁO THEO TRẠNG THÁI (Tabs)
+  const filteredReports = reports.filter(report => {
+    if (statusFilter === 'all') {
+      return report.status !== 'RESOLVED';
+    }
+    return report.status === statusFilter.toUpperCase();
+  });
+
+  const totalReports = reports.length;
+
+  // Lấy thông tin tài liệu (dựa trên báo cáo đầu tiên trong danh sách nếu có)
+  const documentInfo = reports.length > 0 ? {
+    id: reports[0].material?.materialId,
+    title: reports[0].material?.title,
+    authorName: reports[0].reportedUser?.fullName || reports[0].reportedUser?.userName,
+    // ĐÃ CẬP NHẬT: XỬ LÝ LINK ẢNH AVATAR NGAY TỪ LÚC LẤY DỮ LIỆU
+    authorAvatar: reports[0].reportedUser?.avatarUrl ? getDirectImageUrl(reports[0].reportedUser.avatarUrl) : `https://ui-avatars.com/api/?name=${reports[0].reportedUser?.userName || 'U'}&background=random`,
+    authorId: reports[0].reportedUser?.accountId
+  } : {
+    id: filterMaterialId || 'N/A',
+    title: filterMaterialId ? 'Tài liệu đang bị báo cáo' : 'Tất cả Báo cáo hệ thống',
+    authorName: 'N/A',
+    authorAvatar: 'https://ui-avatars.com/api/?name=N/A',
+    authorId: null
+  };
+
+  // 3. MỞ BẢNG CHI TIẾT
   const openReportDetails = (report) => {
     setSelectedReport(report);
     setReportStatus(report.status);
-    const reportedUser = mockTableUsers.find(u => u.userId === report.reported.userId);
-    setUserStatus(reportedUser ? reportedUser.status : 'Active');
+    setUserStatus(report.reportedUser?.accountStatus || 'ACTIVE');
+    setInternalNotes(report.internalNotes || '');
   };
 
   const closeReportDetails = () => {
     setSelectedReport(null);
   };
 
-  const handleSaveModeration = () => {
+  // 4. LƯU QUYẾT ĐỊNH XỬ LÝ (Gọi API)
+  const handleSaveModeration = async () => {
     setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
-      // Actual update logic
-      const reportIndex = mockReports.findIndex(r => r.id === selectedReport.id);
-      if (reportIndex !== -1) {
-        mockReports[reportIndex].status = reportStatus;
+    try {
+      // Cập nhật trạng thái báo cáo
+      if (reportStatus !== selectedReport.status || internalNotes !== selectedReport.internalNotes) {
+        await axiosClient.put(`/api/reports/${selectedReport.reportId}`, {
+          status: reportStatus,
+          internalNotes: internalNotes
+        });
       }
       
-      if (selectedReport.reported.type === 'user') {
-        const userIdx = mockTableUsers.findIndex(u => u.userId === selectedReport.reported.userId);
-        if (userIdx !== -1) {
-          mockTableUsers[userIdx].status = userStatus;
-        }
+      // Nếu trạng thái User thay đổi, gọi API khóa/mở khóa tài khoản
+      if (userStatus !== selectedReport.reportedUser?.accountStatus) {
+         await axiosClient.put(`/api/account/${selectedReport.reportedUser.accountId}/status`);
       }
       
-      alert(`Changes saved successfully for report ${selectedReport.id}`);
+      alert(`Đã lưu quyết định xử lý cho báo cáo #${selectedReport.reportId}`);
       closeReportDetails();
-    }, 800);
-  };
-
-  const handleBanAccount = () => {
-    setIsSaving(true);
-    setTimeout(() => {
+      fetchReports(); // Tải lại danh sách mới nhất
+    } catch (error) {
+      alert("Lỗi khi lưu quyết định: " + (error.response?.data?.message || error.message));
+    } finally {
       setIsSaving(false);
-      // Update mock data
-      allRelatedReports.forEach(r => r.status = 'Resolved');
-      
-      // Suspend uploader
-      const authorId = documentInfo.author?.userId;
-      if (authorId) {
-        const userIdx = mockTableUsers.findIndex(u => u.userId === authorId);
-        if (userIdx !== -1) {
-          mockTableUsers[userIdx].status = 'Suspended';
-          mockTableUsers[userIdx].account_status = 'Suspended';
-        }
-      }
-      
-      alert('Account banned and reports resolved.');
-      navigate('/admin/reports');
-    }, 600);
+    }
   };
 
-  const handleResolveAll = () => {
-    setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
-      allRelatedReports.forEach(r => r.status = 'Resolved');
-      alert('Reports resolved.');
-      navigate('/admin/reports');
-    }, 600);
-  };
-
-  const getReasonBadge = (reason) => {
-    if (reason === 'Copyright Violation' || reason.includes('Copyright')) {
-      return <span className="reason-badge spam">© Copyright</span>;
-    }
-    if (reason === 'Inaccurate Information' || reason === 'Inappropriate Content' || reason.includes('Inappropriate')) {
-      return <span className="reason-badge inappropriate"><ShieldAlert size={14}/> Inappropriate</span>;
-    }
-    return <span className="reason-badge">{reason}</span>;
+  // Hàm tiện ích hiển thị
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleString('vi-VN');
   };
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case 'Pending':
-        return <span className="status-badge pending">PENDING</span>;
-      case 'Under Review':
-        return <span className="status-badge review">IN REVIEW</span>;
-      case 'Resolved':
-        return <span className="status-badge resolved">RESOLVED</span>;
-      default:
-        return <span className="status-badge">{status ? status.toUpperCase() : ''}</span>;
+      case 'PENDING': return <span className="status-badge pending">PENDING</span>;
+      case 'UNDER_REVIEW': return <span className="status-badge review">IN REVIEW</span>;
+      case 'RESOLVED': return <span className="status-badge resolved">RESOLVED</span>;
+      default: return <span className="status-badge">{status}</span>;
     }
   };
 
   return (
     <div className="admin-page-container document-investigation-page">
-      {/* Top Header */}
       <div className="investigation-top-header">
-        <button className="btn-back-clean" onClick={() => navigate('/admin/reports')}>
-          <ArrowLeft size={18} />
-          Investigation Dashboard
+        <button className="btn-back-clean" onClick={() => navigate('/admin')}>
+          <ArrowLeft size={18} /> Dashboard
         </button>
       </div>
 
       <div className="investigation-content">
-        {/* Breadcrumb */}
         <div className="breadcrumb-wrapper mb-16">
           <div className="breadcrumb">
-            <span className="breadcrumb-link" onClick={() => navigate('/admin/reports')}>Report Management</span>
+            <span className="breadcrumb-link" onClick={() => navigate('/admin')}>Report Management</span>
             <ChevronRight size={14} className="breadcrumb-separator" />
-            <span className="breadcrumb-current">{documentInfo.name}</span>
+            <span className="breadcrumb-current">{documentInfo.title}</span>
           </div>
         </div>
 
-        {/* Page Header */}
         <div className="report-details-header mb-24">
           <div className="report-title-wrapper">
-            <h1 className="admin-page-title mb-0">{documentInfo.name}</h1>
-            <span className="badge-critical"><ShieldAlert size={14} /> Critical Status</span>
+            <h1 className="admin-page-title mb-0">{documentInfo.title}</h1>
+            {totalReports > 0 && <span className="badge-critical"><ShieldAlert size={14} /> Cần xử lý</span>}
           </div>
-          <button className="btn-export-solid">
-            <Download size={16} />
-            Export Report
-          </button>
         </div>
 
-        {/* Document Actions Row */}
+        {/* Bảng thông tin tổng quan */}
         <div className="investigation-actions-row mb-24">
-          {/* Left: Document Info Card */}
           <div className="investigation-doc-card">
             <div className="doc-icon-box">
               <FileText size={24} className="text-secondary" />
             </div>
             <div className="doc-info-cols">
               <div className="doc-info-col">
-                <span className="doc-info-label">Material ID</span>
+                <span className="doc-info-label">Mã Tài Liệu</span>
                 <span className="doc-info-value">{documentInfo.id}</span>
               </div>
               <div className="doc-info-col">
-                <span className="doc-info-label">Uploader</span>
+                <span className="doc-info-label">Người Đăng (Uploader)</span>
                 <div className="uploader-info">
-                  <img src={documentInfo.author?.avatar || 'https://ui-avatars.com/api/?name=Uploader'} alt="Uploader" className="uploader-avatar" />
-                  <span className="doc-info-value">{documentInfo.author?.name || 'Unknown'}</span>
+                  {/* ĐÃ CẬP NHẬT CẤU TRÚC ẢNH AVATAR NGƯỜI ĐĂNG */}
+                  <img 
+                    src={documentInfo.authorAvatar} 
+                    alt="Uploader" 
+                    className="uploader-avatar" 
+                    referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      e.target.src = `https://ui-avatars.com/api/?name=${documentInfo.authorName || 'U'}&background=random`;
+                    }}
+                  />
+                  <span className="doc-info-value">{documentInfo.authorName}</span>
                 </div>
               </div>
               <div className="doc-info-col">
-                <span className="doc-info-label">Total Reports</span>
+                <span className="doc-info-label">Tổng Báo Cáo</span>
                 <span className="doc-info-value text-danger font-bold">{totalReports}</span>
               </div>
             </div>
           </div>
-
-          {/* Right: Global Actions */}
-          <div className="investigation-global-actions">
-            <button className="btn-doc-action danger" onClick={handleBanAccount} disabled={isSaving}>
-              <Trash2 size={16} /> Ban Account
-            </button>
-            <button className="btn-doc-action primary" onClick={handleResolveAll} disabled={isSaving}>
-              <CheckSquare size={16} /> Resolve
-            </button>
-          </div>
         </div>
 
-        {/* Layout for Table and Side Panel */}
+        {/* Giao diện Bảng & Bảng điều khiển */}
         <div className={`investigation-layout ${selectedReport ? 'panel-open' : ''}`}>
+          
           {/* Main Table */}
           <div className="investigation-table-container">
             <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '16px 24px', borderBottom: '1px solid #eaebf0' }}>
@@ -204,121 +197,140 @@ const AdminDocumentInvestigation = () => {
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                 >
-                  <option value="all">Filter</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Under Review">In Review</option>
-                  <option value="Resolved">Resolved</option>
+                  <option value="all">Cần xử lý (Pending + Review)</option>
+                  <option value="Pending">Chờ xử lý (Pending)</option>
+                  <option value="Under Review">Đang điều tra (In Review)</option>
+                  <option value="Resolved">Đã giải quyết (Resolved)</option>
                 </select>
               </div>
             </div>
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Report ID</th>
-                  <th>Reporter</th>
-                  <th>Reason/Category</th>
-                  <th>Date Submitted</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredReports.map((report) => (
-                  <tr 
-                    key={report.id} 
-                    className={selectedReport?.id === report.id ? 'selected-row' : ''}
-                    onClick={() => openReportDetails(report)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <td className="report-id-cell">{report.id}</td>
-                    <td>
-                      <div className="user-cell">
-                        <img src={report.reporter.avatar} alt={report.reporter.name} className="user-cell-avatar" />
-                        <span className="user-cell-name">{report.reporter.name}</span>
-                      </div>
-                    </td>
-                    <td>{getReasonBadge(report.reason)}</td>
-                    <td className="date-cell">{report.date.replace('\n', ' • ')}</td>
-                    <td>{getStatusBadge(report.status)}</td>
-                    <td className="td-actions">
-                      <button className="text-action-btn view-record" onClick={(e) => { e.stopPropagation(); openReportDetails(report); }}>
-                        View Details
-                      </button>
-                    </td>
+            
+            {isLoading ? (
+              <div style={{ padding: '40px', textAlign: 'center' }}>Đang tải danh sách báo cáo...</div>
+            ) : (
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Report ID</th>
+                    <th>Người Tố Cáo</th>
+                    <th>Lý do</th>
+                    <th>Ngày gửi</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filteredReports.map((report) => (
+                    <tr 
+                      key={report.reportId} 
+                      className={selectedReport?.reportId === report.reportId ? 'selected-row' : ''}
+                      onClick={() => openReportDetails(report)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <td className="report-id-cell">#{report.reportId}</td>
+                      <td>
+                        <div className="user-cell">
+                          {/* ĐÃ CẬP NHẬT CẤU TRÚC ẢNH AVATAR NGƯỜI TỐ CÁO */}
+                          <img 
+                            src={report.reporter?.avatarUrl ? getDirectImageUrl(report.reporter.avatarUrl) : `https://ui-avatars.com/api/?name=${report.reporter?.userName || 'U'}&background=random`} 
+                            alt={report.reporter?.userName || 'Reporter'} 
+                            className="user-cell-avatar"
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              e.target.src = `https://ui-avatars.com/api/?name=${report.reporter?.userName || 'U'}&background=random`;
+                            }}
+                          />
+                          <span className="user-cell-name">{report.reporter?.fullName || report.reporter?.userName}</span>
+                        </div>
+                      </td>
+                      <td>
+                         <span className="reason-badge inappropriate" title={report.description}>
+                            {report.description?.length > 30 ? report.description.substring(0, 30) + '...' : report.description}
+                         </span>
+                      </td>
+                      <td className="date-cell">{formatDate(report.createdAt)}</td>
+                      <td>{getStatusBadge(report.status)}</td>
+                      <td className="td-actions">
+                        <button className="text-action-btn view-record" onClick={(e) => { e.stopPropagation(); openReportDetails(report); }}>
+                          Chi tiết
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredReports.length === 0 && (
+                     <tr>
+                        <td colSpan="6" style={{ textAlign: 'center', padding: '30px' }}>Không có báo cáo nào ở trạng thái này.</td>
+                     </tr>
+                  )}
+                </tbody>
+              </table>
+            )}
+            
             <div className="table-footer">
-              <div className="pagination-info">Showing {filteredReports.length} of {totalReports} reports</div>
-              <div className="simple-pagination-controls">
-                <button className="nav-arrow-btn">&lt;</button>
-                <button className="nav-arrow-btn active">1</button>
-                <button className="nav-arrow-btn">&gt;</button>
-              </div>
+              <div className="pagination-info">Đang hiển thị {filteredReports.length} / {totalReports} báo cáo</div>
             </div>
           </div>
 
-          {/* Side Panel for Moderation */}
+          {/* Side Panel (Khu vực xử lý) */}
           {selectedReport && (
             <div className="investigation-side-panel">
               <div className="side-panel-header">
-                <h3 className="side-panel-title">Report Details</h3>
+                <h3 className="side-panel-title">Chi tiết Báo cáo #{selectedReport.reportId}</h3>
                 <button className="btn-close-panel" onClick={closeReportDetails}><X size={20} /></button>
               </div>
               
               <div className="side-panel-content">
                 <div className="panel-section mb-24">
-                  <h4 className="panel-section-title">Investigation Text</h4>
+                  <h4 className="panel-section-title">Nội dung Tố cáo</h4>
                   <div className="bg-light-gray p-16 br-8">
-                    <p className="investigation-text m-0">{selectedReport.details}</p>
+                    <p className="investigation-text m-0" style={{ whiteSpace: 'pre-line' }}>{selectedReport.description}</p>
                   </div>
                 </div>
 
                 <div className="panel-section">
                   <div className="d-flex-align-center gap-8 mb-16 text-warning">
                     <ShieldAlert size={18} />
-                    <h4 className="panel-section-title m-0">Moderation Actions</h4>
+                    <h4 className="panel-section-title m-0">Quyết định Xử lý</h4>
                   </div>
                   
                   <div className="form-group mb-16">
-                    <label className="form-label">Update Report Status</label>
+                    <label className="form-label">Cập nhật đơn Báo cáo</label>
                     <select className="form-select" value={reportStatus} onChange={(e) => setReportStatus(e.target.value)}>
-                      <option value="Pending">Pending</option>
-                      <option value="Under Review">In Review</option>
-                      <option value="Resolved">Resolved</option>
+                      <option value="PENDING">Chờ xử lý (Pending)</option>
+                      <option value="UNDER_REVIEW">Đang điều tra (In Review)</option>
+                      <option value="RESOLVED">Đã giải quyết (Resolved)</option>
                     </select>
                   </div>
 
-                  {selectedReport.reported.type === 'user' && (
-                    <div className="form-group mb-16">
-                      <label className="form-label">Update User Status</label>
-                      <select className="form-select" value={userStatus} onChange={(e) => setUserStatus(e.target.value)}>
-                        <option value="Active">Active</option>
-                        <option value="Suspended">Suspended</option>
-                      </select>
-                    </div>
-                  )}
+                  <div className="form-group mb-16">
+                    <label className="form-label">Phạt Tài Khoản (Người đăng)</label>
+                    <select className="form-select" value={userStatus} onChange={(e) => setUserStatus(e.target.value)}>
+                      <option value="ACTIVE">Bình thường (Active)</option>
+                      <option value="INACTIVE">Khóa tài khoản (Inactive)</option>
+                    </select>
+                  </div>
 
                   <div className="form-group mb-24">
                     <div className="d-flex-between mb-8">
-                      <label className="form-label mb-0">Internal Notes</label>
-                      <span className="text-muted text-xs">Admin only</span>
+                      <label className="form-label mb-0">Ghi chú nội bộ</label>
+                      <span className="text-muted text-xs">Chỉ Admin thấy</span>
                     </div>
                     <textarea 
                       className="form-textarea" 
                       rows="4" 
-                      placeholder="Document your findings here..."
+                      value={internalNotes}
+                      onChange={(e) => setInternalNotes(e.target.value)}
+                      placeholder="Ghi lại kết quả điều tra của bạn để Manager xem..."
                     ></textarea>
                   </div>
 
                   <div className="action-buttons-group">
                     <button className="btn-action-warning" onClick={handleSaveModeration} disabled={isSaving}>
                       <ShieldAlert size={16} />
-                      {isSaving ? 'Saving...' : 'Save Changes'}
+                      {isSaving ? 'Đang lưu...' : 'Lưu Quyết Định'}
                     </button>
                     <button className="btn-action-secondary" onClick={closeReportDetails}>
-                      Cancel
+                      Hủy
                     </button>
                   </div>
                 </div>

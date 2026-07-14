@@ -1,13 +1,16 @@
 import React from 'react';
 import { Users, Radio, UserX, AlertCircle, TrendingUp } from 'lucide-react';
-import { mockTableUsers, mockReports } from '../../../../data/mockDocuments';
 import './UserStats.css';
 
-const UserStats = () => {
-  const totalUsers = mockTableUsers.length;
-  const activeUsers = mockTableUsers.filter(u => u.status === 'Active').length;
-  const inactiveUsers = mockTableUsers.filter(u => u.status === 'Inactive' || u.status === 'Suspended').length;
-  const totalReports = mockReports.length;
+const UserStats = ({ users, isLoading }) => {
+  
+  // Tính toán số liệu dựa trên Data thật
+  const totalUsers = users.length;
+  const activeUsers = users.filter(u => u.accountStatus === 'ACTIVE').length;
+  const inactiveUsers = users.filter(u => u.accountStatus !== 'ACTIVE').length;
+  const totalReports = 0; // Tạm thời để 0, chờ có bảng Report sẽ làm sau
+
+  if (isLoading) return <div style={{ marginBottom: '20px' }}>Đang tải số liệu...</div>;
 
   return (
     <div className="user-stats-container">
@@ -24,7 +27,7 @@ const UserStats = () => {
         <div className="stat-card-footer">
           <span className="stat-trend positive">
             <TrendingUp size={14} />
-            +2.4% this month
+            Updated live
           </span>
         </div>
       </div>
@@ -32,7 +35,7 @@ const UserStats = () => {
       <div className="stat-card">
         <div className="stat-card-header">
           <div className="stat-card-content">
-            <p className="stat-label">ACTIVE NOW</p>
+            <p className="stat-label">ACTIVE ACCOUNTS</p>
             <h2 className="stat-value">{activeUsers}</h2>
           </div>
           <div className="stat-icon-wrapper blue-bg">
@@ -40,7 +43,7 @@ const UserStats = () => {
           </div>
         </div>
         <div className="stat-card-footer">
-          <span className="stat-desc">Currently logged in</span>
+          <span className="stat-desc">Currently allowed to login</span>
         </div>
       </div>
 
@@ -57,7 +60,7 @@ const UserStats = () => {
         <div className="stat-card-footer">
           <span className="stat-trend negative">
             <AlertCircle size={14} />
-            Requires attention
+            Suspended or Banned
           </span>
         </div>
       </div>

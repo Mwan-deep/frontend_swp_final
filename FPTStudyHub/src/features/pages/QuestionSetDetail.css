@@ -1,0 +1,156 @@
+.qsd-container {
+  padding: 24px;
+  background-color: #f9fafb;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.qsd-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.qsd-breadcrumb-link {
+  color: #2563eb;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.qsd-breadcrumb-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.qsd-header-card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.qsd-title-group h1 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.qsd-meta {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.qsd-badge {
+  background-color: #fff7ed;
+  color: #e05d10;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.qsd-stat-text {
+  font-size: 14px;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.qsd-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.qsd-btn-ai {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #e05d10;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.qsd-btn-ai:hover {
+  background-color: #92400e;
+}
+
+.qsd-content-card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 20px 0;
+  flex: 1;
+}
+
+.qsd-content-header {
+  padding: 0 24px 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.qsd-table-wrapper {
+  overflow-x: auto;
+}
+
+.qsd-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.qsd-table th {
+  background-color: #f9fafb;
+  padding: 12px 24px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.qsd-table td {
+  padding: 16px 24px;
+  font-size: 14px;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: top;
+}
+
+.qsd-table tr:hover {
+  background-color: #f8fafc;
+}
+
+.qsd-question-content {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.qsd-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #4b5563;
+}

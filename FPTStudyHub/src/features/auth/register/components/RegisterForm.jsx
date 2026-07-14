@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import InputField from './InputField';
 import CheckboxField from './CheckboxField';
-import axiosClient from "../../../../api/axiosClient";
+import { authService } from '../../../../service/authService';
 
 const RegisterForm = () => {
   const navigate = useNavigate();
+  
+  // Clear token cũ khi vừa vào trang đăng ký để tránh bị Axios tự động gửi token hết hạn/sai chữ ký lên server
+  useEffect(() => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('role');
+  }, []);
   
   const [formData, setFormData] = useState({
     fullName: '',
@@ -50,17 +57,8 @@ const RegisterForm = () => {
     setSuccessMsg('');
 
     try {
-      // Gọi đúng endpoint /account từ AccountController
-      // Map dữ liệu từ UI form sang cấu trúc của AccountCreateRequest DTO
-      const response = await axiosClient.post('/account', {
-        userName: formData.email,      // Ánh xạ Student ID thành userName
-        passwordHash: formData.password,   // Ánh xạ password thành passwordHash
-        fullName: formData.fullName,
-        email: formData.email
-        // Các trường dob, gender, avatarUrl, bio không có trong form nên sẽ nhận giá trị null ở backend
-      });
+      const response = await authService.register(formData);
 
-      // Backend trả về ApiResponse có thuộc tính 'message' ("Create Successfully!!!")
       setSuccessMsg(response.message || 'Account created successfully! Redirecting...');
       
       setFormData({
@@ -74,8 +72,6 @@ const RegisterForm = () => {
     } catch (error) {
       console.error("Registration error:", error);
       
-      // Xử lý lỗi từ @Valid của Spring Boot (Ví dụ: "PASSWORD_INVALIDATION", "EMAIL_INVALID")
-      // Spring Boot thường ném lỗi validation vào mảng errors hoặc thông báo chung
       const errorMsg = error.response?.data?.message 
                     || error.response?.data?.errors?.[0]?.defaultMessage 
                     || 'Registration failed. Please try again later.';
@@ -88,8 +84,8 @@ const RegisterForm = () => {
   return (
     <form className="register-form" onSubmit={handleSubmit}>
       
-      {serverError && <div style={{ color: '#dc3545', marginBottom: '15px', fontSize: '14px', fontWeight: '500' }}>{serverError}</div>}
-      {successMsg && <div style={{ color: '#198754', marginBottom: '15px', fontSize: '14px', fontWeight: '500' }}>{successMsg}</div>}
+      {serverError && <div style={{ color: '#dc3545', marginBottom: '15px', fontSize: '14px', fontWeight: '500', padding: '10px', backgroundColor: '#f8d7da', borderRadius: '5px' }}>{serverError}</div>}
+      {successMsg && <div style={{ color: '#198754', marginBottom: '15px', fontSize: '14px', fontWeight: '500', padding: '10px', backgroundColor: '#d1e7dd', borderRadius: '5px' }}>{successMsg}</div>}
 
       <InputField
         label="Full Name"

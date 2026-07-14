@@ -1,3 +1,6 @@
+/* =========================================
+   BỐ CỤC CHUNG (LAYOUT)
+   ========================================= */
 .generate-quiz-container {
   display: flex;
   gap: 24px;
@@ -10,7 +13,6 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 16px;
   min-width: 0;
 }
 
@@ -22,53 +24,112 @@
   flex-shrink: 0;
 }
 
-/* Filter Bar */
-.gq-filter-bar {
+/* =========================================
+   THANH CÔNG CỤ TÌM KIẾM & LỌC (MỚI)
+   ========================================= */
+.gq-top-toolbar {
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
+  background-color: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
   gap: 16px;
-  width: 100%;
-}
-
-.gq-filters {
-  display: flex;
   flex-wrap: wrap;
-  gap: 12px;
 }
 
-.gq-select {
-  padding: 8px 12px;
+.gq-toolbar-filters {
+  display: flex;
+  gap: 15px;
+  flex: 1;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.gq-doc-select {
+  padding: 10px 16px;
+  border-radius: 8px;
   border: 1px solid #d1d5db;
-  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+  min-width: 200px;
   font-size: 14px;
   color: #374151;
-  background-color: white;
-  min-width: 140px;
-  outline: none;
+  background-color: #fff;
 }
 
-.gq-btn-create {
-  background-color: #b45309;
+/* Đổi viền Dropdown sang màu Cam khi focus */
+.gq-doc-select:focus {
+  border-color: #f97316; 
+}
+
+.gq-search-box {
+  position: relative;
+  flex: 0 1 350px;
+  min-width: 250px;
+}
+
+.gq-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 10px;
+  color: #6b7280;
+}
+
+.gq-search-input {
+  width: 100%;
+  padding: 10px 12px 10px 40px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  outline: none;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+/* Đổi viền thanh tìm kiếm sang màu Cam khi focus */
+.gq-search-input:focus {
+  border-color: #f97316; 
+}
+
+/* Đổi màu Nút TẠO ĐỀ THI sang Cam đậm đồng bộ */
+.gq-btn-create-quiz {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background-color: #b45309; 
   color: white;
-  padding: 10px 20px;
+  border-radius: 8px;
   border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 13px;
   cursor: pointer;
-  transition: opacity 0.2s;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background-color 0.2s, opacity 0.2s;
   white-space: nowrap;
 }
-.gq-btn-create:hover { opacity: 0.9; }
 
-/* Table */
+.gq-btn-create-quiz:hover {
+  background-color: #92400e; 
+}
+
+/* =========================================
+   BẢNG CÂU HỎI
+   ========================================= */
+.gq-table-wrapper {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 10px 0 20px 0;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .gq-table-container {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
   overflow-x: auto;
 }
 
@@ -80,17 +141,18 @@
 }
 
 .gq-table th {
-  background-color: #f3f4f6;
-  padding: 12px 10px;
+  background-color: #f9fafb;
+  padding: 14px 12px;
   font-size: 13px;
   font-weight: 600;
   color: #4b5563;
   border-bottom: 1px solid #e5e7eb;
+  border-top: 1px solid #e5e7eb;
   white-space: nowrap;
 }
 
 .gq-table td {
-  padding: 12px 10px;
+  padding: 14px 12px;
   font-size: 13px;
   color: #374151;
   border-bottom: 1px solid #e5e7eb;
@@ -98,6 +160,10 @@
 }
 
 .gq-table tr:last-child td { border-bottom: none; }
+
+.gq-table tbody tr:hover {
+  background-color: #f8fafc;
+}
 
 .gq-col-id { 
   color: #6b7280; 
@@ -109,6 +175,7 @@
   color: #111827; 
   font-weight: 600; 
   font-size: 13px; 
+  line-height: 1.5;
 }
 
 .gq-table td:nth-child(4), 
@@ -116,44 +183,63 @@
   white-space: nowrap;
 }
 
-/* Badges & Status */
+/* Nhãn độ khó */
 .gq-badge {
   padding: 4px 10px;
   border-radius: 12px;
   font-size: 11px;
   font-weight: 700;
+  text-transform: uppercase;
 }
 .gq-badge.easy { background: #dcfce7; color: #16a34a; }
 .gq-badge.medium { background: #ffedd5; color: #ea580c; }
 .gq-badge.hard { background: #fee2e2; color: #dc2626; }
 
-.gq-status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 500;
-}
-.gq-status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-.gq-status-dot.active { background: #f97316; }
-.gq-status-dot.draft { background: #9ca3af; }
-
 .gq-actions-cell {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   align-items: center;
 }
 .gq-icon-action {
-  color: #6b7280;
+  color: #9ca3af;
   cursor: pointer;
   transition: color 0.2s;
 }
 .gq-icon-action:hover { color: #111827; }
+.gq-icon-action.delete:hover { color: #ef4444; }
 
-/* Right Cards */
+/* =========================================
+   PANEL BÊN PHẢI (CARDS & TABS)
+   ========================================= */
+.gq-tabs {
+  display: flex;
+  background-color: #e5e7eb;
+  border-radius: 8px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.gq-tab-btn {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.gq-tab-btn.active {
+  background-color: white;
+  color: #b45309;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.gq-tab-btn:hover:not(.active) { color: #374151; }
+
 .gq-card {
   background: white;
   border: 1px solid #e5e7eb;
@@ -162,6 +248,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 .gq-card.ai-card {
@@ -218,36 +305,43 @@
   box-sizing: border-box;
 }
 
+.gq-textarea:focus { border-color: #f97316; }
+.ai-card .gq-textarea:focus { border-color: #0ea5e9; }
+
 .gq-option-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .gq-input {
   flex: 1;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 13px;
   outline: none;
+  transition: border-color 0.2s;
 }
+.gq-input:focus { border-color: #f97316; }
 
 .gq-row-2 {
   display: flex;
   gap: 12px;
 }
-.w-50 { flex: 1; }
+.w-50 { flex: 1; min-width: 0; }
 
 .gq-select-full {
   width: 100%;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 13px;
   outline: none;
+  color: #374151;
 }
 
+/* Nút bấm trong Panel */
 .gq-btn-save {
   width: 100%;
   background: #b45309;
@@ -258,6 +352,7 @@
   font-weight: 600;
   cursor: pointer;
   margin-top: 8px;
+  transition: opacity 0.2s;
 }
 
 .gq-btn-generate {
@@ -273,8 +368,27 @@
   justify-content: center;
   align-items: center;
   gap: 8px;
+  transition: background-color 0.2s;
 }
 
+.gq-btn-save:hover { opacity: 0.9; }
+.gq-btn-generate:hover:not(:disabled) { background: #0369a1; }
+
+/* Trạng thái Disable khi đang Loading */
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Hiệu ứng Spinner quay vòng */
+.spinner {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+/* Bộ đếm AI */
 .gq-counter {
   display: flex;
   align-items: center;
@@ -294,56 +408,26 @@
   background: white;
   border: 1px solid #d1d5db;
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   color: #4b5563;
+  transition: background-color 0.2s;
 }
+.gq-counter-btn:hover { background-color: #e5e7eb; }
 
 .gq-counter-val {
   font-weight: 600;
   font-size: 14px;
   color: #111827;
-  min-width: 20px;
+  min-width: 24px;
   text-align: center;
 }
 
-/* Custom Tabs for Right Panel */
-.gq-tabs {
-  display: flex;
-  background-color: #e5e7eb;
-  border-radius: 8px;
-  padding: 4px;
-  gap: 4px;
-}
-
-.gq-tab-btn {
-  flex: 1;
-  padding: 10px 0;
-  border: none;
-  background: transparent;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #6b7280;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-.gq-tab-btn.active {
-  background-color: white;
-  color: #b45309;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.gq-tab-btn:hover:not(.active) {
-  color: #374151;
-}
-
-/* Styling for Add/Remove Options in Manual Add Card */
+/* Nút thêm/xóa Option */
 .gq-btn-add-opt {
   display: flex;
   align-items: center;
@@ -356,7 +440,7 @@
   font-weight: 600;
   cursor: pointer;
   padding: 10px 0;
-  margin-top: 8px;
+  margin-top: 4px;
   width: 100%;
   border-radius: 6px;
   transition: all 0.2s;
@@ -376,25 +460,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: 6px;
   border-radius: 4px;
   transition: all 0.2s;
 }
+.gq-btn-remove-opt:hover { background: #fee2e2 !important; }
 
-.gq-btn-remove-opt:hover {
-  background: #fee2e2 !important;
-}
 
 /* =========================================
-   MODAL CSS (DÙNG CHUNG CƠ BẢN)
+   MODAL CSS (TẠO QUIZ & SỬA CÂU HỎI)
    ========================================= */
 .gq-modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -408,7 +488,7 @@
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
 }
@@ -419,6 +499,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
 }
 
 .gq-modal-title {
@@ -433,18 +517,12 @@
   border: none;
   color: #6b7280;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  border-radius: 4px;
+  padding: 6px;
+  border-radius: 6px;
   transition: background-color 0.2s;
+  display: flex;
 }
-
-.gq-modal-close:hover {
-  background-color: #f3f4f6;
-  color: #111827;
-}
+.gq-modal-close:hover { background-color: #f3f4f6; color: #111827; }
 
 .gq-modal-body {
   padding: 24px;
@@ -453,260 +531,95 @@
   gap: 20px;
 }
 
-.gq-options-section {
+.gq-modal-footer {
+  padding: 16px 24px;
+  background-color: #f9fafb;
+  border-top: 1px solid #e5e7eb;
   display: flex;
-  flex-direction: column;
+  justify-content: flex-end;
   gap: 12px;
+  position: sticky;
+  bottom: 0;
 }
 
-.gq-options-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
+.gq-modal-footer.center { justify-content: center; }
 
-.gq-options-hint {
-  font-size: 12px;
-  color: #6b7280;
+.gq-btn-cancel, .gq-btn-cancel-outline {
+  padding: 10px 24px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  color: #4b5563;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
+.gq-btn-cancel-outline { border-color: #b45309; color: #b45309; }
+.gq-btn-cancel:hover { background: #f3f4f6; }
+.gq-btn-cancel-outline:hover { background: #fff7ed; }
 
-.gq-options-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.gq-btn-save-modal {
+  padding: 10px 24px;
+  background: #f97316;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
+.gq-btn-save-modal:hover { background: #ea580c; }
 
-.gq-modal-option-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* Nút Radio Custom */
-.gq-custom-radio input[type="radio"] {
-  display: none;
-}
+/* Radio Button Custom trong Modal */
+.gq-custom-radio input[type="radio"] { display: none; }
 .gq-custom-radio label {
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 20px; height: 20px;
   border: 2px solid #d1d5db;
   border-radius: 50%;
   cursor: pointer;
   position: relative;
   margin-top: 5px;
 }
-.gq-custom-radio input[type="radio"]:checked + label {
-  border-color: #b45309;
-}
+.gq-custom-radio input[type="radio"]:checked + label { border-color: #b45309; }
 .gq-custom-radio input[type="radio"]:checked + label::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 10px;
-  height: 10px;
+  content: ''; position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 10px; height: 10px;
   background-color: #b45309;
   border-radius: 50%;
 }
 
-.gq-btn-add-modal-opt {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: transparent;
-  border: none;
-  color: #b45309;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 4px 0;
-  width: fit-content;
-}
-
-.gq-btn-add-modal-opt:hover {
-  text-decoration: underline;
-}
-
-.gq-modal-footer {
-  padding: 16px 24px;
-  background-color: #f9fafb;
-  border-top: 1px solid #e5e7eb;
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-.gq-btn-cancel {
-  padding: 10px 20px;
-  background: white;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  color: #4b5563;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.gq-btn-cancel:hover {
-  background: #f3f4f6;
-}
-
-.gq-btn-save-modal {
-  padding: 10px 24px;
-  background: #f97316;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.gq-btn-save-modal:hover {
-  background: #ea580c;
-}
-
-/* =========================================
-   CREATE QUIZ MODAL (PHẦN THÊM VÀO)
-   ========================================= */
-.gq-modal-title-wrap {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.gq-modal-title-icon {
-  width: 36px;
-  height: 36px;
-  background-color: #ffedd5;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.gq-visibility-options {
-  display: flex;
-  gap: 16px;
-  margin-top: 4px;
-}
-
+/* Các thành phần nhỏ trong Create Quiz Modal */
+.gq-modal-title-wrap { display: flex; align-items: center; gap: 12px; }
+.gq-modal-title-icon { width: 36px; height: 36px; background-color: #ffedd5; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.gq-visibility-options { display: flex; gap: 16px; margin-top: 4px; }
 .gq-visibility-card {
-  flex: 1;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: white;
+  flex: 1; border: 1px solid #d1d5db; border-radius: 8px; padding: 16px;
+  display: flex; align-items: center; gap: 12px; cursor: pointer;
+  transition: all 0.2s; background: white;
 }
+.gq-visibility-card.selected { border-color: #b45309; background-color: #fff7ed; }
+.gq-radio-custom { width: 20px; height: 20px; border: 2px solid #9ca3af; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.gq-radio-custom.checked { border-color: #b45309; }
+.gq-radio-dot { width: 10px; height: 10px; background-color: transparent; border-radius: 50%; }
+.gq-radio-custom.checked .gq-radio-dot { background-color: #b45309; }
+.gq-vis-icon-blue { color: #0ea5e9; display: flex; align-items: center; }
+.gq-vis-text h4 { margin: 0 0 4px 0; font-size: 14px; font-weight: 600; color: #111827; }
+.gq-vis-text p { margin: 0; font-size: 12px; color: #6b7280; }
+.gq-password-wrapper { position: relative; display: flex; align-items: center; }
+.gq-password-input { padding-right: 40px; }
+.gq-btn-eye { position: absolute; right: 12px; background: transparent; border: none; cursor: pointer; display: flex; }
+.gq-password-hint { display: flex; align-items: flex-start; gap: 8px; background-color: #f3f4f6; padding: 10px 12px; border-radius: 6px; margin-top: 8px; font-size: 12px; color: #4b5563; line-height: 1.4; }
 
-.gq-visibility-card.selected {
-  border-color: #b45309;
-  background-color: #fff7ed;
-}
-
-.gq-radio-custom {
-  width: 20px;
-  height: 20px;
-  border: 2px solid #9ca3af;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.gq-radio-custom.checked {
-  border-color: #b45309;
-}
-
-.gq-radio-dot {
-  width: 10px;
-  height: 10px;
-  background-color: transparent;
-  border-radius: 50%;
-}
-
-.gq-radio-custom.checked .gq-radio-dot {
-  background-color: #b45309;
-}
-
-.gq-vis-icon-blue {
-  color: #0ea5e9;
-  display: flex;
-  align-items: center;
-}
-
-.gq-vis-text h4 {
-  margin: 0 0 2px 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: #111827;
-}
-
-.gq-vis-text p {
-  margin: 0;
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.gq-password-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.gq-password-input {
-  padding-right: 40px; /* Nhường chỗ cho con mắt */
-}
-
-.gq-btn-eye {
-  position: absolute;
-  right: 12px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-
-.gq-password-hint {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  background-color: #f3f4f6;
-  padding: 10px 12px;
-  border-radius: 6px;
-  margin-top: 8px;
-  font-size: 12px;
-  color: #4b5563;
-  line-height: 1.4;
-}
-
-.gq-btn-cancel-outline {
-  padding: 10px 24px;
-  background: white;
-  border: 1px solid #b45309;
-  border-radius: 6px;
-  color: #b45309;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.gq-btn-cancel-outline:hover {
-  background: #fff7ed;
-}
-
-.gq-modal-content.create-quiz .gq-modal-footer {
-  justify-content: center;
+/* Responsive cơ bản */
+@media (max-width: 1024px) {
+  .generate-quiz-container {
+    flex-direction: column;
+  }
+  .gq-right-panel {
+    width: 100%;
+  }
 }

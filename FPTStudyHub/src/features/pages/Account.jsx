@@ -1,75 +1,147 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SettingsTabs from '../account/components/SettingsTabs';
 import ProfileTab from '../account/components/ProfileTab';
 import SecurityTab from '../account/components/SecurityTab';
 import ChangePasswordForm from '../account/components/ChangePasswordForm';
+import axiosClient from '../../utils/axiosClient';
 import './Account.css';
-import {Profile_data} from "../../data/mockDocuments";
-
 
 const Account = () => {
   const [activeTab, setActiveTab] = useState('profile');
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
   
-  // Trạng thái dữ liệu cá nhân
-  const [profileData, setProfileData] = useState(Profile_data);
+  const [profileData, setProfileData] = useState({
+    fullName: '', email: '', bio: '', avatarUrl: ''
+  });
+
+  // 1. GỌI API ĐẾN CONTROLLER MỚI
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await axiosClient.get(`/api/my-profile`); 
+        const userData = response.result || response.data || response;
+        
+        const fetchedAvatar = userData.avatarUrl || userData.avatar_url || userData.avatar || localStorage.getItem('avatarUrl');
+        
+        setProfileData({
+          fullName: userData.fullName || '',
+          email: userData.email || '',
+          bio: userData.bio || '',
+          avatarUrl: fetchedAvatar || '' 
+        });
+
+        if (fetchedAvatar) {
+          localStorage.setItem('avatarUrl', fetchedAvatar);
+        }
+      } catch (error) {
+        console.error("Lỗi lấy thông tin cá nhân:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchUserProfile();
+  }, []);
 
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
     if (name === 'bio' && value.length > 500) return;
-    setProfileData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setProfileData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleUploadPhoto = () => {
-    const newAvatars = [
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150'
-    ];
-    const randomAvatar = newAvatars[Math.floor(Math.random() * newAvatars.length)];
-    setProfileData(prev => ({ ...prev, avatar: randomAvatar }));
+  // 2. UPLOAD ẢNH ĐẾN CONTROLLER MỚI
+  const handleUploadPhoto = async (file) => {
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Ảnh quá lớn! Vui lòng chọn ảnh dưới 5MB.");
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await axiosClient.post(`/api/my-profile/upload-avatar`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      const updatedAccount = response.result || response.data || response;
+      const newAvatarUrl = updatedAccount.avatarUrl || updatedAccount.avatar_url || updatedAccount.avatar;
+      
+      setProfileData(prev => ({ ...prev, avatarUrl: newAvatarUrl }));
+      
+      if (newAvatarUrl) {
+        localStorage.setItem('avatarUrl', newAvatarUrl);
+      }
+      window.dispatchEvent(new Event('notificationsUpdated'));
+      
+      alert("Tải ảnh đại diện thành công! Vui lòng lưu thay đổi.");
+    } catch (error) {
+      console.error("Lỗi upload ảnh:", error);
+      alert("Upload ảnh thất bại! Vui lòng thử lại.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleRemovePhoto = () => {
-    setProfileData(prev => ({ 
-      ...prev, 
-      avatar: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2394A3B8"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>' 
-    }));
+    setProfileData(prev => ({ ...prev, avatarUrl: '' }));
   };
 
-  const handleSaveProfile = (e) => {
+  // 3. LƯU PROFILE ĐẾN CONTROLLER MỚI
+  const handleSaveProfile = async (e) => {
     e.preventDefault();
-    alert('Profile changes saved successfully!');
+    try {
+      const updatePayload = {
+        fullName: profileData.fullName,
+        email: profileData.email,
+        bio: profileData.bio,
+        avatarUrl: profileData.avatarUrl
+      };
+      
+      await axiosClient.put(`/api/my-profile`, updatePayload); 
+      
+      if (profileData.avatarUrl) {
+          localStorage.setItem('avatarUrl', profileData.avatarUrl);
+      }
+      window.dispatchEvent(new Event('notificationsUpdated'));
+
+      alert('Cập nhật hồ sơ thành công!');
+    } catch (error) {
+      console.error("Lỗi cập nhật hồ sơ:", error);
+      alert('Không thể lưu thay đổi. Vui lòng kiểm tra lại thông tin!');
+    }
   };
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    setIsChangingPassword(false); // Reset chuyển đổi form đổi mật khẩu khi chuyển tab
+    setIsChangingPassword(false); 
   };
 
   return (
     <div className="settings-page-container">
       <div className="settings-layout-grid">
-        {/* Menu Tab cột trái */}
         <SettingsTabs activeTab={activeTab} onChange={handleTabChange} />
 
-        {/* Khung nội dung hiển thị cột phải */}
         <div className="settings-right-pane">
           {activeTab === 'profile' && (
             <>
               <h2 className="tab-pane-title">Profile</h2>
               <p className="tab-pane-subtitle">Manage your personal profile information.</p>
               <div className="settings-content-card">
-                <ProfileTab 
-                  data={profileData}
-                  onChange={handleProfileChange}
-                  onUploadPhoto={handleUploadPhoto}
-                  onRemovePhoto={handleRemovePhoto}
-                  onSave={handleSaveProfile}
-                />
+                {isLoading ? (
+                  <p style={{ padding: '20px', color: '#64748B' }}>Đang tải dữ liệu hồ sơ...</p>
+                ) : (
+                  <ProfileTab 
+                    data={profileData}
+                    onChange={handleProfileChange}
+                    onUploadPhoto={handleUploadPhoto}
+                    onRemovePhoto={handleRemovePhoto}
+                    onSave={handleSaveProfile}
+                    isUploading={isUploading}
+                  />
+                )}
               </div>
             </>
           )}
@@ -81,7 +153,6 @@ const Account = () => {
               <>
                 <h2 className="tab-pane-title">Security</h2>
                 <p className="tab-pane-subtitle">Manage your account security settings.</p>
-                
                 <div className="settings-content-card security-card">
                   <SecurityTab onChangePassword={() => setIsChangingPassword(true)} />
                 </div>

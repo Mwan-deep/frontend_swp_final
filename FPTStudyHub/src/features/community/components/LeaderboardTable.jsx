@@ -1,52 +1,39 @@
 import React from 'react';
+import { getDirectImageUrl } from '../../../utils/imageHelper'; 
 
-// Badge Components using custom SVG icons
-const GoldMedalIcon = () => (
-  <svg className="badge-svg gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" title="Top Contributor">
-    <circle cx="12" cy="8" r="7" />
-    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
-  </svg>
-);
-
-const SilverMedalIcon = () => (
-  <svg className="badge-svg silver" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" title="Top 3 Contributor">
-    <circle cx="12" cy="8" r="7" />
-    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
-  </svg>
-);
-
-const BronzeMedalIcon = () => (
-  <svg className="badge-svg bronze" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" title="Top 5 Contributor">
-    <circle cx="12" cy="8" r="7" />
-    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
-  </svg>
-);
-
-const CapIcon = () => (
-  <svg className="badge-svg cap" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" title="Verified Mentor">
-    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
-  </svg>
-);
-
-const FireIcon = () => (
-  <svg className="badge-svg fire" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" title="Trending Contributor">
-    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
-  </svg>
-);
-
+// --- COMPONENT RENDER DANH HIỆU TỪ MANAGER ---
 const RenderBadges = ({ badges }) => {
+  if (!badges || !Array.isArray(badges) || badges.length === 0) {
+    return <span style={{ color: '#94A3B8', fontSize: '13px' }}>-</span>;
+  }
+
+  // Hàm so sánh chuẩn, không phân biệt hoa thường và khoảng trắng
+  const checkBadge = (badgeName) => {
+    return badges.some(b => b.trim() === badgeName.trim());
+  };
+
   return (
-    <div className="badges-list">
-      {badges.includes('gold') && <GoldMedalIcon />}
-      {badges.includes('silver') && <SilverMedalIcon />}
-      {badges.includes('bronze') && <BronzeMedalIcon />}
-      {badges.includes('cap') && <CapIcon />}
-      {badges.includes('fire') && <FireIcon />}
+    <div className="badges-list" style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+      {checkBadge('Trạng Nguyên Lượt Xem') && (
+        <span title="Trạng Nguyên Lượt Xem" style={{ background: '#E0F2FE', color: '#0369A1', padding: '4px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 'bold' }}>
+          👁️ Trạng Nguyên
+        </span>
+      )}
+      {checkBadge('Thần Toán Bài làm') && (
+        <span title="Thần Toán Bài làm" style={{ background: '#FEF3C7', color: '#B45309', padding: '4px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 'bold' }}>
+          📝 Thần Toán
+        </span>
+      )}
+      {checkBadge('Siêu phẩm hữu ích') && (
+        <span title="Siêu phẩm hữu ích" style={{ background: '#DCFCE7', color: '#15803D', padding: '4px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 'bold' }}>
+          📥 Siêu phẩm
+        </span>
+      )}
     </div>
   );
 };
 
+// --- DÒNG DỮ LIỆU CỦA CÁC SINH VIÊN ---
 const LeaderboardRow = ({ student }) => {
   const getRankClass = (rank) => {
     if (rank === 1) return 'rank-first';
@@ -55,87 +42,91 @@ const LeaderboardRow = ({ student }) => {
     return 'rank-normal';
   };
 
+  const isMe = student.currentUser;
+  const rowStyle = isMe 
+    ? { backgroundColor: '#F0FDF4', borderBottom: '2px solid #BBF7D0' } 
+    : { borderBottom: '1px solid #F1F5F9' };
+
   return (
-    <tr className="leaderboard-row">
-      <td className="rank-cell">
-        <span className={`rank-number ${getRankClass(student.rank)}`}>
-          {student.rank}
-        </span>
+    <tr style={rowStyle}>
+      <td style={{ padding: '16px' }}>
+        <span className={`rank-number ${getRankClass(student.rank)}`}>{student.rank}</span>
       </td>
-      <td className="student-cell">
-        <div className="student-info-wrapper">
-          <img src={student.avatar} alt={student.name} className="student-avatar" />
-          <div className="student-details">
-            <span className="student-name">{student.name}</span>
-            <span className="student-major">{student.major}</span>
+      
+      <td style={{ padding: '16px', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ position: 'relative', flexShrink: 0 }}>
+             <img src={getDirectImageUrl(student.avatar)} alt={student.name} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+             {isMe && <span style={{ position: 'absolute', bottom: 0, right: 0, width: '10px', height: '10px', backgroundColor: '#22C55E', borderRadius: '50%', border: '2px solid white' }}></span>}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: '600', color: isMe ? '#15803D' : '#1E293B' }}>
+              {student.name} {isMe && '(Bạn)'}
+            </span>
+            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '13px', color: '#64748B' }}>
+              {student.major}
+            </span>
           </div>
         </div>
       </td>
-      <td className="points-cell">
-        <span className="points-value">{student.points}</span>
+      
+      <td style={{ padding: '16px', verticalAlign: 'middle' }}>
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#3B82F6', fontWeight: '600' }}>
+            <span title="Total Views">👁️</span> <span style={{ fontSize: '15px' }}>{student.totalViews || 0}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#10B981', fontWeight: '600' }}>
+            <span title="Total Downloads">⬇️</span> <span style={{ fontSize: '15px' }}>{student.totalDownloads || 0}</span>
+          </div>
+          {/* ĐÃ KHÔI PHỤC: Số lượng bài Quiz */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#8B5CF6', fontWeight: '600' }}>
+            <span title="Quiz Attempts">📝</span> <span style={{ fontSize: '15px' }}>{student.totalQuizAttempts || 0}</span>
+          </div>
+        </div>
       </td>
-      <td className="badges-cell">
+
+      <td style={{ padding: '16px', verticalAlign: 'middle' }}>
+         <div style={{ color: '#F97316', fontWeight: 'bold', fontSize: '16px' }}>
+           {student.engagementScore?.toLocaleString()} pts
+         </div>
+      </td>
+      
+      <td style={{ padding: '16px', verticalAlign: 'middle' }}>
         <RenderBadges badges={student.badges} />
       </td>
     </tr>
   );
 };
 
-const UserRankRow = ({ user }) => {
-  return (
-    <div className="user-rank-row-container">
-      <div className="user-rank-left">
-        <span className="user-rank-number">{user.rank}</span>
-        <div className="user-profile">
-          <div className="user-avatar-wrapper">
-            <img src={user.avatar} alt={user.name} className="user-avatar" />
-            <span className="status-dot"></span>
-          </div>
-          <div className="user-info">
-            <span className="user-name">{user.name}</span>
-            <span className="user-trend">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="trend-arrow">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                <polyline points="17 6 23 6 23 12" />
-              </svg>
-              {user.rankTrend}
-            </span>
-          </div>
-        </div>
-      </div>
-      <div className="user-rank-right">
-        <div className="user-points-info">
-          <span className="user-points">{user.points}</span>
-          <span className="user-percentile">{user.percentile}</span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
+// --- BẢNG CHÍNH ---
 const LeaderboardTable = ({ data }) => {
-  const topStudents = data.filter(s => !s.currentUser);
-  const currentUserData = data.find(s => s.currentUser);
+  if (!data || data.length === 0) {
+    return (
+      <div style={{ padding: '40px', textAlign: 'center', color: '#64748B', backgroundColor: 'white', borderRadius: '16px' }}>
+        Chưa có dữ liệu tương tác trong khoảng thời gian này.
+      </div>
+    );
+  }
 
   return (
-    <div className="leaderboard-table-card">
-      <table className="leaderboard-table">
+    <div className="leaderboard-table-card" style={{ overflowX: 'hidden' }}>
+      <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse', display: 'table' }}>
         <thead>
-          <tr>
-            <th className="rank-th">Rank</th>
-            <th className="student-th">Student</th>
-            <th className="points-th">Points</th>
-            <th className="badges-th">Badges</th>
+          <tr style={{ borderBottom: '2px solid #E2E8F0' }}>
+            <th style={{ width: '8%', padding: '16px', textAlign: 'left', color: '#64748B', fontWeight: '600' }}>Rank</th>
+            <th style={{ width: '25%', padding: '16px', textAlign: 'left', color: '#64748B', fontWeight: '600' }}>Student</th>
+            {/* KHÔI PHỤC TIÊU ĐỀ: Stats (V/D/Q) */}
+            <th style={{ width: '25%', padding: '16px', textAlign: 'left', color: '#64748B', fontWeight: '600' }}>Stats (V/D/Q)</th> 
+            <th style={{ width: '12%', padding: '16px', textAlign: 'left', color: '#64748B', fontWeight: '600' }}>Score</th> 
+            <th style={{ width: '30%', padding: '16px', textAlign: 'left', color: '#64748B', fontWeight: '600' }}>Danh Vọng</th>
           </tr>
         </thead>
         <tbody>
-          {topStudents.map((student) => (
+          {data.map((student) => (
             <LeaderboardRow key={student.rank} student={student} />
           ))}
         </tbody>
       </table>
-
-      {currentUserData && <UserRankRow user={currentUserData} />}
     </div>
   );
 };

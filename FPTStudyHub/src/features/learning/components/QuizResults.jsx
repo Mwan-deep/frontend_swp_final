@@ -1,12 +1,11 @@
 import React from 'react';
 
-const QuizResults = ({ activeQuiz, userAnswers, onFinish }) => {
-  const totalQuestions = activeQuiz.questions.length;
-  let correctCount = 0;
-  activeQuiz.questions.forEach((q, idx) => {
-    if (userAnswers[idx] === q.correct) correctCount++;
-  });
-  const finalScore = Math.round((correctCount / totalQuestions) * 100);
+const QuizResults = ({ activeQuiz, gradedResult, onFinish, onRetake }) => {
+  const totalQuestions = activeQuiz.questions?.length || 0;
+  
+  const finalScore = gradedResult?.score || 0;
+  const wrongCount = gradedResult?.totalWrong || 0;
+  const correctCount = totalQuestions - wrongCount;
 
   return (
     <div className="secure-access-page-wrapper">
@@ -24,7 +23,7 @@ const QuizResults = ({ activeQuiz, userAnswers, onFinish }) => {
 
         <div className="results-summary-box">
           <div className="results-score-circle">
-            <span className="results-score-number">{finalScore}%</span>
+            <span className="results-score-number">{finalScore}</span>
             <span className="results-score-label">Score</span>
           </div>
           <div className="results-details-list">
@@ -38,18 +37,31 @@ const QuizResults = ({ activeQuiz, userAnswers, onFinish }) => {
             </div>
             <div className="results-detail-item">
               <span className="detail-label">Incorrect Answers</span>
-              <span className="detail-val text-danger">{totalQuestions - correctCount}</span>
+              <span className="detail-val text-danger">{wrongCount}</span>
             </div>
           </div>
         </div>
 
-        <button 
-          type="button" 
-          className="secure-submit-btn-full"
-          onClick={() => onFinish(finalScore)}
-        >
-          Return to Knowledge Check
-        </button>
+        {/* --- ĐÃ CẬP NHẬT: Tách làm 2 nút --- */}
+        <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+          <button 
+            type="button" 
+            className="secure-cancel-link"
+            style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid #E2E8F0', textDecoration: 'none', margin: 0 }}
+            onClick={() => onFinish(finalScore)}
+          >
+            Dashboard
+          </button>
+          <button 
+            type="button" 
+            className="secure-submit-btn-full"
+            style={{ flex: 1, margin: 0 }}
+            onClick={onRetake}
+          >
+            Retake Quiz
+          </button>
+        </div>
+
       </div>
     </div>
   );

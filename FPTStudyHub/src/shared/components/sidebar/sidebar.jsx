@@ -1,7 +1,7 @@
-
-import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import "./sidebar.css";
+import axiosClient from '../../../utils/axiosClient';
 import {
   LayoutDashboard,
   Folder,
@@ -16,21 +16,70 @@ import {
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const location = useLocation();
+  
+  // Logic kiểm tra đăng nhập: Cứ có token là tính đã đăng nhập!
+  const isLoggedIn = !!(localStorage.getItem('token') || localStorage.getItem('api_token') || localStorage.getItem('isLoggedIn') === 'true');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+  // --- LÍNH GÁC BẢO MẬT: CHỐNG NÚT BACK CỦA TRÌNH DUYỆT ---
+  useEffect(() => {
+    const enforceSecurity = () => {
+      const currentToken = localStorage.getItem('token') || localStorage.getItem('api_token');
+      // Nếu không có token (đã đăng xuất), ép văng ra trang login ngay lập tức
+      if (!currentToken) {
+        window.location.replace('/login');
+      }
+    };
+
+    // 1. Kiểm tra mỗi khi URL thay đổi
+    enforceSecurity();
+
+    // 2. Kiểm tra khi trình duyệt lôi trang từ RAM ra (Chống BFCache)
+    window.addEventListener('pageshow', enforceSecurity);
+    
+    // Dọn dẹp sự kiện
+    return () => {
+      window.removeEventListener('pageshow', enforceSecurity);
+    };
+  }, [location.pathname]);
+  
   const menuItems = [
     { id: 'dashboard', path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'documents', path: '/documents', label: 'Documents', icon: Folder },
     { id: 'ai-features', path: '/ai-features', label: 'AI Features', icon: Sparkles },
     { id: 'learning', path: '/learning', label: 'Learning', icon: BookOpen },
     { id: 'community', path: '/community', label: 'Community', icon: Users },
-    { id: 'my-quizzes', path: '/my-quizzes', label: 'My Quizzes', icon: HelpCircle }, // Thêm tab My Quizzes ở đây
+    { id: 'my-quizzes', path: '/my-quizzes', label: 'My Quizzes', icon: HelpCircle }, 
   ];
 
-  const handleConfirmLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    window.location.href = '/';
+  // --- HÀM XỬ LÝ ĐĂNG XUẤT CHUẨN ---
+  const handleConfirmLogout = async () => {
+    console.log("👉 [1] Đã xác nhận Logout từ Modal, bắt đầu tiến trình...");
+    
+    try {
+      const currentToken = localStorage.getItem('token') || localStorage.getItem('api_token');
+      
+      if (currentToken) {
+        console.log("👉 [2] Đang gọi API Logout xuống Backend...");
+        await axiosClient.post('/api/authen/logout', { 
+          token: currentToken 
+        });
+        console.log("✅ [3] Backend đã xác nhận hủy Token thành công!");
+      }
+    } catch (error) {
+      console.error("❌ Lỗi khi đăng xuất ở Backend:", error);
+    } finally {
+      console.log("👉 [4] Đang xóa sạch dữ liệu trình duyệt và thoát...");
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // Che giấu toàn bộ giao diện trước khi thoát
+      document.body.style.display = 'none'; 
+      
+      // ĐỔI TẠI ĐÂY: Sửa '/login' thành '/' để đá thẳng về trang chủ!
+      window.location.replace('/'); 
+    }
   };
 
   return (
@@ -70,7 +119,6 @@ const Sidebar = () => {
               <span>Settings</span>
             </NavLink>
 
-            {/* Chỉ hiển thị nút Logout khi đã đăng nhập */}
             {isLoggedIn && (
               <div
                 className="nav-item"
@@ -85,7 +133,6 @@ const Sidebar = () => {
         </div>
       </aside>
 
-      {/* ==================== LOGOUT MODAL ==================== */}
       {showLogoutModal && (
         <div className="modal-overlay" onClick={() => setShowLogoutModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>

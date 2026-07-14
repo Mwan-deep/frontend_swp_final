@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from "./layout/layout.jsx";
 import AdminLayout from "./layout/AdminLayout.jsx";
@@ -7,22 +7,33 @@ import { publicRoutes, adminRoutes, managerRoutes } from './routes/routesConfig'
 import Login from './features/auth/login/login';
 import Register from './features/auth/register/register';
 import ManagerLayout from "./layout/ManagerLayout.jsx";
+import DocumentDetail from './features/pages/DocumentDetail.jsx';
+import QuestionSetDetail from './features/pages/QuestionSetDetail.jsx';
+import useStudyTracker from './utils/useStudyTracker'
 
-// Hợp phần bảo vệ: Bắt buộc đăng nhập và kiểm tra quyền truy cập (Role)
+const isTokenExpired = (token) => {
+  if (!token) return true;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp * 1000 < Date.now();
+  } catch (e) {
+    return true; 
+  }
+};
+
 const RequireAuth = ({ children, allowedRole }) => {
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  // Mặc định là user nếu không có role
+  const token = localStorage.getItem('token');
+  const isValidLogin = token && !isTokenExpired(token); 
   let userRole = (localStorage.getItem('role') || 'user').toLowerCase();
-  if (userRole === 'student') userRole = 'user';
 
-  // Nếu chưa đăng nhập -> về trang login
-  if (!isLoggedIn) {
-    return <Navigate to="/login" replace />;
+  if (!isValidLogin) {
+    localStorage.clear();
+    sessionStorage.clear();
+    // ĐỔI TẠI ĐÂY: Navigate về '/'
+    return <Navigate to="/" replace />;
   }
 
-  // Nếu có yêu cầu về quyền (allowedRole) mà quyền hiện tại không khớp
   if (allowedRole && userRole !== allowedRole) {
-    // Điều hướng: Admin về admin, Manager về manager, User về dashboard
     if (userRole === 'admin') return <Navigate to="/admin" replace />;
     if (userRole === 'manager') return <Navigate to="/manager" replace />;
     return <Navigate to="/dashboard" replace />;
@@ -32,38 +43,58 @@ const RequireAuth = ({ children, allowedRole }) => {
 };
 
 function App() {
+  useStudyTracker();
+  
+  useEffect(() => {
+    const checkSecurity = () => {
+      const token = localStorage.getItem('token') || localStorage.getItem('api_token');
+      const path = window.location.pathname;
+      const isPublic = path === '/' || path.startsWith('/login') || path.startsWith('/register');
+
+      if ((!token || isTokenExpired(token)) && !isPublic) {
+        localStorage.clear();
+        sessionStorage.clear();
+        // ĐỔI TẠI ĐÂY: Đá thẳng về '/'
+        window.location.replace('/');
+      }
+    };
+
+    checkSecurity();
+    window.addEventListener('popstate', checkSecurity);
+    window.addEventListener('pageshow', (e) => { if (e.persisted) checkSecurity(); });
+    window.addEventListener('focus', checkSecurity);
+
+    return () => {
+      window.removeEventListener('popstate', checkSecurity);
+      window.removeEventListener('pageshow', checkSecurity);
+      window.removeEventListener('focus', checkSecurity);
+    };
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
-        {/* 1. Vào trang web là thấy ngay Landing Page độc lập */}
         <Route path="/" element={<LandingPage />} />
-
-        {/* 2. Đường dẫn /login độc lập không bọc trong Layout bảo mật */}
         <Route path="/login" element={<Login />} />
-
         <Route path="/register" element={<Register />} />
+        <Route path="/documents/:id" element={<DocumentDetail />} />
+        <Route path="/question-sets/:id" element={<QuestionSetDetail />} />
 
-        {/* 3. Layout bọc các trang dành cho USER */}
-
+        {/* Các trang dành cho USER */}
         <Route element={<Layout />}>
           {publicRoutes
-            .filter((route) => !route.noLayout) // Lọc bỏ các trang độc lập (Landing, Login)
+            .filter((route) => !route.noLayout)
             .map((route, index) => {
               const Page = route.component;
-
-
               const isDocumentsRoute = route.path.includes('documents');
-
               return (
                 <Route
                   key={`user-${index}`}
                   path={route.path}
                   element={
                     isDocumentsRoute ? (
-                      // Trang tài liệu cho phép truy cập tự do (Freemium)
                       <Page />
                     ) : (
-                      // Các trang khác của hệ thống bắt buộc là 'user' mới vào được
                       <RequireAuth allowedRole="user">
                         <Page />
                       </RequireAuth>
@@ -74,7 +105,7 @@ function App() {
             })}
         </Route>
 
-        {/* 4. Các trang dành riêng cho ADMIN (Có Layout riêng) */}
+        {/* Các trang dành cho ADMIN */}
         <Route element={<AdminLayout />}>
           {adminRoutes.map((route, index) => {
             const Page = route.component;
@@ -92,7 +123,7 @@ function App() {
           })}
         </Route>
 
-        {/* 5. Các trang dành riêng cho MANAGER (Có Layout riêng) */}
+        {/* Các trang dành cho MANAGER */}
         <Route element={<ManagerLayout />}>
           {managerRoutes.map((route, index) => {
             const Page = route.component;
@@ -110,7 +141,6 @@ function App() {
           })}
         </Route>
 
-        {/* 6. Chỉ chuyển hướng khi người dùng gõ bừa một đường dẫn hoàn toàn không tồn tại */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
@@ -118,4 +148,3 @@ function App() {
 }
 
 export default App;
-

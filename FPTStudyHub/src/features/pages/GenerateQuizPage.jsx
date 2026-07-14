@@ -1,136 +1,236 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
-import FilterBar from '../generate-quiz/components/FilterBar';
+import axiosClient from '../../utils/axiosClient';
+import { Search, Plus } from 'lucide-react'; 
+
 import QuestionTable from '../generate-quiz/components/QuestionTable';
 import ManualAddCard from '../generate-quiz/components/ManualAddCard';
 import AIGeneratorCard from '../generate-quiz/components/AIGeneratorCard';
 import Pagination from '../../shared/components/Pagination/Pagination'; 
 import EditQuestionModal from '../generate-quiz/components/EditQuestionModal'; 
 import CreateQuizModal from '../generate-quiz/components/CreateQuizModal'; 
-import { QUIZ_BANK_DATA } from '../../data/generate-quiz';
-import { MOCK_QUIZ_DATA } from '../../data/mockQuizzes'; 
 import './GenerateQuiz.css';
 
 const GenerateQuizPage = () => {
   const navigate = useNavigate();
+
+  const [allQuestions, setAllQuestions] = useState([]);
+  const [documents, setDocuments] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [selectedDocId, setSelectedDocId] = useState('all');
+
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 20;
-  const [activeTab, setActiveTab] = useState('manual');
-  const [tableData, setTableData] = useState(QUIZ_BANK_DATA);
-  
-  const [editingQuestion, setEditingQuestion] = useState(null);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
-  // Quản lý danh sách câu hỏi được tích chọn
+  const itemsPerPage = 8;
   const [selectedQuestionIds, setSelectedQuestionIds] = useState([]);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingQuestion, setEditingQuestion] = useState(null);
 
-  // Hàm xử lý khi tích chọn 1 câu hỏi
+  const [activeTab, setActiveTab] = useState('manual');
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      setIsLoading(true);
+      try {
+        const docRes = await axiosClient.get('/api/v1/question-sets');
+        const docsData = docRes.result || docRes.data || docRes || [];
+        setDocuments(docsData);
+
+        const qRes = await axiosClient.get('/api/v1/question-sets/questions');
+        const questionsData = qRes.result || qRes.data || qRes || [];
+
+        const formattedQuestions = questionsData.map(q => ({
+          id: q.questionId || q.id,
+          content: q.questionText || q.content,
+          subject: q.documentTitle || "Chung", 
+          docId: q.documentId || q.docId, 
+          difficulty: q.difficulty || "Medium",
+          created: q.createdAt ? new Date(q.createdAt).toLocaleDateString('en-GB') : 'N/A'
+        }));
+
+        setAllQuestions(formattedQuestions);
+      } catch (error) {
+        console.error("Lỗi lấy dữ liệu:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInitialData();
+  }, []);
+
+  const filteredQuestions = allQuestions.filter(q => {
+    const matchesSearch = q.content?.toLowerCase().includes(searchKeyword.toLowerCase());
+    const matchesDoc = selectedDocId === 'all' || q.docId?.toString() === selectedDocId?.toString();
+    return matchesSearch && matchesDoc;
+  });
+
+  const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = filteredQuestions.slice(startIndex, startIndex + itemsPerPage);
+
   const handleSelectQuestion = (id) => {
     setSelectedQuestionIds(prev => 
       prev.includes(id) ? prev.filter(qId => qId !== id) : [...prev, id]
     );
   };
 
-  // Hàm xử lý khi tích chọn "chọn tất cả" trên cùng
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedQuestionIds(tableData.map(q => q.id));
+      setSelectedQuestionIds(filteredQuestions.map(q => q.id));
     } else {
       setSelectedQuestionIds([]);
     }
   };
 
   const handleAddQuestion = (newQuestion) => {
-    setTableData([newQuestion, ...tableData]);
+    const formatted = {
+      id: newQuestion.questionId || newQuestion.id,
+      content: newQuestion.questionText || newQuestion.content,
+      subject: newQuestion.documentTitle || "Manual Input",
+      docId: "all",
+      difficulty: newQuestion.difficulty || "Medium",
+      created: new Date().toLocaleDateString('en-GB')
+    };
+    setAllQuestions([formatted, ...allQuestions]);
+  };
+
+  const handleAIGenerateSuccess = (newQuestions) => {
+    const formatted = newQuestions.map(q => ({
+      id: q.questionId,
+      content: q.questionText,
+      subject: "AI Free Prompt",
+      docId: "all",
+      difficulty: "Medium",
+      created: new Date().toLocaleDateString('en-GB')
+    }));
+    setAllQuestions([...formatted, ...allQuestions]);
+    setSelectedQuestionIds(prev => [...prev, ...formatted.map(q => q.id)]);
   };
 
   const handleDeleteQuestion = (id) => {
-    if (window.confirm("Are you sure you want to delete this question?")) {
-      setTableData(tableData.filter(question => question.id !== id));
+    if (window.confirm("Bạn có chắc chắn muốn xóa câu hỏi này không?")) {
+      setAllQuestions(allQuestions.filter(question => question.id !== id));
+      setSelectedQuestionIds(selectedQuestionIds.filter(qId => qId !== id));
     }
   };
 
   const handleEditQuestion = (id) => {
-    const questionToEdit = tableData.find(q => q.id === id);
+    const questionToEdit = allQuestions.find(q => q.id === id);
     setEditingQuestion(questionToEdit);
   };
 
   const handleSaveModal = (updatedQuestion) => {
-    setTableData(tableData.map(q => q.id === updatedQuestion.id ? updatedQuestion : q));
+    setAllQuestions(allQuestions.map(q => q.id === updatedQuestion.id ? updatedQuestion : q));
     setEditingQuestion(null); 
   };
 
-  // Hàm xử lý tạo Quiz sau khi điền xong Modal
-  const handleFinalCreateQuiz = (quizData) => {
-    // 1. CHUYỂN ĐỔI DỮ LIỆU CÂU HỎI TỪ BẢNG SANG ĐÚNG CHUẨN CỦA TRANG THI
-    const formattedQuestions = tableData
-      .filter(q => selectedQuestionIds.includes(q.id))
-      .map((q, index) => {
-        return {
-          id: index + 1, // Số thứ tự câu hỏi trong bài thi (1, 2, 3...)
-          text: q.content, // ĐỔI TÊN biến content thành text cho khớp
-          // Bơm 4 đáp án A B C D vào để lúc vô thi không bị lỗi văng màn hình
-          options: q.options && q.options.length > 0 ? q.options : ["Option A", "Option B", "Option C", "Option D"],
-          correct: 0, // Mặc định cho đáp án đầu tiên là đúng
-          hint: "This is an auto-generated question."
-        };
-      });
+  const handleFinalCreateQuiz = async (modalData) => {
+    if (selectedQuestionIds.length === 0) {
+      alert("Vui lòng chọn ít nhất 1 câu hỏi!");
+      return;
+    }
 
-    // 2. GÓI VÀO QUIZ MỚI
-    const newQuiz = {
-      id: `QZ-${Math.floor(Math.random() * 1000) + 1000}`,
-      code: 'NEW2026',
-      subject: 'Custom Generated',
-      difficulty: 'INTERMEDIATE',
-      title: quizData.title, 
-      description: quizData.description,
-      source: 'Generated from Question Bank',
-      questionsCount: formattedQuestions.length, 
-      questions: formattedQuestions, // Đưa mảng đã chuẩn form vào đây
-      attempts: 0,
-      averageScore: 0,
-      publishStatus: 'ready',
-      createdDate: new Date().toLocaleDateString('en-GB'),
-      duration: 15,
-      status: 'not-started',
-      accessMode: quizData.visibility, 
-      password: quizData.password, 
-    };
+    try {
+      const payload = {
+        title: modalData.title,
+        description: modalData.description,
+        durationMinutes: 15,
+        passScore: 50,
+        visibility: modalData.visibility.toUpperCase(),
+        questionIds: selectedQuestionIds 
+      };
 
-    MOCK_QUIZ_DATA.unshift(newQuiz); 
-    alert("Quiz created successfully!");
-    setIsCreateModalOpen(false); 
-    setSelectedQuestionIds([]); // Xóa tích sau khi tạo xong
-    navigate('/my-quizzes'); 
+      await axiosClient.post('/api/v1/quizzes/create', payload);
+
+      alert("Tuyệt vời! Đề thi đã được lưu vào hệ thống.");
+      setIsCreateModalOpen(false); 
+      setSelectedQuestionIds([]); 
+      
+      navigate('/question-sets'); 
+
+    } catch (error) {
+      console.error("Lỗi khi tạo bài thi:", error);
+      alert("Lưu đề thi thất bại. Vui lòng kiểm tra lại kết nối!");
+    }
   };
 
   return (
     <div className="generate-quiz-container">
+      
       <div className="gq-left-panel">
         
-        <FilterBar onCreateClick={() => {
-          if (selectedQuestionIds.length === 0) {
-            alert("Please select at least one question to create a quiz!");
-            return;
-          }
-          setIsCreateModalOpen(true);
-        }} />
-        
-        <QuestionTable 
-          data={tableData} 
-          onDelete={handleDeleteQuestion}
-          onEdit={handleEditQuestion}
-          selectedIds={selectedQuestionIds}
-          onSelect={handleSelectQuestion}
-          onSelectAll={handleSelectAll}
-        />
-        
-        <div style={{ marginTop: '16px' }}>
-          <Pagination 
-            currentPage={currentPage} 
-            totalPages={totalPages} 
-            onPageChange={(page) => setCurrentPage(page)} 
-          />
+        {/* THANH CÔNG CỤ ĐÃ ĐƯỢC LÀM SẠCH VÀ SỬ DỤNG CLASS CSS */}
+        <div className="gq-top-toolbar">
+          <div className="gq-toolbar-filters">
+            
+            <select 
+              className="gq-doc-select"
+              value={selectedDocId}
+              onChange={(e) => {
+                setSelectedDocId(e.target.value);
+                setCurrentPage(1);
+              }}
+            >
+              <option value="all">📚 Tất cả tài liệu</option>
+              {documents.map(doc => (
+                <option key={doc.id} value={doc.id}>{doc.title}</option>
+              ))}
+            </select>
+
+            <div className="gq-search-box">
+              <Search size={18} className="gq-search-icon" />
+              <input 
+                type="text" 
+                className="gq-search-input"
+                placeholder="Tìm kiếm nội dung câu hỏi..." 
+                value={searchKeyword}
+                onChange={(e) => {
+                  setSearchKeyword(e.target.value);
+                  setCurrentPage(1);
+                }}
+              />
+            </div>
+          </div>
+
+          <button 
+            className="gq-btn-create-quiz"
+            onClick={() => {
+              if (selectedQuestionIds.length === 0) {
+                alert("Bạn chưa chọn câu hỏi nào. Vui lòng tích chọn câu hỏi trước!");
+                return;
+              }
+              setIsCreateModalOpen(true);
+            }}
+          >
+            <Plus size={18} />
+            TẠO ĐỀ THI ({selectedQuestionIds.length})
+          </button>
+        </div>
+
+        <div style={{ backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '10px 0', minHeight: '60vh' }}>
+          {isLoading ? (
+            <p style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>Đang tải danh sách câu hỏi...</p>
+          ) : (
+            <>
+              <QuestionTable 
+                data={paginatedData} 
+                onDelete={handleDeleteQuestion}
+                onEdit={handleEditQuestion}
+                selectedIds={selectedQuestionIds}
+                onSelect={handleSelectQuestion}
+                onSelectAll={handleSelectAll}
+              />
+              <div style={{ marginTop: '16px', padding: '0 20px' }}>
+                <Pagination 
+                  currentPage={currentPage} 
+                  totalPages={totalPages} 
+                  onPageChange={(page) => setCurrentPage(page)} 
+                />
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -151,9 +251,9 @@ const GenerateQuizPage = () => {
         </div>
 
         {activeTab === 'manual' ? (
-          <ManualAddCard onSave={handleAddQuestion} />
+          <ManualAddCard onSaveSuccess={handleAddQuestion} />
         ) : (
-          <AIGeneratorCard />
+          <AIGeneratorCard onGenerateSuccess={handleAIGenerateSuccess} />
         )}
       </div>
 

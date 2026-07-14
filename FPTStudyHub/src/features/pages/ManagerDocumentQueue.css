@@ -1,18 +1,30 @@
+/* =========================================================
+   1. BỐ CỤC TỔNG (Đã fix lỗi tràn màn hình)
+========================================================= */
 .manager-document-queue {
   display: flex;
-  height: 100%;
+  /* Trừ đi chiều cao của Header để bảng không bị tràn xuống dưới */
+  height: calc(100vh - 80px); 
   width: 100%;
   background-color: #f8f9fa;
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
   overflow: hidden;
 }
 
+/* =========================================================
+   2. CỘT TRÁI - KHU VỰC BẢNG (Đã fix lỗi không cuộn được)
+========================================================= */
 .queue-main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   padding: 24px;
-  overflow-y: auto;
-  border-right: 1px solid #eaeaea;
+  overflow: hidden; /* Cực kỳ quan trọng: Giữ nội dung không phá vỡ khung */
 }
 
 .queue-header {
@@ -65,34 +77,16 @@
   color: #555;
 }
 
-.filter-group select {
-  padding: 8px 12px;
-  border: 1px solid #dcdcdc;
-  border-radius: 6px;
-  background-color: white;
-  min-width: 150px;
-  outline: none;
-  font-size: 14px;
-}
-
-.btn-filter-icon {
-  background: white;
-  border: 1px solid #dcdcdc;
-  border-radius: 6px;
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #555;
-}
-
+/* =========================================================
+   3. BẢNG TÀI LIỆU VÀ THANH CUỘN (Sticky Header)
+========================================================= */
 .queue-table-wrapper {
+  flex: 1;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  overflow: hidden;
+  border: 1px solid #eaeaea;
+  overflow-y: auto; /* Bật thanh cuộn dọc cho bảng */
+  min-height: 0;    /* Fix lỗi kẹt thanh cuộn trên Flexbox */
 }
 
 .queue-table {
@@ -106,12 +100,17 @@
   border-bottom: 1px solid #eaeaea;
 }
 
-.queue-table th {
-  background-color: #f8f9fa;
+/* Giữ tiêu đề bảng đứng yên khi cuộn chuột */
+.queue-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f8fafc;
   font-size: 13px;
   font-weight: 600;
   color: #666;
   text-transform: uppercase;
+  z-index: 10;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 .queue-table tbody tr {
@@ -176,9 +175,9 @@
   font-weight: 600;
 }
 
-.status-pill.reported {
-  background-color: #faeaea;
-  color: #d32f2f;
+.status-pill.pending {
+  background-color: #fef0db;
+  color: #d97706;
 }
 
 .status-pill.approved {
@@ -186,14 +185,20 @@
   color: #1e8e3e;
 }
 
-/* Details Panel */
+
+/* =========================================================
+   4. CỘT PHẢI - CHI TIẾT TÀI LIỆU
+========================================================= */
 .queue-details-panel {
   width: 400px;
   background-color: white;
   padding: 24px;
   display: flex;
   flex-direction: column;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
+  min-height: 0;
 }
 
 .details-header {
@@ -301,31 +306,14 @@
   border-radius: 50%;
 }
 
-.details-tags {
-  margin-bottom: 24px;
-}
 
-.tags-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.tag {
-  background-color: #e3f2fd;
-  color: #1976d2;
-  font-size: 12px;
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-weight: 500;
-}
-
+/* =========================================================
+   5. DANH SÁCH TỐ CÁO (REPORTS)
+========================================================= */
 .details-reports-box {
   background-color: #fff5f5;
   border: 1px solid #ffd4d4;
   border-radius: 8px;
-  padding: 16px;
   margin-bottom: 24px;
 }
 
@@ -336,7 +324,6 @@
   color: #d32f2f;
   font-weight: 600;
   font-size: 14px;
-  margin-bottom: 12px;
 }
 
 .reports-list {
@@ -345,20 +332,10 @@
   gap: 12px;
 }
 
-.report-item {
-  background-color: white;
-  border: 1px solid #ffd4d4;
-  padding: 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  color: #333;
-  line-height: 1.5;
-}
 
-.report-item p {
-  margin: 0;
-}
-
+/* =========================================================
+   6. CÁC NÚT HÀNH ĐỘNG 
+========================================================= */
 .details-action-buttons {
   margin-top: auto;
   display: flex;
@@ -418,4 +395,81 @@
 
 .btn-delete:hover {
   background-color: #b02323;
+}
+
+
+/* =========================================================
+   7. GIAO DIỆN NHẬP LÝ DO XÓA TÀI LIỆU
+========================================================= */
+.delete-reason-box {
+  display: flex;
+  flex-direction: column;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 16px;
+  border-radius: 8px;
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+.delete-reason-box textarea {
+  width: 100%;
+  height: 80px;
+  padding: 10px;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 14px;
+  margin-bottom: 12px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.delete-reason-box textarea:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.delete-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-cancel-delete {
+  background: transparent;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  flex: none !important; /* Ghi đè để nút không bị giãn dài */
+}
+
+.btn-cancel-delete:hover {
+  background: #f3f4f6;
+}
+
+.btn-confirm-delete {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  flex: none !important;
+}
+
+.btn-confirm-delete:hover {
+  background: #dc2626;
+}
+
+/* Hiệu ứng trượt xuống mượt mà khi bấm nút Xóa */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

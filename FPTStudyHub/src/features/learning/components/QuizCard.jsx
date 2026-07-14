@@ -20,38 +20,19 @@ const ClockIcon = () => (
 );
 
 const QuizCard = ({ quiz, onAction }) => {
-  const { id, subject, difficulty, title, source, questionsCount, duration, status, score, completedQuestions, accessMode } = quiz;
+  const { id, subject, title, source, questionsCount, duration, status, score, completedQuestions, accessMode } = quiz;
 
   const getSubjectClass = (subj) => {
-    switch (subj.toLowerCase()) {
-      case 'computer science':
-        return 'cs-theme';
-      case 'software engineering':
-        return 'se-theme';
-      case 'economics':
-        return 'eco-theme';
-      default:
-        return 'default-theme';
-    }
-  };
-
-  const getDifficultyClass = (diff) => {
-    switch (diff.toLowerCase()) {
-      case 'beginner':
-        return 'beginner-badge';
-      case 'intermediate':
-        return 'intermediate-badge';
-      case 'advanced':
-        return 'advanced-badge';
-      default:
-        return 'default-badge';
+    switch (subj?.toLowerCase()) {
+      case 'computer science': return 'cs-theme';
+      case 'software engineering': return 'se-theme';
+      case 'economics': return 'eco-theme';
+      default: return 'default-theme';
     }
   };
 
   return (
     <div className="quiz-grid-card">
-      
-      {/* Badges Header */}
       <div className="quiz-card-header-badges">
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <span className="quiz-card-id-badge">{id}</span>
@@ -63,16 +44,13 @@ const QuizCard = ({ quiz, onAction }) => {
               🔒 Private
             </span>
           )}
-          <span className={`quiz-badge-difficulty ${getDifficultyClass(difficulty)}`}>{difficulty}</span>
         </div>
       </div>
 
-      {/* Main Details */}
       <div className="quiz-card-main-content">
         <h3 className="quiz-card-title">{title}</h3>
         <p className="quiz-card-source">{source}</p>
         
-        {/* Specs List */}
         <div className="quiz-card-specs-row">
           <div className="quiz-spec-item">
             <QuestionDocIcon />
@@ -85,22 +63,33 @@ const QuizCard = ({ quiz, onAction }) => {
         </div>
       </div>
 
-      {/* Action / Status Footer Area */}
       <div className="quiz-card-action-footer">
         
+        {/* --- ĐÃ CẬP NHẬT: Thêm nút Retake cạnh Review --- */}
         {status === 'completed' && (
           <div className="quiz-status-details-block">
             <div className="quiz-score-row">
               <span className="score-label">Best Score</span>
-              <span className="score-value-text">{score}%</span>
+              <span className="score-value-text">{score} pts</span>
             </div>
-            <button 
-              type="button" 
-              className="quiz-card-btn review-btn"
-              onClick={() => onAction(id, 'review')}
-            >
-              Review Results
-            </button>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
+              <button 
+                type="button" 
+                className="quiz-card-btn review-btn"
+                style={{ flex: 1 }}
+                onClick={() => onAction(id, 'review')}
+              >
+                Review
+              </button>
+              <button 
+                type="button" 
+                className="quiz-card-btn take-quiz-btn"
+                style={{ flex: 1 }}
+                onClick={() => onAction(id, 'take')}
+              >
+                Retake
+              </button>
+            </div>
           </div>
         )}
 
@@ -142,7 +131,6 @@ const QuizCard = ({ quiz, onAction }) => {
         )}
 
       </div>
-
     </div>
   );
 };

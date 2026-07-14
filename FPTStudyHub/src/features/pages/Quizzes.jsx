@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Archive,
   CheckCircle,
@@ -7,46 +7,87 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom'; // Thêm useNavigate để điều hướng trang
+import { useNavigate } from 'react-router-dom';
+import axiosClient from '../../utils/axiosClient'; 
+
 import QuizStatsCard from '../quizzes/components/QuizStatsCard';
 import QuizFilter from '../quizzes/components/QuizFilter';
 import QuizTable from '../quizzes/components/QuizTable';
 import './Quizzes.css';
-
 
 import QuizIntro from '../learning/components/QuizIntro';
 import QuizResults from '../learning/components/QuizResults';
 import SecureQuizAuth from '../learning/components/SecureQuizAuth';
 import QuizTaking from '../learning/components/QuizTaking';
 
-
-import { INITIAL_QUIZZES } from "../../data/mockQuizzes";
-
-const MOCK_STATS_DATA = {
-  totalQuizzes: INITIAL_QUIZZES?.length || 0,
-  activeQuizzes: INITIAL_QUIZZES?.filter(q => q.status === 'active' || q.status === 'running').length || 0,
-  totalAttempts: 142
-};
-
 const Quizzes = () => {
-  const navigate = useNavigate(); // Khởi tạo hook navigate
-  const [quizzes, setQuizzes] = useState(INITIAL_QUIZZES || []);
+  const navigate = useNavigate();
+  
+  // --- STATE LƯU TRỮ DỮ LIỆU TỪ API ---
+  const [quizzes, setQuizzes] = useState([]);
+  const [totalAttempts, setTotalAttempts] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 3;
 
-  // --- THÊM STATE QUẢN LÝ TIẾN TRÌNH LUỒNG LÀM BÀI ---
+  // --- STATE QUẢN LÝ TIẾN TRÌNH LUỒNG LÀM BÀI ---
   const [activeQuiz, setActiveQuiz] = useState(null);
   const [quizFlowStage, setQuizFlowStage] = useState('list'); // 'list' | 'auth' | 'intro' | 'taking' | 'results'
-  const [userAnswers, setUserAnswers] = useState({});
+  const [gradedResult, setGradedResult] = useState(null);
 
+  // 1. TỰ ĐỘNG GỌI API KHI VÀO TRANG
+  useEffect(() => {
+    const fetchQuizzesAndStats = async () => {
+      try {
+        const myQuizzesRes = await axiosClient.get('/api/v1/quizzes/my-quizzes');
+        
+        // ĐÃ SỬA: Gọi API Bảng xếp hạng để lấy số lượt NGƯỜI KHÁC làm quiz của mình
+        const leaderboardRes = await axiosClient.get('/api/v1/community/leaderboard');
+
+        const quizzesData = myQuizzesRes.result || myQuizzesRes.data || myQuizzesRes || [];
+        const leaderboardData = leaderboardRes.result || leaderboardRes.data || leaderboardRes || [];
+
+        // Tìm số liệu thống kê của bản thân trong Bảng xếp hạng
+        const myLeaderboardStats = leaderboardData.find(user => user.currentUser === true);
+        const realTotalAttempts = myLeaderboardStats ? myLeaderboardStats.totalQuizAttempts : 0;
+
+        // Ép kiểu DTO Backend về chuẩn mà Bảng (Table) đang cần
+        const formattedQuizzes = quizzesData.map(q => ({
+          quizId: q.quizId, 
+          id: q.quizId,     
+          title: q.title || "Untitled Quiz",
+          code: q.visibility === 'PUBLIC' ? 'Public' : 'Private', 
+          questionsCount: q.quantity || 0,
+          status: 'ready', 
+          visibility: q.visibility, 
+          createdDate: q.createdAt ? new Date(q.createdAt).toLocaleDateString('en-GB') : 'N/A'
+        }));
+
+        setQuizzes(formattedQuizzes); 
+        
+        // ĐÃ SỬA: Cập nhật bằng đúng con số thực tế
+        setTotalAttempts(realTotalAttempts); 
+
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu quiz:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchQuizzesAndStats();
+  }, []);
+
+  // 2. LỌC DỮ LIỆU THEO TỪ KHÓA VÀ TRẠNG THÁI
   const filteredQuizzes = quizzes.filter(quiz => {
     const matchesSearch = (quiz.title?.toLowerCase().includes(searchQuery.toLowerCase()) || false) ||
-      (quiz.code?.toLowerCase().includes(searchQuery.toLowerCase()) || false);
+                          (quiz.quizId?.toString().includes(searchQuery.toLowerCase()) || false);
 
-    const quizPublishStatus = quiz.publishStatus || quiz.status;
-    const matchesStatus = selectedStatus === 'all' || quizPublishStatus === selectedStatus;
+    const quizStatus = quiz.visibility?.toLowerCase() || 'active';
+    const matchesStatus = selectedStatus === 'all' || quizStatus === selectedStatus;
 
     return matchesSearch && matchesStatus;
   });
@@ -55,51 +96,38 @@ const Quizzes = () => {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedQuizzes = filteredQuizzes.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  // --- KHI BẤM START BẮT ĐẦU LÀM BÀI THI ---
-  const handleStartQuiz = (id) => {
-    const quiz = quizzes.find(q => q.id === id);
-    if (!quiz) return;
+  // 3. TÍNH TOÁN STATS TỰ ĐỘNG
+  const statsData = {
+    totalQuizzes: quizzes.length,
+    activeQuizzes: quizzes.filter(q => q.visibility === 'PUBLIC' || q.status === 'ACTIVE').length,
+    totalAttempts: totalAttempts
+  };
 
-    // Chuẩn bị câu hỏi và cấu hình (để dự phòng nếu quiz chưa khai báo câu hỏi sẵn)
-    const quizWithQuestions = {
-      ...quiz,
-      questions: quiz.questions || [
-        {
-          id: 1,
-          text: "What is the time complexity of searching in a balanced Binary Search Tree (BST)?",
-          options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
-          correct: 1
-        },
-        {
-          id: 2,
-          text: "Which of the following data structures works on the Last In First Out (LIFO) principle?",
-          options: ["Queue", "Stack", "Tree", "Graph"],
-          correct: 1
-        }
-      ],
-      duration: quiz.duration || 15,
-      password: quiz.password || "1234"
-    };
+  // 4. KHI BẤM START: GỌI API LẤY ĐỀ THI VÀ CHUYỂN LUỒNG
+  const handleStartQuiz = async (id) => {
+    try {
+      const response = await axiosClient.get(`/api/v1/quizzes/${id}/take`);
+      const quizData = response.result || response.data || response;
 
-    setActiveQuiz(quizWithQuestions);
+      setActiveQuiz(quizData);
 
-    // Kiểm tra xem đề thi là Private (yêu cầu pass) hay Public
-    if (quiz.accessMode === 'private' || quiz.password) {
-      setQuizFlowStage('auth'); // Chuyển sang màn hình nhập password
-    } else {
-      setQuizFlowStage('intro'); // Chuyển trực tiếp sang màn hình Intro giới thiệu
+      if (quizData.visibility === 'PRIVATE' || quizData.password) {
+        setQuizFlowStage('auth'); 
+      } else {
+        setQuizFlowStage('intro'); 
+      }
+    } catch (error) {
+      console.error("Lỗi lấy đề thi:", error);
+      alert("Không thể tải đề thi. Vui lòng thử lại!");
     }
   };
 
-
-  // 🚨 ĐÃ SỬA CHỖ NÀY: Dùng navigate để điều hướng thay vì alert
   const handleShowStats = (id) => {
-    navigate('/analytics');
+    navigate(`/analytics/${id}`); 
   };
 
   const handleCreateNewQuiz = () => {
-    navigate('/question-sets');
-
+    navigate('/question-sets'); 
   };
 
   // --- CÁC HÀM XỬ LÝ CHUYỂN TIẾP TRẠNG THÁI THI ---
@@ -116,24 +144,52 @@ const Quizzes = () => {
     setQuizFlowStage('taking');
   };
 
-  const handleQuizSubmit = (answers) => {
-    setUserAnswers(answers);
-    setQuizFlowStage('results');
+  const handleQuizSubmit = (backendResult) => {
+    setGradedResult(backendResult); 
+    setQuizFlowStage('results'); 
   };
-
+  
   const handleQuizFinish = (score) => {
-    // Cập nhật điểm thi và đánh dấu hoàn thành cục bộ
-    const updatedQuizzes = quizzes.map(q =>
-      q.id === activeQuiz.id
-        ? { ...q, status: 'completed', score: score }
-        : q
-    );
-    setQuizzes(updatedQuizzes);
     setActiveQuiz(null);
     setQuizFlowStage('list');
   };
 
-  // --- HIỂN THỊ CÁC MÀN HÌNH THEO TIẾN TRÌNH LUỒNG LÀM BÀI ---
+  if (quizFlowStage === 'results' && activeQuiz) {
+    return (
+      <QuizResults
+        activeQuiz={activeQuiz}
+        gradedResult={gradedResult}
+        onFinish={handleQuizFinish}
+        onRetake={() => handleStartQuiz(activeQuiz.quizId || activeQuiz.id)}
+      />
+    );
+  }
+
+  const handleToggleVisibility = async (quizId, currentVisibility) => {
+    const newStatus = currentVisibility === 'PUBLIC' ? 'PRIVATE' : 'PUBLIC';
+    try {
+      await axiosClient.patch(`/api/v1/quizzes/${quizId}/visibility?status=${newStatus}`);
+      
+      setQuizzes(prevQuizzes => prevQuizzes.map(q => {
+        if (q.quizId === quizId) {
+          return {
+            ...q,
+            visibility: newStatus,
+            code: newStatus === 'PUBLIC' ? 'Public' : 'Private'
+          };
+        }
+        return q;
+      }));
+    } catch (error) {
+      console.error("Lỗi cập nhật trạng thái:", error);
+      alert("Không thể cập nhật trạng thái lúc này. Vui lòng thử lại!");
+    }
+  };
+
+  if (isLoading) {
+    return <div className="quizzes-dashboard-wrapper"><p style={{padding: '20px'}}>Đang tải dữ liệu bài thi...</p></div>;
+  }
+
   if (quizFlowStage === 'auth' && activeQuiz) {
     return (
       <SecureQuizAuth
@@ -167,7 +223,7 @@ const Quizzes = () => {
     return (
       <QuizResults
         activeQuiz={activeQuiz}
-        userAnswers={userAnswers}
+        gradedResult={gradedResult}
         onFinish={handleQuizFinish}
       />
     );
@@ -193,17 +249,17 @@ const Quizzes = () => {
           icon={Archive}
           badgeText="+12%"
           badgeType="success"
-          value={MOCK_STATS_DATA.totalQuizzes}
+          value={statsData.totalQuizzes}
           label="Total Quizzes"
           iconBg="#fef3c7"
           iconColor="#d97706"
         />
         <QuizStatsCard
           icon={CheckCircle}
-          badgeText="Running"
+          badgeText="Public"
           badgeType="success"
-          value={MOCK_STATS_DATA.activeQuizzes}
-          label="Active Quizzes"
+          value={statsData.activeQuizzes}
+          label="Public Quizzes" 
           iconBg="#dcfce7"
           iconColor="#15803d"
         />
@@ -211,7 +267,7 @@ const Quizzes = () => {
           icon={Users}
           badgeText="This Semester"
           badgeType="default"
-          value={MOCK_STATS_DATA.totalAttempts}
+          value={statsData.totalAttempts}
           label="Total Attempts"
           iconBg="#ffedd5"
           iconColor="#ea580c"
@@ -236,6 +292,7 @@ const Quizzes = () => {
           quizzes={paginatedQuizzes}
           onStart={handleStartQuiz}
           onStats={handleShowStats}
+          onToggleVisibility={handleToggleVisibility}
         />
 
         <div className="quizzes-table-footer">

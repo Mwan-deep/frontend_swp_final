@@ -1,7 +1,8 @@
 import React from 'react';
 import QuizTableRow from './QuizTableRow';
 
-const QuizTable = ({ quizzes, onStart, onStats }) => {
+// THÊM onToggleVisibility VÀO TRONG NGOẶC NHỌN Ở DÒNG NÀY:
+const QuizTable = ({ quizzes, onStart, onStats, onToggleVisibility }) => {
   return (
     <div className="quiz-table-container">
       <table className="quiz-data-table">
@@ -21,6 +22,7 @@ const QuizTable = ({ quizzes, onStart, onStats }) => {
                 quiz={quiz}
                 onStart={onStart}
                 onStats={onStats}
+                onToggleVisibility={onToggleVisibility} // Bây giờ biến này đã hợp lệ
               />
             ))
           ) : (

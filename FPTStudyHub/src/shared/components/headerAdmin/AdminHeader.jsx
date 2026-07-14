@@ -1,41 +1,103 @@
-import React from 'react';
-import { Search, Bell, History, ShieldCheck } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getDirectImageUrl } from '../../../utils/imageHelper';
+import axiosClient from '../../../utils/axiosClient';
 import './AdminHeader.css';
 
 const AdminHeader = () => {
   const navigate = useNavigate();
 
+  // =========================
+  // STATES
+  // =========================
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [fullName, setFullName] = useState('Admin');
+
+  // =========================
+  // LOAD PROFILE
+  // =========================
+  const loadProfile = async () => {
+    try {
+      const res = await axiosClient.get('/api/my-profile');
+
+      const data = res.result || res.data || res;
+
+      if (data) {
+        setAvatarUrl(data.avatarUrl || '');
+        setFullName(data.fullName || 'Admin');
+      }
+
+    } catch (err) {
+      console.error(
+        'Lỗi lấy profile admin:',
+        err
+      );
+    }
+  };
+
+  // =========================
+  // EFFECT
+  // =========================
+  useEffect(() => {
+    loadProfile();
+
+    // Event cập nhật avatar realtime
+    window.addEventListener(
+      'avatarUpdated',
+      loadProfile
+    );
+
+    return () => {
+      window.removeEventListener(
+        'avatarUpdated',
+        loadProfile
+      );
+    };
+  }, []);
+
   return (
     <header className="admin-header">
-      <div className="admin-header-search">
-        <Search size={18} className="admin-search-icon" />
-        <input
-          type="text"
-          placeholder="Global Admin Search..."
-          className="admin-search-input"
-        />
+
+      {/* =========================
+          LEFT
+      ========================== */}
+      <div className="admin-header-left">
+
+        <h2 className="admin-header-title">
+          Admin Dashboard
+        </h2>
+
+        <p className="admin-header-subtitle">
+          Quản trị và giám sát toàn bộ hệ thống
+        </p>
+
       </div>
 
-      <div className="admin-header-actions">
-        <button className="admin-icon-btn">
-          <Bell size={20} />
-          <span className="admin-notif-dot"></span>
-        </button>
-        <button className="admin-icon-btn">
-          <History size={20} />
-        </button>
-        <button className="admin-icon-btn">
-          <ShieldCheck size={20} />
-        </button>
-        <div className="header-profile" onClick={() => navigate('/admin/settings')}>
-          <img
-            src="https://ui-avatars.com/api/?name=Admin+Admin&background=random"
-            alt="Profile"
-            className="header-avatar"
-          />
-        </div>
+      {/* =========================
+          RIGHT
+      ========================== */}
+      <div
+        className="header-profile"
+        onClick={() => navigate('/admin/settings')}
+      >
+
+        <img
+          src={
+            avatarUrl
+              ? getDirectImageUrl(avatarUrl)
+              : `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random`
+          }
+          alt="Profile"
+          className="header-avatar"
+          referrerPolicy="no-referrer"
+          onError={(e) => {
+            e.target.src =
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random`;
+          }}
+        />
+
       </div>
+
     </header>
   );
 };

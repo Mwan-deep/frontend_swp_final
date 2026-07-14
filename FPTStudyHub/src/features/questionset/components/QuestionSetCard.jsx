@@ -1,6 +1,6 @@
 import React from 'react';
 
-const QuestionSetCard = ({ title, subject, totalQuestions, downloads, status, icon: Icon, iconColor, iconBg }) => {
+const QuestionSetCard = ({ title, subject, totalQuestions, icon: Icon, iconColor, iconBg }) => {
   return (
     <div className="qset-card">
       <div className="qset-card-header">
@@ -10,9 +10,7 @@ const QuestionSetCard = ({ title, subject, totalQuestions, downloads, status, ic
         >
           {Icon && <Icon size={20} />}
         </div>
-        <span className={`qset-status ${status.toLowerCase()}`}>
-          {status}
-        </span>
+        {/* Đã xóa badge status ở đây */}
       </div>
       
       <h3 className="qset-title">{title}</h3>
@@ -25,10 +23,7 @@ const QuestionSetCard = ({ title, subject, totalQuestions, downloads, status, ic
           <span className="qset-stat-label">Total Questions</span>
           <span className="qset-stat-value">{totalQuestions}</span>
         </div>
-        <div className="qset-stat-item">
-          <span className="qset-stat-label">Downloads</span>
-          <span className="qset-stat-value">{downloads}</span>
-        </div>
+        {/* Đã xóa phần hiển thị lượt Downloads ở đây */}
       </div>
     </div>
   );

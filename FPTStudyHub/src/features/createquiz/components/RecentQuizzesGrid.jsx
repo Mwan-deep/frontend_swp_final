@@ -3,6 +3,8 @@ import { HelpCircle } from 'lucide-react';
 
 const RecentQuizzesGrid = ({ recentQuizzes, onViewAll }) => {
   const getBadgeClass = (status) => {
+    if (!status) return 'recent-badge';
+
     switch (status.toLowerCase()) {
       case 'ready':
         return 'recent-badge badge-ready';
@@ -32,7 +34,8 @@ const RecentQuizzesGrid = ({ recentQuizzes, onViewAll }) => {
                 <HelpCircle size={20} className="recent-icon" />
               </div>
               <span className={getBadgeClass(quiz.status)}>
-                {quiz.status.toUpperCase()}
+                {/* THÊM CHECK AN TOÀN TRƯỚC KHI toUpperCase() */}
+                {quiz.status ? quiz.status.toUpperCase() : 'UNKNOWN'}
               </span>
             </div>
             
@@ -40,10 +43,12 @@ const RecentQuizzesGrid = ({ recentQuizzes, onViewAll }) => {
             
             <div className="recent-card-footer">
               <span className="recent-footer-text">
-                {quiz.questionsCount !== null ? `${quiz.questionsCount} questions` : '-- questions'}
+                {quiz.questionsCount !== null && quiz.questionsCount !== undefined 
+                  ? `${quiz.questionsCount} questions` 
+                  : '-- questions'}
               </span>
               <span className="recent-footer-dot">•</span>
-              <span className="recent-footer-text">{quiz.timeAgo}</span>
+              <span className="recent-footer-text">{quiz.timeAgo || 'N/A'}</span>
             </div>
           </div>
         ))}

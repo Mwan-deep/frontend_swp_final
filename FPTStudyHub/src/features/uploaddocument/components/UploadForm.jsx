@@ -1,55 +1,85 @@
-/* UploadForm.jsx */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
-import { MAJORS_DATA, SEMESTERS } from '../../../data/uploaddocument';
 
 const UploadForm = ({ formData, onChange }) => {
-  const [selectedMajor, setSelectedMajor] = useState('');
-  const [specsList, setSpecsList] = useState([]);
+  const [majors, setMajors] = useState([]);
+  const [specializations, setSpecializations] = useState([]);
+  const [semesters, setSemesters] = useState([]);
 
-  const handleMajorChange = (e) => {
-    const major = e.target.value;
-    setSelectedMajor(major);
-    setSpecsList(MAJORS_DATA[major] || []);
-    onChange('major', major);
-    onChange('specialization', ''); // Reset specialization khi đổi major
+  // Lấy danh sách Semesters và Majors khi component vừa render
+  useEffect(() => {
+    const fetchMasterData = async () => {
+      try {
+        const token = localStorage.getItem('token'); // Đảm bảo bạn lưu token ở localStorage
+        const headers = { 'Authorization': `Bearer ${token}` };
+
+        // Lấy Semesters
+        const semRes = await fetch('http://localhost:8080/api/v1/master-data/semesters', { headers });
+        if (semRes.ok) setSemesters(await semRes.json());
+
+        // Lấy Majors
+        const majRes = await fetch('http://localhost:8080/api/v1/master-data/majors', { headers });
+        if (majRes.ok) setMajors(await majRes.json());
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu master:", error);
+      }
+    };
+    fetchMasterData();
+  }, []);
+
+  // Xử lý khi người dùng chọn Ngành học (Major)
+  const handleMajorChange = async (e) => {
+    const majorId = e.target.value;
+    onChange('majorId', majorId);
+    onChange('specializationId', ''); // Reset chuyên ngành hẹp
+    setSpecializations([]); // Xóa list cũ
+
+    if (majorId) {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`http://localhost:8080/api/v1/master-data/majors/${majorId}/specializations`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) setSpecializations(await res.json());
+      } catch (error) {
+        console.error("Lỗi khi tải chuyên ngành:", error);
+      }
+    }
   };
 
   return (
     <div className="upload-form-fields">
       
-      {/* Major field */}
       <div className="upload-form-group">
         <label className="upload-input-label">Major</label>
         <select 
           className="upload-select" 
-          value={formData.major} 
+          value={formData.majorId} 
           onChange={handleMajorChange}
         >
           <option value="">Select Major</option>
-          {Object.keys(MAJORS_DATA).map((major, idx) => (
-            <option key={idx} value={major}>{major}</option>
+          {majors.map((major) => (
+            // Dùng majorId làm value thay vì tên
+            <option key={major.majorId} value={major.majorId}>{major.majorName}</option>
           ))}
         </select>
       </div>
 
-      {/* Specialization field */}
       <div className="upload-form-group">
         <label className="upload-input-label">Specialization</label>
         <select 
           className="upload-select" 
-          value={formData.specialization} 
-          disabled={!selectedMajor}
-          onChange={(e) => onChange('specialization', e.target.value)}
+          value={formData.specializationId} 
+          disabled={!formData.majorId}
+          onChange={(e) => onChange('specializationId', e.target.value)}
         >
           <option value="">Select Specialization</option>
-          {specsList.map((spec, idx) => (
-            <option key={idx} value={spec}>{spec}</option>
+          {specializations.map((spec) => (
+            <option key={spec.specializationId} value={spec.specializationId}>{spec.specializationName}</option>
           ))}
         </select>
       </div>
 
-      {/* Subject field */}
       <div className="upload-form-group">
         <label className="upload-input-label">Subject</label>
         <div className="upload-input-wrapper">
@@ -57,8 +87,8 @@ const UploadForm = ({ formData, onChange }) => {
             type="text" 
             className="upload-input" 
             placeholder="Search by course code..."
-            value={formData.subject}
-            onChange={(e) => onChange('subject', e.target.value)}
+            value={formData.subjectName}
+            onChange={(e) => onChange('subjectName', e.target.value)}
           />
           <Search size={18} className="upload-input-icon" />
         </div>
@@ -69,17 +99,18 @@ const UploadForm = ({ formData, onChange }) => {
         <label className="upload-input-label">Semester</label>
         <select 
           className="upload-select" 
-          value={formData.semester} 
-          onChange={(e) => onChange('semester', e.target.value)}
+          value={formData.semesterId} 
+          onChange={(e) => onChange('semesterId', e.target.value)}
         >
           <option value="">Select Semester</option>
-          {SEMESTERS.map((sem, idx) => (
-            <option key={idx} value={sem}>{sem}</option>
+          {semesters.map((sem) => (
+            <option key={sem.semesterId} value={sem.semesterId}>
+              {sem.displayName} {/* Hiển thị tên đã ghép: "Spring 2026" */}
+            </option>
           ))}
         </select>
       </div>
 
-      {/* Title field */}
       <div className="upload-form-group form-group-full">
         <label className="upload-input-label">Title</label>
         <input 
@@ -91,7 +122,6 @@ const UploadForm = ({ formData, onChange }) => {
         />
       </div>
 
-      {/* Description field */}
       <div className="upload-form-group form-group-full">
         <label className="upload-input-label">Description</label>
         <textarea 

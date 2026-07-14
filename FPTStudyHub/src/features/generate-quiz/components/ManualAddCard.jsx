@@ -1,63 +1,67 @@
 import React, { useState } from 'react';
-import { FileText, Plus, X } from 'lucide-react';
+import { FileText, Plus, X, Loader2 } from 'lucide-react';
+import axiosClient from '../../../utils/axiosClient';
 
-const ManualAddCard = ({ onSave }) => { // Nhận prop onSave từ trang cha
-  // State quản lý dữ liệu người dùng nhập
+const ManualAddCard = ({ onSaveSuccess }) => {
   const [questionText, setQuestionText] = useState('');
   const [subject, setSubject] = useState('Java Programming');
   const [difficulty, setDifficulty] = useState('Easy');
   
+  // State xịn hơn: Lưu luôn nội dung text và cờ đúng/sai
   const [options, setOptions] = useState([
-    { id: 1, placeholder: 'Option A' },
-    { id: 2, placeholder: 'Option B' }
+    { id: 1, text: '', isCorrect: true },
+    { id: 2, text: '', isCorrect: false },
+    { id: 3, text: '', isCorrect: false },
+    { id: 4, text: '', isCorrect: false }
   ]);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleAddOption = () => {
-    const newId = options.length > 0 ? Math.max(...options.map(o => o.id)) + 1 : 1;
-    const nextLetter = String.fromCharCode(65 + options.length);
-    setOptions([...options, { id: newId, placeholder: `Option ${nextLetter}` }]);
+  const handleOptionChange = (id, newText) => {
+    setOptions(options.map(opt => opt.id === id ? { ...opt, text: newText } : opt));
   };
 
-  const handleRemoveOption = (id) => {
-    if (options.length > 2) {
-      setOptions(options.filter(o => o.id !== id));
-    }
+  const setCorrectOption = (id) => {
+    setOptions(options.map(opt => ({ ...opt, isCorrect: opt.id === id })));
   };
 
-  const handleSave = () => {
-    if (!questionText.trim()) {
-      alert("Please enter the question text!");
+  const handleSave = async () => {
+    if (!questionText.trim() || options.some(o => !o.text.trim())) {
+      alert("Vui lòng điền đầy đủ câu hỏi và các đáp án!");
       return;
     }
 
-    // 1. Tạo một object câu hỏi mới khớp với cấu trúc bảng
-    const newQuestion = {
-      id: `QB-${Math.floor(Math.random() * 1000) + 2000}`, // Random ID ví dụ: QB-2451
-      content: questionText,
-      subject: subject,
-      difficulty: difficulty.toUpperCase(),
-      created: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      status: 'active'
-    };
+    setIsSaving(true);
+    try {
+      const payload = {
+        content: questionText,
+        subject: subject,
+        difficulty: difficulty.toUpperCase(),
+        options: options.map(opt => ({ text: opt.text, isCorrect: opt.isCorrect }))
+      };
 
-    // 2. Truyền câu hỏi mới này cho trang cha (GenerateQuizPage) để nó cập nhật bảng
-    if (onSave) {
-      onSave(newQuestion);
+      // Gọi API lưu xuống Database
+      const response = await axiosClient.post('/api/v1/question-sets/questions/create', payload);
+      const savedQuestion = response.result || response.data;
+
+      if (onSaveSuccess) {
+        onSaveSuccess(savedQuestion); // Bắn câu hỏi thật (có ID thật) ra bảng
+      }
+
+      alert("Lưu câu hỏi thành công!");
+      setQuestionText('');
+      setOptions(options.map((opt, i) => ({ ...opt, text: '', isCorrect: i === 0 })));
+    } catch (error) {
+      console.error(error);
+      alert("Lỗi lưu câu hỏi!");
+    } finally {
+      setIsSaving(false);
     }
-
-    alert("Question added to the bank successfully!");
-    
-    // 3. Xóa trắng form sau khi lưu
-    setQuestionText('');
-    setOptions([{ id: 1, placeholder: 'Option A' }, { id: 2, placeholder: 'Option B' }]);
   };
 
   return (
     <div className="gq-card">
       <div className="gq-card-header">
-        <div className="gq-card-icon manual">
-          <FileText size={20} />
-        </div>
+        <div className="gq-card-icon manual"><FileText size={20} /></div>
         <h3 className="gq-card-title">Add Question Manually</h3>
       </div>
       
@@ -72,21 +76,25 @@ const ManualAddCard = ({ onSave }) => { // Nhận prop onSave từ trang cha
       </div>
 
       <div className="gq-input-group">
-        <label className="gq-label">Options</label>
-        {options.map((opt) => (
-          <div className="gq-option-row" key={opt.id}>
-            <input type="radio" name="correct_opt" />
-            <input type="text" className="gq-input" placeholder={opt.placeholder} />
-            {options.length > 2 && (
-              <button className="gq-btn-remove-opt" onClick={() => handleRemoveOption(opt.id)}>
-                <X size={16} />
-              </button>
-            )}
+        <label className="gq-label">Options (Tick the correct answer)</label>
+        {options.map((opt, index) => (
+          <div className="gq-option-row" key={opt.id} style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '8px' }}>
+            <input 
+              type="radio" 
+              name="manual_correct_opt" 
+              checked={opt.isCorrect}
+              onChange={() => setCorrectOption(opt.id)}
+              style={{ cursor: 'pointer' }}
+            />
+            <input 
+              type="text" 
+              className="gq-input" 
+              placeholder={`Option ${String.fromCharCode(65 + index)}`} 
+              value={opt.text}
+              onChange={(e) => handleOptionChange(opt.id, e.target.value)}
+            />
           </div>
         ))}
-        <button className="gq-btn-add-opt" onClick={handleAddOption}>
-          <Plus size={14} /> Add Option
-        </button>
       </div>
 
       <div className="gq-row-2">
@@ -108,7 +116,9 @@ const ManualAddCard = ({ onSave }) => { // Nhận prop onSave từ trang cha
         </div>
       </div>
 
-      <button className="gq-btn-save" onClick={handleSave}>Save Question</button>
+      <button className="gq-btn-save" onClick={handleSave} disabled={isSaving}>
+        {isSaving ? "Saving..." : "Save Question"}
+      </button>
     </div>
   );
 };

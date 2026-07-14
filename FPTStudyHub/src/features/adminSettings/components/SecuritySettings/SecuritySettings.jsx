@@ -1,61 +1,68 @@
 import React, { useState } from 'react';
 import { Laptop, Smartphone, Eye, EyeOff } from 'lucide-react';
-import { adminSettings, accounts } from '../../../../data/mockDocuments';
+import axiosClient from '../../../../utils/axiosClient';
 import './SecuritySettings.css';
 
 const SecuritySettings = () => {
-  const [security, setSecurity] = useState({ ...adminSettings.security });
   const [passwords, setPasswords] = useState({ current: '', new: '', confirm: '' });
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  
+  // States mô phỏng cho các tính năng chưa có Backend
+  const [security, setSecurity] = useState({ twoFactorEnabled: false, notifications: { loginAlerts: true, passwordChange: true } });
   const [isSavingNotifications, setIsSavingNotifications] = useState(false);
 
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const adminUser = accounts.find(u => u.role === 'admin') || accounts[2];
-
-  const handlePasswordUpdate = () => {
+  // GỌI API ĐỔI MẬT KHẨU (Đã fix lỗi URL và Method)
+  const handlePasswordUpdate = async () => {
     if (!passwords.current || !passwords.new || !passwords.confirm) {
-      alert('Please fill in all password fields.');
-      return;
-    }
-    if (passwords.current !== adminUser.password) {
-      alert('Current password is incorrect.');
+      alert('Vui lòng điền đầy đủ các ô mật khẩu!');
       return;
     }
     if (passwords.new !== passwords.confirm) {
-      alert('New password and confirm password do not match.');
+      alert('Mật khẩu mới và Nhập lại mật khẩu không khớp!');
       return;
     }
+
     setIsUpdatingPassword(true);
-    setTimeout(() => {
-      adminUser.password = passwords.new;
+    try {
+      // 1. Dùng POST
+      // 2. Đường dẫn là /change_password (có gạch dưới)
+      // 3. Gửi thêm confirmNewPassword
+      await axiosClient.post('/api/account/change_password', {
+        oldPassword: passwords.current,
+        newPassword: passwords.new,
+        confirmNewPassword: passwords.confirm
+      });
+      
+      alert('Mật khẩu của bạn đã được cập nhật thành công!');
+      setPasswords({ current: '', new: '', confirm: '' }); // Xóa trắng form
+    } catch (error) {
+      alert(error.response?.data?.message || 'Mật khẩu cũ không chính xác hoặc có lỗi xảy ra!');
+    } finally {
       setIsUpdatingPassword(false);
-      setPasswords({ current: '', new: '', confirm: '' });
-      alert('Password updated successfully!');
-    }, 600);
+    }
   };
 
   const handleToggle2FA = () => {
-    const newVal = !security.twoFactorEnabled;
-    setSecurity(prev => ({ ...prev, twoFactorEnabled: newVal }));
-    adminSettings.security.twoFactorEnabled = newVal;
-    alert(`Two-Factor Authentication has been ${newVal ? 'enabled' : 'disabled'}.`);
+    setSecurity(prev => ({ ...prev, twoFactorEnabled: !prev.twoFactorEnabled }));
+    alert('Tính năng 2FA hiện tại đang chạy ở chế độ Demo.');
   };
 
   const handleNotificationChange = (field) => {
-    const newVal = !security.notifications[field];
-    const newNotifications = { ...security.notifications, [field]: newVal };
-    setSecurity(prev => ({ ...prev, notifications: newNotifications }));
+    setSecurity(prev => ({ 
+      ...prev, 
+      notifications: { ...prev.notifications, [field]: !prev.notifications[field] } 
+    }));
   };
 
   const handleSaveNotifications = () => {
     setIsSavingNotifications(true);
     setTimeout(() => {
-      adminSettings.security.notifications = { ...security.notifications };
       setIsSavingNotifications(false);
-      alert('Security notification preferences saved!');
+      alert('Đã lưu tùy chọn thông báo thành công (Demo)!');
     }, 600);
   };
 
@@ -127,26 +134,8 @@ const SecuritySettings = () => {
           </div>
         </div>
         
-        <button 
-          className="btn-primary-small" 
-          onClick={handlePasswordUpdate}
-          disabled={isUpdatingPassword}
-        >
+        <button className="btn-primary-small" onClick={handlePasswordUpdate} disabled={isUpdatingPassword}>
           {isUpdatingPassword ? 'Updating...' : 'Update Password'}
-        </button>
-      </div>
-
-      {/* Two-Factor Authentication */}
-      <div className="security-section split-section">
-        <div className="split-content">
-          <h3 className="settings-sub-title">Two-Factor Authentication</h3>
-          <p className="settings-desc mb-0">Add an extra layer of security to your account.</p>
-        </div>
-        <button 
-          className={`btn-secondary-light ${security.twoFactorEnabled ? 'active' : ''}`}
-          onClick={handleToggle2FA}
-        >
-          {security.twoFactorEnabled ? 'Disable 2FA' : 'Enable 2FA'}
         </button>
       </div>
 
@@ -162,56 +151,9 @@ const SecuritySettings = () => {
             </div>
             <div className="session-info">
               <h4 className="session-title">MacBook Pro • Chrome</h4>
-              <p className="session-meta">Ho Chi Minh City, Vietnam • Current Session</p>
+              <p className="session-meta">Current Session</p>
             </div>
           </div>
-          
-          <div className="session-item">
-            <div className="session-icon">
-              <Smartphone size={20} />
-            </div>
-            <div className="session-info">
-              <h4 className="session-title">iPhone 15 Pro • App</h4>
-              <p className="session-meta">Hanoi, Vietnam • 2 hours ago</p>
-            </div>
-            <button className="btn-text-danger">Log out</button>
-          </div>
-        </div>
-      </div>
-
-      {/* Security Notifications */}
-      <div className="security-section no-border">
-        <h3 className="settings-sub-title">Security Notifications</h3>
-        <p className="settings-desc">Control how you receive security alerts.</p>
-        
-        <div className="notification-list">
-          <label className="notification-item">
-            <input 
-              type="checkbox" 
-              checked={security.notifications.loginAlerts}
-              onChange={() => handleNotificationChange('loginAlerts')}
-              className="mr-2"
-            />
-            <span className="notification-label">Login alerts</span>
-          </label>
-          <label className="notification-item">
-            <input 
-              type="checkbox" 
-              checked={security.notifications.passwordChange}
-              onChange={() => handleNotificationChange('passwordChange')}
-              className="mr-2"
-            />
-            <span className="notification-label">Password change notifications</span>
-          </label>
-        </div>
-        <div className="settings-footer mt-16">
-          <button 
-            className="btn-save" 
-            onClick={handleSaveNotifications}
-            disabled={isSavingNotifications}
-          >
-            {isSavingNotifications ? 'Saving...' : 'Save Preferences'}
-          </button>
         </div>
       </div>
     </div>

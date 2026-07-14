@@ -1,25 +1,87 @@
-import React from 'react';
-import { Calendar, MoreHorizontal } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calendar, MoreHorizontal, FileText, Clock, TrendingUp } from 'lucide-react';
 import './Dashboard.css';
 
-// Import chính xác các component con từ thư mục '../dashboard/components/'
 import StatCard from '../dashboard/components/StatCard';
 import ProgressCard from '../dashboard/components/ProgressCard';
 import ActivityList from '../dashboard/components/ActivityList';
 import AiSuggestions from '../dashboard/components/AiSuggestions';
 
-// Import dữ liệu dashboardStats từ mockDocuments
-import { dashboardStats } from "../../data/mockDocuments";
+import axiosClient from '../../utils/axiosClient';
+import { parseJwt } from '../../service/authService';
 
 const Dashboard = () => {
-  const formattedDate = "October 24, 2023";
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState("Student");
+
+  // Format ngày tháng hiện tại (VD: October 24, 2023)
+  const formattedDate = new Intl.DateTimeFormat('en-US', {
+    month: 'long', day: 'numeric', year: 'numeric'
+    
+  }).format(new Date());
+
+  useEffect(() => {
+    // 1. Lấy tên user từ Token
+    const token = localStorage.getItem('token');
+    if (token) {
+      const payload = parseJwt(token);
+      if (payload?.name) setUserName(payload.name);
+      else if (payload?.sub) setUserName(payload.sub.split('@')[0]);
+    }
+
+    // 2. Gọi API lấy dữ liệu Dashboard (Backend tự động lấy ID qua SecurityContext)
+    const fetchDashboardData = async () => {
+      try {
+        const response = await axiosClient.get(`/api/v1/dashboard/summary`);
+        setData(response.result);
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu dashboard:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (loading) {
+    return <div className="dashboard-container"><p style={{ padding: '20px' }}>Đang tải dữ liệu...</p></div>;
+  }
+
+  // --- HÀM TÍNH TOÁN ĐỘ THỊ ĐƯỜNG (SVG LINE CHART) TỰ ĐỘNG ---
+  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  // Trục Y của SVG chạy từ 10 (Max) đến 170 (Min)
+  const MAX_MINUTES = 240;
+
+  const points = daysOfWeek.map((day, index) => {
+    const minutes = data?.weeklyActivity?.[day] || 0;
+    const y = 170 - (Math.min(minutes, MAX_MINUTES) / MAX_MINUTES) * 160;
+    return { x: 40 + index * 90, y: y };
+  });
+
+  // Tạo chuỗi tọa độ nét cong mượt (Bezier Curve)
+  let linePath = `M ${points[0].x},${points[0].y}`;
+  for (let i = 1; i < points.length; i++) {
+    const prev = points[i - 1];
+    const curr = points[i];
+    const cx = (prev.x + curr.x) / 2;
+    linePath += ` C ${cx},${prev.y} ${cx},${curr.y} ${curr.x},${curr.y}`;
+  }
+
+  const fillPath = `${linePath} L 580,170 L 40,170 Z`;
+
+  // --- HÀM TÍNH TOÁN BIỂU ĐỒ CỘT (BAR CHART) TỰ ĐỘNG ---
+  const uploads = data?.monthlyUploadsPerWeek || [0, 0, 0, 0];
+  const maxUpload = Math.max(...uploads, 1);
 
   return (
     <div className="dashboard-container">
       {/* Welcome Banner */}
       <div className="welcome-banner">
         <div className="welcome-text">
-          <h1>Welcome back, <span className="highlight">Alex</span>!</h1>
+          <h1>Welcome back, <span className="highlight">{userName}</span>!</h1>
           <p>Ready to study and make progress today?</p>
         </div>
         <div className="welcome-date">
@@ -30,17 +92,24 @@ const Dashboard = () => {
 
       {/* Stats Grid */}
       <div className="stats-grid">
-        {/* Render danh sách chỉ số động bằng cách map qua dashboardStats */}
-        {dashboardStats.map((item, index) => (
-          <StatCard
-            key={index}
-            icon={item.icon}
-            value={item.value}
-            label={item.label}
-            iconBgClass={item.iconBgClass}
-          />
-        ))}
-
+        <StatCard
+          icon={FileText}
+          value={data?.totalDocuments || 0}
+          label="Total Documents"
+          iconBgClass="bg-orange-light"
+        />
+        <StatCard
+          icon={Clock}
+          value={`${Math.floor((data?.totalStudyMinutes || 0) / 60)}h ${(data?.totalStudyMinutes || 0) % 60}m`}
+          label="Study Time"
+          iconBgClass="bg-blue-light"
+        />
+        <StatCard
+          icon={TrendingUp}
+          value={`${data?.monthlyGrowthPercentage || 0}%`}
+          label="Monthly Growth"
+          iconBgClass="bg-green-light"
+        />
       </div>
 
       {/* Grid Đồ thị & Hoạt động */}
@@ -81,31 +150,23 @@ const Dashboard = () => {
                   <text x="15" y="175">0</text>
                 </g>
 
-                <path
-                  d="M 40,138 C 90,120 100,82 130,82 C 160,82 190,105 220,98 C 250,90 280,122 310,122 C 340,122 370,22 400,22 C 430,22 460,130 490,130 C 520,130 550,30 580,30 L 580,170 L 40,170 Z"
-                  fill="url(#chartGradient)"
-                />
+                <path d={fillPath} fill="url(#chartGradient)" />
 
                 <path
-                  d="M 40,138 C 90,120 100,82 130,82 C 160,82 190,105 220,98 C 250,90 280,122 310,122 C 340,122 370,22 400,22 C 430,22 460,130 490,130 C 520,130 550,30 580,30"
+                  d={linePath}
                   fill="none"
                   stroke="#f27123"
                   strokeWidth="4"
                   strokeLinecap="round"
                 />
 
-                <circle cx="400" cy="22" r="5" fill="#f27123" stroke="#ffffff" strokeWidth="2" />
-                <circle cx="580" cy="30" r="5" fill="#f27123" stroke="#ffffff" strokeWidth="2" />
+                {points.map((point, index) => (
+                  <circle key={index} cx={point.x} cy={point.y} r="5" fill="#f27123" stroke="#ffffff" strokeWidth="2" />
+                ))}
               </svg>
 
               <div className="x-axis-labels">
-                <span>Mon</span>
-                <span>Tue</span>
-                <span>Wed</span>
-                <span>Thu</span>
-                <span>Fri</span>
-                <span>Sat</span>
-                <span>Sun</span>
+                {daysOfWeek.map(day => <span key={day}>{day}</span>)}
               </div>
             </div>
           </div>
@@ -115,27 +176,22 @@ const Dashboard = () => {
             <div className="dashboard-card monthly-uploads-card">
               <div className="card-header">
                 <h2>Monthly Uploads</h2>
-                <span className="growth-badge">+12%</span>
+                <span className="growth-badge">+{data?.monthlyGrowthPercentage || 0}%</span>
               </div>
 
               <div className="bar-chart-container">
                 <div className="bars-wrapper">
-                  <div className="bar-column">
-                    <div className="bar-track"><div className="bar-fill bg-blue" style={{ height: '35%' }}></div></div>
-                    <span className="bar-label">Week 1</span>
-                  </div>
-                  <div className="bar-column">
-                    <div className="bar-track"><div className="bar-fill bg-blue" style={{ height: '55%' }}></div></div>
-                    <span className="bar-label">Week 2</span>
-                  </div>
-                  <div className="bar-column">
-                    <div className="bar-track"><div className="bar-fill bg-blue" style={{ height: '25%' }}></div></div>
-                    <span className="bar-label">WeeK 3</span>
-                  </div>
-                  <div className="bar-column">
-                    <div className="bar-track"><div className="bar-fill bg-orange" style={{ height: '80%' }}></div></div>
-                    <span className="bar-label">WeeK 4</span>
-                  </div>
+                  {uploads.map((val, index) => (
+                    <div className="bar-column" key={index}>
+                      <div className="bar-track">
+                        <div
+                          className={`bar-fill ${index === 3 ? 'bg-orange' : 'bg-blue'}`}
+                          style={{ height: `${(val / maxUpload) * 100}%` }}>
+                        </div>
+                      </div>
+                      <span className="bar-label">Week {index + 1}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

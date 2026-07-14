@@ -1,26 +1,34 @@
-/* Community.css */
-
 .community-page-container {
   padding: 40px;
   background-color: #F8FAFC;
-  min-height: 100%;
+  min-height: 100vh;
   box-sizing: border-box;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* 1. HEADER & FILTER TABS */
+/* =========================
+   HEADER
+========================= */
+
 .community-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 24px;
   margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
 }
 
 .community-title {
   font-size: 32px;
   font-weight: 800;
   color: #0F172A;
-  margin-bottom: 8px;
+  margin: 0 0 8px;
   letter-spacing: -0.5px;
 }
 
@@ -28,42 +36,51 @@
   font-size: 15px;
   color: #64748B;
   margin: 0;
+  line-height: 1.5;
 }
 
-/* Time Filter Pill Container */
+/* =========================
+   TIME FILTER
+========================= */
+
 .time-filter-container {
   display: flex;
+  align-items: center;
   background-color: #FFFFFF;
   border: 1.5px solid #E2E8F0;
   border-radius: 12px;
   padding: 4px;
   gap: 4px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .time-filter-btn {
   border: none;
-  background: none;
+  background: transparent;
   font-family: inherit;
   font-size: 14px;
   font-weight: 600;
   color: #64748B;
-  padding: 8px 18px;
+  padding: 10px 18px;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s ease;
 }
 
 .time-filter-btn:hover {
+  background-color: #F8FAFC;
   color: #0F172A;
 }
 
 .time-filter-btn.active {
-  background-color: #E0F2FE; /* Soft light blue */
-  color: #0369A1; /* Deep blue-sky */
+  background-color: #E0F2FE;
+  color: #0369A1;
 }
 
-/* 2. LAYOUT GRID */
+/* =========================
+   MAIN GRID
+========================= */
+
 .community-main-grid {
   display: grid;
   grid-template-columns: 1.8fr 1fr;
@@ -71,21 +88,33 @@
   align-items: start;
 }
 
-/* 3. LEADERBOARD TABLE CARD */
+.leaderboard-section {
+  width: 100%;
+  min-width: 0;
+}
+
+/* =========================
+   LEADERBOARD CARD
+========================= */
+
 .leaderboard-table-card {
   background-color: #FFFFFF;
   border: 1.5px solid #E2E8F0;
   border-radius: 16px;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+}
+
+/* Table wrapper giúp responsive */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
 }
 
 .leaderboard-table {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
+  min-width: 700px;
 }
 
 .leaderboard-table th {
@@ -95,14 +124,26 @@
   color: #64748B;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-bottom: 1.5px solid #F1F5F9;
+  border-bottom: 1px solid #E2E8F0;
   background-color: #FCFDFE;
 }
 
-.rank-th { width: 10%; text-align: center; }
-.student-th { width: 45%; }
-.points-th { width: 25%; }
-.badges-th { width: 20%; }
+.rank-th {
+  width: 10%;
+  text-align: center;
+}
+
+.student-th {
+  width: 45%;
+}
+
+.points-th {
+  width: 25%;
+}
+
+.badges-th {
+  width: 20%;
+}
 
 .leaderboard-row {
   border-bottom: 1px solid #F1F5F9;
@@ -117,45 +158,51 @@
   border-bottom: none;
 }
 
+/* =========================
+   RANK
+========================= */
+
 .rank-cell {
   padding: 16px 24px;
   text-align: center;
 }
 
-/* Rank Circle styles matching mock exactly */
 .rank-number {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  min-height: 46px;
-  margin: 0;
+  width: 34px;
+  height: 34px;
+  margin: 0 auto;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 14px;
   font-weight: 700;
 }
 
 .rank-first {
-  background-color: #FEF08A; /* Soft yellow */
-  color: #A16207; /* Dark yellow/gold */
+  background-color: #FEF08A;
+  color: #A16207;
 }
 
 .rank-second {
-  background-color: #F1F5F9; /* Slate grey */
+  background-color: #E2E8F0;
   color: #475569;
 }
 
 .rank-third {
-  background-color: #FFEDD5; /* Soft orange/bronze */
+  background-color: #FED7AA;
   color: #C2410C;
 }
 
 .rank-normal {
-  background-color: transparent;
+  background-color: #F1F5F9;
   color: #64748B;
 }
 
-/* Student Profile styling */
+/* =========================
+   STUDENT INFO
+========================= */
+
 .student-cell {
   padding: 16px 24px;
 }
@@ -167,17 +214,18 @@
 }
 
 .student-avatar {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
   border: 1.5px solid #E2E8F0;
+  flex-shrink: 0;
 }
 
 .student-details {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .student-name {
@@ -191,7 +239,10 @@
   color: #64748B;
 }
 
-/* Points column */
+/* =========================
+   POINTS
+========================= */
+
 .points-cell {
   padding: 16px 24px;
 }
@@ -199,61 +250,81 @@
 .points-value {
   font-size: 15px;
   font-weight: 700;
-  color: #F26F21; /* Brand orange color for points highlights */
+  color: #F26F21;
 }
 
-/* Badges column styling */
+/* =========================
+   BADGES
+========================= */
+
 .badges-cell {
   padding: 16px 24px;
 }
 
 .badges-list {
   display: flex;
-  gap: 8px;
   align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .badge-svg {
   width: 20px;
   height: 20px;
-  transition: transform 0.2s ease;
   cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
 .badge-svg:hover {
   transform: scale(1.15);
 }
 
-.badge-svg.gold { color: #EAB308; }
-.badge-svg.silver { color: #94A3B8; }
-.badge-svg.bronze { color: #D97706; }
-.badge-svg.cap { color: #0EA5E9; }
-.badge-svg.fire { color: #EF4444; }
+.badge-svg.gold {
+  color: #EAB308;
+}
 
-/* 4. USER RANK ROW (bottom row highlight) */
+.badge-svg.silver {
+  color: #94A3B8;
+}
+
+.badge-svg.bronze {
+  color: #D97706;
+}
+
+.badge-svg.cap {
+  color: #0EA5E9;
+}
+
+.badge-svg.fire {
+  color: #EF4444;
+}
+
+/* =========================
+   USER RANK
+========================= */
+
 .user-rank-row-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
   padding: 20px 24px;
-  background-color: #F0F9FF; /* Soft blue tint */
-  border-top: 2px solid #E0F2FE;
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
+  background-color: #F0F9FF;
+  border-top: 1px solid #E0F2FE;
 }
 
 .user-rank-left {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
 }
 
 .user-rank-number {
+  width: 32px;
+  text-align: center;
   font-size: 16px;
   font-weight: 800;
   color: #0369A1;
-  width: 32px;
-  text-align: center;
 }
 
 .user-profile {
@@ -264,10 +335,9 @@
 
 .user-avatar-wrapper {
   position: relative;
-  display: inline-block;
 }
 
-.user-avatar-wrapper .user-avatar {
+.user-avatar {
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -275,26 +345,26 @@
   border: 2px solid #38BDF8;
 }
 
-.user-avatar-wrapper .status-dot {
+.status-dot {
   position: absolute;
-  bottom: 1px;
-  right: 1px;
+  bottom: 0;
+  right: 0;
   width: 10px;
   height: 10px;
-  background-color: #22C55E; /* Online green */
-  border: 2px solid #F0F9FF;
   border-radius: 50%;
+  background-color: #22C55E;
+  border: 2px solid #FFFFFF;
 }
 
 .user-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .user-name {
   font-size: 15px;
-  font-weight: 800;
+  font-weight: 700;
   color: #0F172A;
 }
 
@@ -304,21 +374,11 @@
   gap: 4px;
   font-size: 12px;
   font-weight: 600;
-  color: #0284C7; /* Trend info color */
-}
-
-.trend-arrow {
   color: #0284C7;
 }
 
 .user-rank-right {
   text-align: right;
-}
-
-.user-points-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
 }
 
 .user-points {
@@ -335,7 +395,10 @@
   letter-spacing: 0.5px;
 }
 
-/* 5. RIGHT CARD COLUMN */
+/* =========================
+   RIGHT SIDEBAR CARDS
+========================= */
+
 .cards-section {
   display: flex;
   flex-direction: column;
@@ -350,22 +413,24 @@
   box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
 }
 
-/* Monthly Reward Card */
 .monthly-reward-card {
-  border-left: 4px solid #F26F21; /* Accent FPT Orange border */
+  border-left: 4px solid #F26F21;
 }
+
+/* =========================
+   CARD CONTENT
+========================= */
 
 .card-title {
   font-size: 20px;
   font-weight: 800;
   color: #0F172A;
-  margin-bottom: 8px;
-  letter-spacing: -0.3px;
+  margin: 0 0 8px;
 }
 
 .card-subtitle {
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
   color: #64748B;
   margin-bottom: 24px;
 }
@@ -374,18 +439,18 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  padding: 16px;
+  border-radius: 12px;
   background-color: #F8FAFC;
   border: 1px solid #E2E8F0;
-  border-radius: 12px;
-  padding: 16px;
 }
 
 .reward-icon-wrapper {
-  background-color: #FFF7ED; /* Soft orange bg */
-  color: #F26F21;
   width: 48px;
   height: 48px;
-  border-radius: 10px;
+  border-radius: 12px;
+  background-color: #FFF7ED;
+  color: #F26F21;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -394,7 +459,7 @@
 .reward-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .reward-title {
@@ -409,7 +474,10 @@
   font-weight: 600;
 }
 
-/* How to Earn Points Card */
+/* =========================
+   GUIDE LIST
+========================= */
+
 .card-section-title {
   font-size: 12px;
   font-weight: 700;
@@ -433,33 +501,27 @@
 }
 
 .guide-icon-box {
-  background-color: #EFF6FF;
-  color: #0284C7;
   width: 36px;
   height: 36px;
   border-radius: 8px;
+  background-color: #EFF6FF;
+  color: #0284C7;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-/* Give guide icons distinct background tints */
-.guide-item:nth-child(2) .guide-icon-box { background-color: #F0FDF4; color: #16A34A; }
-.guide-item:nth-child(3) .guide-icon-box { background-color: #FAF5FF; color: #9333EA; }
-.guide-item:nth-child(4) .guide-icon-box { background-color: #FFF7ED; color: #EA580C; }
-
 .guide-text {
   font-size: 14px;
   color: #334155;
-  line-height: 1.4;
+  line-height: 1.5;
   font-weight: 500;
 }
 
 .points-highlight {
   font-weight: 700;
   color: #64748B;
-  margin-left: 2px;
 }
 
 .view-guidelines-btn {
@@ -479,32 +541,84 @@
 .view-guidelines-btn:hover {
   background-color: #F26F21;
   color: #FFFFFF;
-  box-shadow: 0 4px 12px rgba(242, 111, 33, 0.15);
 }
 
-/* 6. RESPONSIVE ADJUSTMENTS */
+/* =========================
+   LOADING STATE
+========================= */
+
+.loading-container {
+  padding: 48px;
+  text-align: center;
+  color: #64748B;
+  font-size: 15px;
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  border: 1.5px solid #E2E8F0;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
 @media (max-width: 1024px) {
   .community-page-container {
     padding: 24px;
   }
+
   .community-main-grid {
     grid-template-columns: 1fr;
-    gap: 24px;
+  }
+
+  .cards-section {
+    width: 100%;
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .community-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
   }
+
   .time-filter-container {
     width: 100%;
   }
+
   .time-filter-btn {
     flex: 1;
     text-align: center;
-    padding: 8px 10px;
+  }
+
+  .community-title {
+    font-size: 28px;
+  }
+
+  .community-page-container {
+    padding: 16px;
+  }
+
+  .community-card {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .community-title {
+    font-size: 24px;
+  }
+
+  .community-subtitle {
+    font-size: 14px;
+  }
+
+  .user-rank-row-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .user-rank-right {
+    width: 100%;
+    text-align: left;
   }
 }

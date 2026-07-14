@@ -3,15 +3,12 @@ import React, { useState, useEffect, useRef } from 'react';
 const QuizFilterBar = ({
   searchQuery,
   setSearchQuery,
-  selectedSubject,
-  setSelectedSubject,
-  selectedDifficulty,
-  setSelectedDifficulty,
   selectedStatus,
   setSelectedStatus,
-  subjects,
-  difficulties,
+  selectedCreator,      
+  setSelectedCreator,   
   statuses,
+  creators = [],        
   quizzes = [],
   onSearch
 }) => {
@@ -40,15 +37,15 @@ const QuizFilterBar = ({
   const query = searchQuery.trim().toLowerCase();
   const suggestions = query
     ? quizzes.filter(q => 
-        q.title.toLowerCase().includes(query) || 
-        q.id.toLowerCase().includes(query) ||
-        q.subject.toLowerCase().includes(query) ||
-        q.source.toLowerCase().includes(query)
+        (q.title && q.title.toLowerCase().includes(query)) || 
+        (q.id && q.id.toString().toLowerCase().includes(query)) ||
+        (q.subject && q.subject.toLowerCase().includes(query)) ||
+        (q.account?.userName && q.account.userName.toLowerCase().includes(query))
       )
     : [];
 
   const handleSuggestionClick = (quiz) => {
-    setSearchQuery(quiz.title);
+    setSearchQuery(quiz.title); // Có thể đổi thành quiz.subject nếu muốn gán keyword là tên môn
     setShowSuggestions(false);
     setTimeout(() => {
       onSearch(quiz.title);
@@ -64,7 +61,7 @@ const QuizFilterBar = ({
         </svg>
         <input
           type="text"
-          placeholder="Search quizzes, courses, or topics..."
+          placeholder="Search quizzes, subjects, or creators..."
           value={searchQuery}
           onChange={(e) => {
             setSearchQuery(e.target.value);
@@ -84,7 +81,9 @@ const QuizFilterBar = ({
                 <span className="suggestion-id">{quiz.id}</span>
                 <div className="suggestion-text">
                   <span className="suggestion-title">{quiz.title}</span>
-                  <span className="suggestion-sub">{quiz.subject} • {quiz.source}</span>
+                  <span className="suggestion-sub">
+                    {quiz.subject} • By {quiz.account?.userName || 'Anonymous'}
+                  </span>
                 </div>
                 {quiz.accessMode === 'private' && (
                   <span className="suggestion-lock" title="Password Protected">🔒</span>
@@ -95,28 +94,17 @@ const QuizFilterBar = ({
         )}
       </div>
 
-      <div className="filter-input-wrapper select-input-wrapper">
-        <select
-          value={selectedSubject}
-          onChange={(e) => setSelectedSubject(e.target.value)}
-          aria-label="Filter by Subject"
-        >
-          <option value="All">All Subjects</option>
-          {subjects.map((subj, idx) => (
-            <option key={idx} value={subj}>{subj}</option>
-          ))}
-        </select>
-      </div>
+      {/* ĐÃ XÓA FILTER SUBJECT Ở ĐÂY */}
 
       <div className="filter-input-wrapper select-input-wrapper">
         <select
-          value={selectedDifficulty}
-          onChange={(e) => setSelectedDifficulty(e.target.value)}
-          aria-label="Filter by Difficulty"
+          value={selectedCreator}
+          onChange={(e) => setSelectedCreator(e.target.value)}
+          aria-label="Filter by Creator"
         >
-          <option value="All">All Difficulties</option>
-          {difficulties.map((diff, idx) => (
-            <option key={idx} value={diff}>{diff}</option>
+          <option value="All">All Creators</option>
+          {creators.map((creator, idx) => (
+            <option key={idx} value={creator}>{creator}</option>
           ))}
         </select>
       </div>

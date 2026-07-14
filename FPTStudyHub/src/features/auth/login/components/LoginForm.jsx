@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 
-const LoginForm = ({ onSubmit }) => {
+const LoginForm = ({ onSubmit, isLoading }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -25,6 +25,7 @@ const LoginForm = ({ onSubmit }) => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          disabled={isLoading}
         />
       </div>
 
@@ -46,14 +47,14 @@ const LoginForm = ({ onSubmit }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={isLoading}
           />
-          {/*Nếu đang hiện mật khẩu thì đổi icon thành 
-          "mắt gạch chéo" <EyeOff>, ngược lại thì hiện icon "con mắt" <Eye>. */}
           <button
             type="button"
             className="password-visibility-toggle"
             onClick={() => setShowPassword(!showPassword)}
             aria-label="Toggle password visibility"
+            disabled={isLoading}
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
@@ -68,15 +69,16 @@ const LoginForm = ({ onSubmit }) => {
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
             className="checkbox-input"
+            disabled={isLoading}
           />
           <span className="checkbox-text">Remember me for 7 days</span>
         </label>
       </div>
 
       {/* Nút Login */}
-      <button type="submit" className="login-submit-button">
-        <span>Login</span>
-        <LogIn size={18} className="button-login-icon" />
+      <button type="submit" className="login-submit-button" disabled={isLoading}>
+        <span>{isLoading ? 'Logging in...' : 'Login'}</span>
+        {!isLoading && <LogIn size={18} className="button-login-icon" />}
       </button>
     </form>
   );

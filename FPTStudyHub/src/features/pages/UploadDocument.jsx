@@ -1,120 +1,132 @@
-/* UploadDocument.jsx */
 import React, { useState } from 'react';
-
-// Path adjusted for your features/pages/uploaddocument/components structure
 import UploadForm from '../uploaddocument/components/UploadForm';
 import FileUploader from '../uploaddocument/components/FileUploader';
 import RecentContributions from '../uploaddocument/components/RecentContributions';
 import './UploadDocument.css';
 
 const UploadDocument = () => {
+  // Thay đổi State để khớp với ID mà Backend yêu cầu
   const [formData, setFormData] = useState({
-    major: '',
-    specialization: '',
-    subject: '',
-    semester: '',
+    majorId: '',
+    specializationId: '',
+    subjectName: '',
+    semesterId: '',
     title: '',
     description: ''
   });
 
-  // Each file entry will be an object: { id, file, progress, isUploading }
   const [files, setFiles] = useState([]);
   const [complyChecked, setComplyChecked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFormChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  // Wrap selected files with metadata and start a mock upload for each
   const handleFilesSelected = (selectedFiles) => {
     const newFiles = selectedFiles.map((file, idx) => ({
-      id: `${Date.now()}-${idx}`,          // unique identifier
+      id: `${Date.now()}-${idx}`,
       file,
       progress: 0,
-      isUploading: true,
+      isUploading: false, // Sẽ bật true khi bấm Submit
+      status: 'pending' // pending | success | error
     }));
-
     setFiles(prev => [...prev, ...newFiles]);
-
-    // Kick‑off a simulated upload for every newly added file
-    newFiles.forEach(f => simulateFileUpload(f.id));
   };
 
-  // Simulate per‑file upload progress (2 s total)
-  const simulateFileUpload = (fileId) => {
-    const duration = 2000;          // 2 seconds total
-    const intervalTime = 100;       // update every 100 ms
-    const step = 100 / (duration / intervalTime); // % increase per tick
-
-    const timer = setInterval(() => {
-      setFiles(prev => prev.map(f => {
-        if (f.id !== fileId) return f;
-
-        const nextProgress = f.progress + step;
-        if (nextProgress >= 100) {
-          clearInterval(timer);
-          return { ...f, progress: 100, isUploading: false };
-        }
-        return { ...f, progress: Math.round(nextProgress) };
-      }));
-    }, intervalTime);
-  };
-
-  // Remove a file by its unique id
   const handleRemoveFile = (id) => {
     setFiles(prev => prev.filter(f => f.id !== id));
   };
 
-  // Form can be submitted only when every file has finished uploading
   const isFormValid = () => {
     return (
-      formData.major !== '' &&
-      formData.specialization !== '' &&
+      formData.specializationId !== '' &&
+      formData.semesterId !== '' &&
+      formData.subjectName.trim() !== '' &&
       formData.title.trim() !== '' &&
       files.length > 0 &&
-      files.every(f => !f.isUploading) && // all uploads finished
       complyChecked
     );
   };
 
-  const handleSubmit = (e) => {
+  // Hàm xử lý Upload gọi thẳng API Backend
+  const uploadSingleFile = (fileObj) => {
+    return new Promise((resolve, reject) => {
+      const token = localStorage.getItem('token');
+      const data = new FormData();
+      
+      // Khớp 100% với @RequestParam trong StudyMaterialController
+      data.append('specializationId', formData.specializationId);
+      data.append('semesterId', formData.semesterId);
+      data.append('subjectName', formData.subjectName);
+      data.append('title', formData.title);
+      data.append('description', formData.description);
+      data.append('file', fileObj.file);
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', 'http://localhost:8080/api/v1/documents/upload', true);
+      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+      // Lắng nghe tiến trình upload thật
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percentComplete = Math.round((event.loaded / event.total) * 100);
+          setFiles(prev => prev.map(f => 
+            f.id === fileObj.id ? { ...f, progress: percentComplete, isUploading: true } : f
+          ));
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status === 201) {
+          setFiles(prev => prev.map(f => 
+            f.id === fileObj.id ? { ...f, progress: 100, isUploading: false, status: 'success' } : f
+          ));
+          resolve(xhr.response);
+        } else {
+          setFiles(prev => prev.map(f => 
+            f.id === fileObj.id ? { ...f, isUploading: false, status: 'error' } : f
+          ));
+          reject(xhr.responseText);
+        }
+      };
+
+      xhr.onerror = () => reject("Lỗi kết nối mạng");
+      xhr.send(data);
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isFormValid()) return;
 
     setIsSubmitting(true);
 
-    // Mock saving form metadata
-    setTimeout(() => {
-      alert(`Successfully uploaded ${files.length} document(s) for "${formData.title}"!`);
+    try {
+      // Chạy upload tuần tự hoặc song song tùy ý. Ở đây chạy song song (Promise.all)
+      const uploadPromises = files.map(fileObj => uploadSingleFile(fileObj));
+      await Promise.all(uploadPromises);
 
-      // Reset everything
+      alert(`Successfully uploaded ${files.length} document(s) to AI Study Hub!`);
+      
+      // Reset form
       setFormData({
-        major: '',
-        specialization: '',
-        subject: '',
-        semester: '',
-        title: '',
-        description: ''
+        majorId: '', specializationId: '', subjectName: '', semesterId: '', title: '', description: ''
       });
       setFiles([]);
       setComplyChecked(false);
+
+    } catch (error) {
+      alert("Đã xảy ra lỗi trong quá trình upload: " + error);
+    } finally {
       setIsSubmitting(false);
-    }, 800);
+    }
   };
 
   const handleCancel = () => {
     if (window.confirm("Are you sure you want to cancel? All unsaved inputs will be lost.")) {
       setFormData({
-        major: '',
-        specialization: '',
-        subject: '',
-        semester: '',
-        title: '',
-        description: ''
+        majorId: '', specializationId: '', subjectName: '', semesterId: '', title: '', description: ''
       });
       setFiles([]);
       setComplyChecked(false);
@@ -123,8 +135,6 @@ const UploadDocument = () => {
 
   return (
     <div className="upload-page-wrapper">
-
-      {/* 1. Page Header Block (Breadcrumbs removed) */}
       <div className="upload-header-container">
         <h1 className="upload-page-title">Upload Study Material</h1>
         <p className="upload-page-subtitle">
@@ -132,19 +142,10 @@ const UploadDocument = () => {
         </p>
       </div>
 
-      {/* 2. Main Form Card */}
       <form onSubmit={handleSubmit} className="upload-card-container">
-
-        {/* Grid layout containing left form fields & right file dropzone */}
         <div className="upload-grid-layout">
-
-          {/* Left: Input Fields */}
-          <UploadForm
-            formData={formData}
-            onChange={handleFormChange}
-          />
-
-          {/* Right: File dropzone */}
+          <UploadForm formData={formData} onChange={handleFormChange} />
+          
           <div className="upload-files-side">
             <FileUploader
               files={files}
@@ -153,10 +154,8 @@ const UploadDocument = () => {
               isSubmitting={isSubmitting}
             />
           </div>
-
         </div>
 
-        {/* 3. Honor Code / Integrity Checkbox */}
         <div className="integrity-checkbox-container">
           <input
             type="checkbox"
@@ -171,29 +170,15 @@ const UploadDocument = () => {
           </label>
         </div>
 
-        {/* 4. Footer Actions (Cancel / Submit) */}
         <div className="upload-submit-actions">
-          <button
-            type="button"
-            className="upload-cancel-btn"
-            onClick={handleCancel}
-            disabled={isSubmitting}
-          >
+          <button type="button" className="upload-cancel-btn" onClick={handleCancel} disabled={isSubmitting}>
             Cancel
           </button>
-
-          <button
-            type="submit"
-            className="upload-submit-btn"
-            disabled={!isFormValid() || isSubmitting}
-          >
-            {isSubmitting ? 'Uploading...' : 'Submit Material'}
+          <button type="submit" className="upload-submit-btn" disabled={!isFormValid() || isSubmitting}>
+            {isSubmitting ? 'Uploading to Server...' : 'Submit Material'}
           </button>
         </div>
-
       </form>
-
-      {/* 5. Recent Contributions Listing */}
       <RecentContributions />
     </div>
   );

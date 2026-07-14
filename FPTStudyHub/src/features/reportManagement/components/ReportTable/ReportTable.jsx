@@ -1,44 +1,51 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { Search, Filter, RefreshCcw, MoreVertical, Edit2, Mail, UserX, AlertTriangle, FileText, ExternalLink } from 'lucide-react';
-
+import { Search, Filter, RefreshCcw, MoreVertical, Mail, UserX, AlertTriangle, FileText, ExternalLink } from 'lucide-react';
+import { getDirectImageUrl } from '../../../../utils/imageHelper'; // ĐÃ THÊM IMPORT HÀM XỬ LÝ ẢNH
 import './ReportTable.css';
 
-import { mockReports } from '../../../../data/mockDocuments';
-const ReportTable = ({ searchTerm = '', statusFilter = 'all' }) => {
-
+// Nhận mảng reports và isLoading từ component cha
+const ReportTable = ({ reports = [], isLoading = false, searchTerm = '', statusFilter = 'all' }) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = React.useState(1);
 
-  const filteredReports = mockReports.filter(report => {
+  // Lọc dữ liệu dựa trên từ khóa và bộ lọc trạng thái
+  const filteredReports = reports.filter(report => {
     const term = searchTerm.toLowerCase();
-
-    const matchesSearch = report.id.toLowerCase().includes(term) ||
-      report.reporter.name.toLowerCase().includes(term) ||
-      report.reported.name.toLowerCase().includes(term);
+    
+    // Tìm kiếm theo ID báo cáo, tên người tố cáo, hoặc tên tài liệu
+    const matchesSearch = 
+      report.reportId?.toString().includes(term) ||
+      (report.reporter?.fullName || report.reporter?.userName || '').toLowerCase().includes(term) ||
+      (report.material?.title || '').toLowerCase().includes(term);
 
     let matchesStatus = true;
     if (statusFilter === 'all') {
-      matchesStatus = report.status !== 'Resolved';
+      matchesStatus = report.status !== 'RESOLVED';
     } else {
-      matchesStatus = report.status === statusFilter;
+      matchesStatus = report.status === statusFilter.toUpperCase();
     }
 
     return matchesSearch && matchesStatus;
   });
 
+  // Gom nhóm các báo cáo nhắm vào cùng 1 tài liệu (materialId)
   const groupedMap = new Map();
   filteredReports.forEach(report => {
-    if (!groupedMap.has(report.reported.userId)) {
-      groupedMap.set(report.reported.userId, { ...report, groupCount: 1 });
+    const docId = report.material?.materialId;
+    if (!docId) return;
+
+    if (!groupedMap.has(docId)) {
+      groupedMap.set(docId, { ...report, groupCount: 1 });
     } else {
-      const existing = groupedMap.get(report.reported.userId);
+      const existing = groupedMap.get(docId);
       existing.groupCount += 1;
     }
   });
+  
   const groupedReports = Array.from(groupedMap.values());
 
+  // Phân trang
   const itemsPerPage = 10;
   const totalItems = groupedReports.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
@@ -51,46 +58,40 @@ const ReportTable = ({ searchTerm = '', statusFilter = 'all' }) => {
   }, [searchTerm, statusFilter]);
 
   const getReasonBadge = (reason) => {
-    if (reason === 'Copyright Violation' || reason.includes('Copyright')) {
-      return <span className="reason-badge spam">© Copyright</span>;
+    if (!reason) return <span className="reason-badge">Unknown</span>;
+    if (reason.includes('Bản quyền') || reason.toLowerCase().includes('copyright')) {
+      return <span className="reason-badge spam">© Bản quyền</span>;
     }
-    if (reason === 'Inaccurate Information' || reason === 'Inappropriate Content' || reason.includes('Inappropriate')) {
-      return <span className="reason-badge inappropriate"><AlertTriangle size={14} /> Inappropriate</span>;
+    if (reason.includes('Spam') || reason.toLowerCase().includes('spam')) {
+       return <span className="reason-badge spam"><Mail size={14} /> Spam</span>;
     }
-
-    switch (reason) {
-      case 'Spam':
-        return <span className="reason-badge spam"><Mail size={14} /> Spam</span>;
-      case 'Harassment':
-        return <span className="reason-badge harassment"><UserX size={14} /> Harassment</span>;
-
-      default:
-        return <span className="reason-badge">{reason}</span>;
-    }
+    return <span className="reason-badge inappropriate"><AlertTriangle size={14} /> Vi phạm</span>;
   };
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case 'Pending':
-
-        return <span className="status-badge pending">High Priority</span>;
-      case 'Under Review':
-        return <span className="status-badge review">Under Review</span>;
-      case 'Resolved':
-        return <span className="status-badge resolved">Resolved</span>;
-
+      case 'PENDING':
+        return <span className="status-badge pending">Chờ xử lý</span>;
+      case 'UNDER_REVIEW':
+        return <span className="status-badge review">Đang điều tra</span>;
+      case 'RESOLVED':
+        return <span className="status-badge resolved">Đã xử lý</span>;
       default:
         return <span className="status-badge">{status}</span>;
     }
   };
 
+  if (isLoading) {
+    return <div style={{ padding: '40px', textAlign: 'center', backgroundColor: '#fff', borderRadius: '8px' }}>Đang tải dữ liệu...</div>;
+  }
+
   return (
     <div className="report-table-container">
       {/* Table Header */}
       <div className="report-table-header">
-        <h2 className="report-table-title">Active Reports</h2>
+        <h2 className="report-table-title">Danh sách Báo cáo hoạt động (Active Reports)</h2>
         <div className="report-table-actions">
-          <button className="icon-btn-small"><RefreshCcw size={18} /></button>
+          <button className="icon-btn-small" onClick={() => window.location.reload()}><RefreshCcw size={18} /></button>
           <button className="icon-btn-small"><MoreVertical size={18} /></button>
         </div>
       </div>
@@ -101,76 +102,83 @@ const ReportTable = ({ searchTerm = '', statusFilter = 'all' }) => {
           <thead>
             <tr>
               <th>Report ID</th>
-              <th>Reporter</th>
-              <th>Reported User</th>
-              <th>Reason</th>
-              <th>Total Reports</th>
-              <th>Date Submitted</th>
-              <th>Status</th>
-              <th className="th-actions">Actions</th>
+              <th>Người Tố Cáo</th>
+              <th>Tài Liệu Vi Phạm</th>
+              <th>Lý Do (Tóm tắt)</th>
+              <th>Tổng số lượng</th>
+              <th>Ngày Gửi</th>
+              <th>Trạng thái</th>
+              <th className="th-actions">Hành động</th>
             </tr>
           </thead>
           <tbody>
-
-            {currentReports.map((report) => {
-              const reportCount = report.groupCount;
-              return (
-
-                <tr key={report.id}>
-                  <td className="report-id-cell">{report.id}</td>
-                  <td>
-                    <div className="user-cell">
-                      <img src={report.reporter.avatar} alt={report.reporter.name} className="user-cell-avatar" />
-                      <div className="user-cell-info">
-
-                        <p className="user-cell-name">{reportCount > 1 ? 'Multiple Reporters' : report.reporter.name}</p>
-                        <p className="user-cell-email">{reportCount > 1 ? `${reportCount} unique users` : report.reporter.handle}</p>
-
+            {currentReports.length === 0 ? (
+              <tr>
+                <td colSpan="8" style={{ textAlign: 'center', padding: '30px' }}>Không tìm thấy báo cáo nào phù hợp.</td>
+              </tr>
+            ) : (
+              currentReports.map((report) => {
+                const reportCount = report.groupCount;
+                return (
+                  <tr key={report.reportId}>
+                    <td className="report-id-cell">#{report.reportId}</td>
+                    <td>
+                      <div className="user-cell">
+                        {/* ĐÃ CẬP NHẬT CẤU TRÚC ẢNH AVATAR TẠI ĐÂY */}
+                        <img 
+                          src={report.reporter?.avatarUrl ? getDirectImageUrl(report.reporter.avatarUrl) : `https://ui-avatars.com/api/?name=${report.reporter?.userName || 'U'}&background=random`} 
+                          alt="Reporter" 
+                          className="user-cell-avatar" 
+                          referrerPolicy="no-referrer"
+                          onError={(e) => {
+                            e.target.src = `https://ui-avatars.com/api/?name=${report.reporter?.userName || 'U'}&background=random`;
+                          }}
+                        />
+                        <div className="user-cell-info">
+                          <p className="user-cell-name">{reportCount > 1 ? 'Nhiều người dùng' : (report.reporter?.fullName || report.reporter?.userName)}</p>
+                          <p className="user-cell-email">{reportCount > 1 ? `${reportCount} tài khoản` : report.reporter?.email}</p>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="user-cell">
-                      {report.reported.type === 'user' ? (
-                        <img src={report.reported.avatar} alt={report.reported.name} className="user-cell-avatar" />
-                      ) : (
+                    </td>
+                    <td>
+                      <div className="user-cell">
                         <div className="doc-icon-wrapper"><FileText size={20} className="doc-icon" /></div>
-                      )}
-                      <div className="user-cell-info">
-                        <p className="user-cell-name">{report.reported.name}</p>
-
-                        <p className="user-cell-email">Document</p>
-
+                        <div className="user-cell-info">
+                          <p className="user-cell-name" title={report.material?.title}>
+                            {report.material?.title?.length > 20 ? report.material?.title.substring(0, 20) + '...' : report.material?.title}
+                          </p>
+                          <p className="user-cell-email">Chủ sở hữu: {report.reportedUser?.userName}</p>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td>{getReasonBadge(report.reason)}</td>
-
-                  <td>
-                    <span className="total-reports-badge">
-                      {reportCount} Report{reportCount > 1 ? 's' : ''} <ExternalLink size={12} style={{ marginLeft: '2px' }} />
-                    </span>
-                  </td>
-                  <td className="date-cell whitespace-pre-line">{report.date.split('\n')[0]}</td>
-                  <td>{getStatusBadge(report.status)}</td>
-                  <td className="td-actions">
-                    <button
-                      className={`text-action-btn ${reportCount > 1 ? 'review-all' : 'view-record'}`}
-                      onClick={() => {
-                        if (reportCount > 1) {
-                          navigate('/admin/investigate-document', { state: { materialId: report.reported.userId } });
-                        } else {
-                          navigate('/admin/report-details', { state: { reportId: report.id } });
-                        }
-                      }}
-                    >
-                      {reportCount > 1 ? 'Review All' : 'View Record'}
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-
+                    </td>
+                    <td>{getReasonBadge(report.description)}</td>
+                    <td>
+                      <span className="total-reports-badge">
+                        {reportCount} Đơn <ExternalLink size={12} style={{ marginLeft: '2px' }} />
+                      </span>
+                    </td>
+                    <td className="date-cell whitespace-pre-line">{new Date(report.createdAt).toLocaleDateString('vi-VN')}</td>
+                    <td>{getStatusBadge(report.status)}</td>
+                    <td className="td-actions">
+                      <button
+                        className={`text-action-btn ${reportCount > 1 ? 'review-all' : 'view-record'}`}
+                        onClick={() => {
+                          if (reportCount > 1) {
+                            // Chuyển sang màn hình Investigation (Xem gộp nhiều đơn của 1 tài liệu)
+                            navigate('/admin/investigate-document', { state: { materialId: report.material?.materialId } });
+                          } else {
+                            // Chuyển sang màn hình Details (Xem chi tiết 1 đơn lẻ)
+                            navigate('/admin/report-details', { state: { reportId: report.reportId } });
+                          }
+                        }}
+                      >
+                        {reportCount > 1 ? 'Điều tra gộp' : 'Xem chi tiết'}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>
@@ -178,7 +186,7 @@ const ReportTable = ({ searchTerm = '', statusFilter = 'all' }) => {
       {/* Pagination Footer */}
       <div className="table-footer">
         <div className="pagination-info">
-          Showing {totalItems === 0 ? 0 : startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} reports
+          Đang hiển thị {totalItems === 0 ? 0 : startIndex + 1}-{Math.min(endIndex, totalItems)} / {totalItems} kết quả
         </div>
         <div className="simple-pagination-controls">
           <button className="nav-arrow-btn" disabled={currentPage === 1} onClick={() => setCurrentPage(p => Math.max(1, p - 1))}>&lt;</button>

@@ -21,9 +21,10 @@ const QuizFilter = ({ searchQuery, setSearchQuery, selectedStatus, setSelectedSt
           onChange={(e) => setSelectedStatus(e.target.value)}
           className="filter-select"
         >
+          {/* SỬA LẠI CÁC OPTION Ở ĐÂY ĐỂ KHỚP VỚI DATABASE */}
           <option value="all">All Statuses</option>
-          <option value="ready">Ready</option>
-          <option value="expired">Expired</option>
+          <option value="public">Public</option>
+          <option value="private">Private</option>
         </select>
         <div className="filter-icon-container">
           <SlidersHorizontal size={16} />

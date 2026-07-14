@@ -1,49 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axiosClient from '../../../utils/axiosClient';
 
 const SecurityTab = ({ onChangePassword }) => {
-  const [twoFA, setTwoFA] = useState(false);
-  const [sessions, setSessions] = useState([
-    {
-      id: 1,
-      browser: 'Chrome',
-      os: 'macOS',
-      location: 'Ho Chi Minh City, Vietnam',
-      time: '2 days ago'
-    },
-    {
-      id: 2,
-      browser: 'Chrome',
-      os: 'macOS',
-      location: 'Ho Chi Minh City, Vietnam',
-      time: '5 days ago'
+  const [sessions, setSessions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDevices = async () => {
+      try {
+        setIsLoading(true);
+        // ĐÃ ĐỔI ĐƯỜNG DẪN TẠI ĐÂY
+        const response = await axiosClient.get(`/api/my-profile/devices`);
+        const data = response.result || response.data || [];
+        setSessions(data);
+      } catch (error) {
+        console.error("Lỗi lấy danh sách thiết bị:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchDevices();
+  }, []);
+
+  const handleLogoutSession = async (deviceId) => {
+    try {
+      // ĐÃ ĐỔI ĐƯỜNG DẪN TẠI ĐÂY
+      await axiosClient.delete(`/api/my-profile/devices/${deviceId}`);
+      setSessions(prev => prev.filter(session => session.id !== deviceId));
+      alert('Đã đăng xuất thiết bị thành công!');
+    } catch (error) {
+      console.error("Lỗi đăng xuất thiết bị:", error);
+      alert('Có lỗi xảy ra khi đăng xuất thiết bị.');
     }
-  ]);
-
-  const handleToggle2FA = () => {
-    setTwoFA(!twoFA);
-  };
-
-  const handleLogoutSession = (id) => {
-    setSessions(prev => prev.filter(session => session.id !== id));
-    alert('Logged out of session successfully!');
   };
 
   const handleChangePassword = () => {
     if (onChangePassword) {
-      onChangePassword(); // Gọi hàm kích hoạt mở ChangePasswordForm
-    } else {
-      alert('Simulating password change action. In a production app, this would open a change password form.');
+      onChangePassword();
     }
-  };
-
-  const handleSetup2FA = () => {
-    alert('Simulating 2FA setup process...');
   };
 
   return (
     <div className="security-tab-container">
       <div className="security-card-inner">
-        {/* 1. PASSWORD SECTION */}
         <div className="security-section-row">
           <div className="security-section-left">
             <div className="security-icon-box">
@@ -54,7 +53,7 @@ const SecurityTab = ({ onChangePassword }) => {
             </div>
             <div className="security-text-details">
               <h4 className="security-item-title">Password</h4>
-              <p className="security-item-subtitle">Last changed 35 days ago</p>
+              <p className="security-item-subtitle">Manage your login password.</p>
             </div>
           </div>
           <button type="button" className="sec-action-btn" onClick={handleChangePassword}>
@@ -62,39 +61,8 @@ const SecurityTab = ({ onChangePassword }) => {
           </button>
         </div>
 
-        {/* 2. TWO-FACTOR AUTHENTICATION */}
-        <div className="security-section-row two-fa-row">
-          <div className="security-section-left">
-            <div className="security-icon-box">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sec-icon">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                <path d="m9 12 2 2 4-4" />
-              </svg>
-            </div>
-            <div className="security-text-details">
-              <div className="title-toggle-wrapper">
-                <h4 className="security-item-title">Two-Factor Authentication</h4>
-              </div>
-              <p className="security-item-subtitle desc-text">Add an extra layer of security to your account.</p>
-              <button type="button" className="sec-action-btn setup-2fa-btn" onClick={handleSetup2FA}>
-                Setup 2FA
-              </button>
-            </div>
-          </div>
-          
-          <div className="toggle-container-right">
-            <label className="toggle-switch">
-              <input type="checkbox" checked={twoFA} onChange={handleToggle2FA} />
-              <span className="toggle-slider"></span>
-            </label>
-            <span className="toggle-state-text">{twoFA ? 'On' : 'Off'}</span>
-          </div>
-        </div>
-
-        {/* Divider line */}
         <div className="sec-card-divider"></div>
 
-        {/* 3. RECENT LOGIN ACTIVITY */}
         <div className="security-activity-section">
           <div className="activity-section-header">
             <div className="security-icon-box plain-icon">
@@ -105,12 +73,14 @@ const SecurityTab = ({ onChangePassword }) => {
             </div>
             <div className="security-text-details">
               <h4 className="security-item-title">Recent Login Activity</h4>
-              <p className="security-item-subtitle desc-text">Review locations where your account is currently logged in.</p>
+              <p className="security-item-subtitle desc-text">Review devices where your account is currently logged in.</p>
             </div>
           </div>
 
           <div className="sessions-list-container">
-            {sessions.length > 0 ? (
+            {isLoading ? (
+              <div className="no-sessions-fallback">Đang tải lịch sử đăng nhập...</div>
+            ) : sessions.length > 0 ? (
               sessions.map(session => (
                 <div className="session-device-row" key={session.id}>
                   <div className="device-info-left">
@@ -122,13 +92,16 @@ const SecurityTab = ({ onChangePassword }) => {
                       </svg>
                     </div>
                     <div className="device-details">
-                      <span className="device-name">{session.browser} • {session.os}</span>
-                      <span className="device-location">{session.location}</span>
+                      <span className="device-name">{session.deviceId || 'Unknown Device'}</span>
+                      <span className="device-location">
+                        Status: <span style={{color: session.trusted ? '#10B981' : '#F59E0B'}}>{session.trusted ? 'Trusted' : 'Untrusted'}</span>
+                      </span>
                     </div>
                   </div>
-                  
                   <div className="device-info-right">
-                    <span className="device-time">{session.time}</span>
+                    <span className="device-time">
+                      {session.lastLogin ? new Date(session.lastLogin).toLocaleString('en-GB') : 'N/A'}
+                    </span>
                     <button type="button" className="sec-action-btn logout-device-btn" onClick={() => handleLogoutSession(session.id)}>
                       Logout
                     </button>
@@ -137,13 +110,12 @@ const SecurityTab = ({ onChangePassword }) => {
               ))
             ) : (
               <div className="no-sessions-fallback">
-                No active login sessions.
+                No active login sessions found.
               </div>
             )}
           </div>
         </div>
       </div>
-
       <div className="security-support-footer">
         Need help? Contact support at <a href="mailto:support@fptstudyhub.edu.vn">support@fptstudyhub.edu.vn</a>
       </div>

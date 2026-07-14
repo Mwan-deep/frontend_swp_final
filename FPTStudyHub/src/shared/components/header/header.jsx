@@ -1,87 +1,172 @@
-
 import React, { useState, useEffect } from 'react';
-import { Search, Bell } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { getDirectImageUrl } from '../../../utils/imageHelper';
+import axiosClient from '../../../utils/axiosClient';
 import "./header.css";
 
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [unreadCount, setUnreadCount] = useState(0);
 
-  // Lấy trạng thái đăng nhập và trang hiện tại
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  // =========================
+  // STATES
+  // =========================
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [userAvatar, setUserAvatar] = useState('');
+  const [userName, setUserName] = useState('User');
+
+  // =========================
+  // AUTH
+  // =========================
+  const isLoggedIn = !!(
+    localStorage.getItem('token') ||
+    localStorage.getItem('api_token')
+  );
+
   const isDocumentsPage = location.pathname === '/documents';
 
-  // Đọc số thông báo chưa đọc từ localStorage (chỉ khi đã đăng nhập)
-  const updateUnreadCount = () => {
-    if (!isLoggedIn) return;
-    const stored = localStorage.getItem('study_hub_notifications');
-    if (stored) {
-      try {
-        const list = JSON.parse(stored);
-        const unread = list.filter(n => !n.read).length;
-        setUnreadCount(unread);
-      } catch (e) {
-        setUnreadCount(0);
+  // =========================
+  // LOAD PROFILE
+  // =========================
+  const loadProfile = async () => {
+    try {
+      const res = await axiosClient.get('/api/my-profile');
+
+      const data = res.result || res.data || res;
+
+      if (data) {
+        setUserAvatar(data.avatarUrl || '');
+        setUserName(data.fullName || 'User');
       }
-    } else {
-      setUnreadCount(2);
+
+    } catch (err) {
+      console.error(
+        'Lỗi lấy thông tin profile trong Header:',
+        err
+      );
     }
   };
 
+  // =========================
+  // LOAD UNREAD NOTIFICATIONS
+  // =========================
+  const fetchUnreadNotifications = async () => {
+    if (!isLoggedIn) return;
+
+    try {
+      const response = await axiosClient.get('/api/notifications');
+
+      const data = Array.isArray(response)
+        ? response
+        : (response?.result || []);
+
+      // Đếm số thông báo chưa đọc
+      const unread = data.filter(
+        (notification) => !notification.isRead
+      ).length;
+
+      setUnreadCount(unread);
+
+    } catch (error) {
+      console.error(
+        'Lỗi lấy notifications:',
+        error
+      );
+
+      setUnreadCount(0);
+    }
+  };
+
+  // =========================
+  // EFFECT
+  // =========================
   useEffect(() => {
-    updateUnreadCount();
-    window.addEventListener('notificationsUpdated', updateUnreadCount);
+    if (!isLoggedIn) return;
+
+    loadProfile();
+
+    // Load unread notifications lần đầu
+    fetchUnreadNotifications();
+
+    // Lắng nghe event cập nhật từ Notifications page
+    window.addEventListener(
+      'notificationsUpdated',
+      fetchUnreadNotifications
+    );
+
     return () => {
-      window.removeEventListener('notificationsUpdated', updateUnreadCount);
+      window.removeEventListener(
+        'notificationsUpdated',
+        fetchUnreadNotifications
+      );
     };
+
   }, [isLoggedIn]);
 
   return (
     <header className="header">
+
+      {/* =========================
+          LEFT
+      ========================== */}
       <div className="header-left">
         <a
           href="#"
           className="logo"
           onClick={(e) => {
             e.preventDefault();
-            // Nếu đã đăng nhập về Dashboard, chưa đăng nhập về trang Documents
-            navigate(isLoggedIn ? '/dashboard' : '/documents');
+
+            navigate(
+              isLoggedIn
+                ? '/dashboard'
+                : '/documents'
+            );
           }}
         >
           FPT <span>Study Hub</span>
         </a>
       </div>
 
-      <div className="header-center">
-        <div className="search-wrapper">
-          <Search size={18} className="search-icon" />
-          <input
-            type="text"
-            placeholder="Search documents, subjects, authors..."
-            className="search-input"
-          />
-        </div>
-      </div>
-
+      {/* =========================
+          RIGHT
+      ========================== */}
       <div className="header-right">
+
         {isLoggedIn ? (
           <>
+            {/* =========================
+                NOTIFICATION BUTTON
+            ========================== */}
             <button
               className="icon-button"
               aria-label="Notifications"
               onClick={() => navigate('/notifications')}
             >
               <Bell size={20} />
-              {unreadCount > 0 && <span className="badge"></span>}
+
+              {/* Hiện chấm đỏ nếu còn thông báo chưa đọc */}
+              {unreadCount > 0 && (
+                <span className="badge"></span>
+              )}
             </button>
 
-            <div className="avatar-wrapper" onClick={() => navigate('/account')}>
+            {/* =========================
+                USER AVATAR
+            ========================== */}
+            <div
+              className="avatar-wrapper"
+              onClick={() => navigate('/settings')}
+            >
               <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80"
+                src={
+                  userAvatar
+                    ? getDirectImageUrl(userAvatar)
+                    : `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=random`
+                }
                 alt="User Profile"
                 className="avatar-img"
+                referrerPolicy="no-referrer"
               />
             </div>
           </>
@@ -96,6 +181,7 @@ const Header = () => {
             </button>
           )
         )}
+
       </div>
     </header>
   );

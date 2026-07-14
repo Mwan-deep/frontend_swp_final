@@ -16,12 +16,8 @@ const SuggestionCard = ({ badge, title, desc, badgeClass }) => {
   );
 };
 
-const AiSuggestions = () => {
-  const suggestions = [
-    { badge: "Document", title: "Advanced Neural Networks Guide", desc: "A comprehensive overview of deep learning architectures...", badgeClass: "badge-blue" },
-    { badge: "Quiz Prep", title: "Practice: Binary Trees", desc: "Generate a quick 10-question quiz based on the Data Structures...", badgeClass: "badge-yellow" }
-  ];
-
+// Đã thêm props { suggestions }
+const AiSuggestions = ({ suggestions }) => {
   return (
     <div className="ai-suggestions-sidebar">
       <div className="sidebar-header">
@@ -35,23 +31,29 @@ const AiSuggestions = () => {
       </div>
 
       <div className="suggestions-list">
-        {suggestions.map((sug, index) => (
-          <SuggestionCard 
-            key={index}
-            badge={sug.badge}
-            title={sug.title}
-            desc={sug.desc}
-            badgeClass={sug.badgeClass}
-          />
-        ))}
+        {/* Kiểm tra nếu không có data (Dù Backend của chúng ta luôn trả về list mặc định, nhưng vẫn nên check để UI không vỡ) */}
+        {!suggestions || suggestions.length === 0 ? (
+           <div style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
+             <p>Đang chờ AI phân tích dữ liệu...</p>
+           </div>
+        ) : (
+          suggestions.map((sugText, index) => (
+            <SuggestionCard 
+              key={index}
+              badge="AI Tip" 
+              title="Gợi ý cá nhân hóa" 
+              desc={sugText} // Nội dung từ Gemini được nhét vào đây
+              badgeClass={index % 2 === 0 ? "badge-blue" : "badge-yellow"} // Đổi màu badge xen kẽ cho đẹp mắt
+            />
+          ))
+        )}
       </div>
 
       <button 
         className="refresh-btn"
-        onClick={() => alert('Refreshing AI study suggestions...')}
+        onClick={() => window.location.reload()} // Click vào đây sẽ gọi lại API reload trang
       >
         <RefreshCw size={15} />
-
         <span>Refresh Suggestions</span>
       </button>
     </div>

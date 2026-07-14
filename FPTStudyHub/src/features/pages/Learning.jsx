@@ -1,227 +1,271 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import QuizFilterBar from '../learning/components/QuizFilterBar';
 import QuizCard from '../learning/components/QuizCard';
 import SecureQuizAuth from '../learning/components/SecureQuizAuth';
 import QuizIntro from '../learning/components/QuizIntro';
 import QuizTaking from '../learning/components/QuizTaking';
 import QuizResults from '../learning/components/QuizResults';
-import { INITIAL_QUIZZES } from "../../data/mockQuizzes";
 import './Learning.css';
 import Pagination from '../../shared/components/Pagination/Pagination';
 
-const SUBJECTS_LIST = ['Computer Science', 'Software Engineering', 'Economics'];
-const DIFFICULTIES_LIST = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'];
+import axiosClient from '../../utils/axiosClient';
+
 const STATUSES_LIST = [
-  { value: 'completed', label: 'Completed' },
+  { value: 'not-started', label: 'Not Started' },
   { value: 'in-progress', label: 'In Progress' },
-  { value: 'not-started', label: 'Not Started' }
+  { value: 'completed', label: 'Completed' }
 ];
 
 const Learning = () => {
-  const [quizzes, setQuizzes] = useState(INITIAL_QUIZZES);
+  const navigate = useNavigate(); 
+  const [quizzes, setQuizzes] = useState([]);
   const [filteredQuizzes, setFilteredQuizzes] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Filter states
+  const [dynamicCreators, setDynamicCreators] = useState(['All']);
+  const [selectedCreator, setSelectedCreator] = useState('All');
+
   const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSubject, setSelectedSubject] = useState('All');
-  const [selectedDifficulty, setSelectedDifficulty] = useState('All');
+  
+  // Đã xóa state selectedSubject
+  
   const [selectedStatus, setSelectedStatus] = useState('All');
-
-  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 3;
-
-  // Workflow Navigation states: 'dashboard' | 'auth' | 'intro' | 'taking' | 'results'
   const [view, setView] = useState('dashboard');
   const [activeQuiz, setActiveQuiz] = useState(null);
-
-  // Active quiz taking results (to pass from taking to results screen)
   const [userAnswers, setUserAnswers] = useState({});
+  const [pendingActionType, setPendingActionType] = useState('take');
 
-  // Perform search & filter
+  useEffect(() => {
+    const fetchLearningData = async () => {
+      setIsLoading(true);
+      try {
+        const publicRes = await axiosClient.get('/api/v1/quizzes/all');
+        const myQuizzesRes = await axiosClient.get('/api/v1/quizzes/my-quizzes');
+        const historyRes = await axiosClient.get('/api/v1/quizzes/history');
+
+        const extractData = (res) => Array.isArray(res) ? res : (res?.result || res?.data || res || []);
+
+        const publicQuizzes = extractData(publicRes);
+        const myQuizzes = extractData(myQuizzesRes);
+        const historyAttempts = extractData(historyRes);
+
+        const quizMap = new Map();
+
+        publicQuizzes.forEach(q => {
+          quizMap.set(q.quizId, {
+            id: q.quizId.toString(),
+            quizId: q.quizId,
+            title: q.title || 'Untitled Quiz',
+            subject: q.subject ? q.subject.trim() : 'General', 
+            source: q.account?.userName || 'Community', 
+            questionsCount: q.quantity || 0,
+            duration: q.duration || 15,
+            status: 'not-started', 
+            score: 0,
+            totalWrong: 0,
+            completedQuestions: 0,
+            accessMode: 'public',
+            password: q.password || ''
+          });
+        });
+
+        myQuizzes.forEach(q => {
+          if (!quizMap.has(q.quizId)) {
+            quizMap.set(q.quizId, {
+              id: q.quizId.toString(),
+              quizId: q.quizId,
+              title: q.title || 'Untitled Quiz',
+              subject: q.subject ? q.subject.trim() : 'General', 
+              source: 'Me',
+              questionsCount: q.quantity || 0,
+              duration: q.duration || 15,
+              status: 'not-started', 
+              score: 0,
+              totalWrong: 0,
+              completedQuestions: 0,
+              accessMode: q.visibility?.toLowerCase() === 'public' ? 'public' : 'private',
+              password: q.password || ''
+            });
+          } else {
+            const existingQuiz = quizMap.get(q.quizId);
+            existingQuiz.source = 'Me';
+          }
+        });
+
+        historyAttempts.sort((a, b) => {
+          if (a.status === 'COMPLETED' && b.status !== 'COMPLETED') return 1;
+          if (a.status !== 'COMPLETED' && b.status === 'COMPLETED') return -1;
+          return 0;
+        }).forEach(attempt => {
+          const qId = attempt.quizId;
+          if (quizMap.has(qId)) {
+            const existingQuiz = quizMap.get(qId);
+            
+            if (attempt.status === 'IN_PROGRESS') {
+                existingQuiz.status = 'in-progress';
+                try {
+                   existingQuiz.draftAnswers = attempt.savedAnswers ? JSON.parse(attempt.savedAnswers) : {};
+                   existingQuiz.completedQuestions = Object.keys(existingQuiz.draftAnswers).length;
+                } catch(e) { console.error("Lỗi parse JSON:", e) }
+            } else {
+                existingQuiz.status = 'completed';
+                existingQuiz.score = Math.max(existingQuiz.score || 0, attempt.score || 0);
+                existingQuiz.totalWrong = attempt.totalWrong || 0;
+            }
+          }
+        });
+
+        const finalQuizzes = Array.from(quizMap.values());
+        setQuizzes(finalQuizzes);
+        
+        finalQuizzes.forEach(q => {
+          if (q.status !== 'completed') {
+            const draft = localStorage.getItem(`quiz_draft_${q.quizId}`);
+            if (draft) {
+              q.status = 'in-progress';
+              q.completedQuestions = Object.keys(JSON.parse(draft)).length;
+            }
+          }
+        });
+
+        setQuizzes(finalQuizzes);
+        
+        setDynamicCreators(['All', ...new Set(finalQuizzes.map(q => q.source))].filter(Boolean));
+        // Đã xóa setDynamicSubjects
+      } catch (error) {
+        console.error("Lỗi tải data Learning:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchLearningData();
+  }, []);
+
   const handleSearchFilter = () => {
     let result = quizzes;
     const query = searchQuery.trim().toLowerCase();
-
+    
+    // Gộp tìm kiếm: Tên, ID, Tên môn học (subject) và Tên người tạo
     if (query !== '') {
-      // TRƯỜNG HỢP 2: Tìm kiếm chính xác tuyệt đối theo Mã ID (Ví dụ: QZ005)
-      const exactMatch = quizzes.find(q => q.id.toLowerCase() === query);
-      if (exactMatch) {
-        result = [exactMatch];
-      } else {
-        // TRƯỜNG HỢP 1: Tìm kiếm theo từ khóa (Quét cả bài Public và Private)
-        result = result.filter(q => 
-          q.title.toLowerCase().includes(query) || 
-          q.subject.toLowerCase().includes(query) ||
-          q.source.toLowerCase().includes(query)
-        );
-      }
-    } else {
-      // TRẠNG THÁI MẶC ĐỊNH: Ẩn hoàn toàn bài Private, chỉ hiển thị bài Public
-      result = result.filter(q => q.accessMode === 'public');
+      result = result.filter(q => 
+        (q.title && q.title.toLowerCase().includes(query)) || 
+        (q.id && q.id.toLowerCase().includes(query)) ||
+        (q.subject && q.subject.toLowerCase().includes(query)) ||
+        (q.source && q.source.toLowerCase().includes(query))
+      );
     }
-
-    // Áp dụng các bộ lọc phụ (Subject, Difficulty, Status)
-    if (selectedSubject !== 'All') {
-      result = result.filter(q => q.subject === selectedSubject);
+    
+    if (selectedCreator && selectedCreator !== 'All') {
+      result = result.filter(q => q.source && q.source.toLowerCase() === selectedCreator.toLowerCase());
     }
-    if (selectedDifficulty !== 'All') {
-      result = result.filter(q => q.difficulty === selectedDifficulty);
-    }
-    if (selectedStatus !== 'All') {
+    
+    if (selectedStatus && selectedStatus !== 'All') {
       result = result.filter(q => q.status === selectedStatus);
     }
-
+    
     setFilteredQuizzes(result);
   };
 
-  // Run filter on initial mount or when selections change
   useEffect(() => {
     handleSearchFilter();
-    setCurrentPage(1); // Reset về trang 1 khi lọc thay đổi
-  }, [searchQuery, selectedSubject, selectedDifficulty, selectedStatus, quizzes]);
+    setCurrentPage(1); 
+  // Đã xóa selectedSubject khỏi dependency array
+  }, [searchQuery, selectedCreator, selectedStatus, quizzes]); 
 
-  // Submit search button trigger
   const handleSearchSubmit = (forcedQuery) => {
-    if (typeof forcedQuery === 'string') {
-      setSearchQuery(forcedQuery);
-      setSearchInput(forcedQuery);
-    } else {
-      setSearchQuery(searchInput);
+    setSearchQuery(typeof forcedQuery === 'string' ? forcedQuery : searchInput);
+    if (typeof forcedQuery === 'string') setSearchInput(forcedQuery);
+  };
+
+  const handleQuizAction = async (quizId, actionType) => {
+    const targetQuiz = quizzes.find(q => q.id === quizId?.toString() || q.quizId === quizId);
+    
+    if (actionType === 'review') {
+      navigate('/', { state: { reviewedQuizData: targetQuiz } });
+      return;
+    }
+
+    setPendingActionType(actionType);
+    try {
+      const response = await axiosClient.get(`/api/v1/quizzes/${quizId}/take`);
+      const activeQuizData = { ...targetQuiz, ...(response.result || response.data || response) };
+      setActiveQuiz(activeQuizData);
+
+      if (activeQuizData.accessMode === 'private' || activeQuizData.visibility === 'PRIVATE') {
+        setView('auth');
+      } else {
+        setView(actionType === 'resume' ? 'taking' : 'intro');
+      }
+    } catch (error) {
+      alert("Không thể mở bài thi lúc này, vui lòng thử lại.");
     }
   };
 
-  // Handle Quiz Action click
-  const handleQuizAction = (quizId, actionType) => {
-    const quiz = quizzes.find(q => q.id === quizId);
-    if (!quiz) return;
-
-    setActiveQuiz(quiz);
-
-    if (quiz.accessMode === 'private') {
-      setView('auth');
-    } else {
-      setView('intro');
-    }
-  };
-
-  const handleQuizSubmit = (answers) => {
-    setUserAnswers(answers);
+  const handleQuizSubmit = (gradedResult) => {
+    setUserAnswers(gradedResult);
     setView('results');
   };
 
   const handleQuizFinished = (finalScore) => {
-    // Update quiz status in quizzes list
-    const updatedQuizzes = quizzes.map(q => {
-      if (q.id === activeQuiz.id) {
-        return {
-          ...q,
-          status: 'completed',
-          score: Math.max(q.score || 0, finalScore)
-        };
+    setQuizzes(quizzes.map(q => {
+      if (q.id === activeQuiz.id?.toString() || q.quizId === activeQuiz.quizId) {
+        return { ...q, status: 'completed', score: Math.max(q.score || 0, finalScore) };
       }
       return q;
-    });
-    setQuizzes(updatedQuizzes);
+    }));
     setView('dashboard');
     setActiveQuiz(null);
   };
 
-  // Pagination calculations
   const totalPages = Math.ceil(filteredQuizzes.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedQuizzes = filteredQuizzes.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  // Render sub-views depending on current view state
   if (view === 'auth' && activeQuiz) {
-    return (
-      <SecureQuizAuth 
-        activeQuiz={activeQuiz}
-        onAuthSuccess={() => setView('intro')}
-        onCancel={() => {
-          setView('dashboard');
-          setActiveQuiz(null);
-        }}
-      />
-    );
+    return <SecureQuizAuth activeQuiz={activeQuiz} onAuthSuccess={() => setView(pendingActionType === 'resume' ? 'taking' : 'intro')} onCancel={() => { setView('dashboard'); setActiveQuiz(null); }} />;
   }
-
   if (view === 'intro' && activeQuiz) {
-    return (
-      <QuizIntro 
-        activeQuiz={activeQuiz}
-        onStartQuiz={() => setView('taking')}
-        onCancel={() => {
-          setView('dashboard');
-          setActiveQuiz(null);
-        }}
-      />
-    );
+    return <QuizIntro activeQuiz={activeQuiz} onStartQuiz={() => setView('taking')} onCancel={() => { setView('dashboard'); setActiveQuiz(null); }} />;
   }
-
   if (view === 'taking' && activeQuiz) {
-    return (
-      <QuizTaking 
-        activeQuiz={activeQuiz}
-        onSubmit={handleQuizSubmit}
-      />
-    );
+    return <QuizTaking activeQuiz={activeQuiz} onSubmit={handleQuizSubmit} />;
   }
-
   if (view === 'results' && activeQuiz) {
-    return (
-      <QuizResults 
-        activeQuiz={activeQuiz}
-        userAnswers={userAnswers}
-        onFinish={handleQuizFinished}
-      />
-    );
+    return <QuizResults 
+             activeQuiz={activeQuiz} 
+             gradedResult={userAnswers} 
+             onFinish={handleQuizFinished} 
+             onRetake={() => handleQuizAction(activeQuiz.quizId || activeQuiz.id, 'take')} 
+           />;
   }
 
-  // --- DEFAULT VIEW: DASHBOARD SEARCH, FILTERS & CARDS GRID ---
   return (
     <div className="learning-page-wrapper">
-      
-      {/* 1. Page Header Block */}
       <div className="learning-header-container">
         <div className="header-text-block">
           <h1 className="learning-page-title">Knowledge Check</h1>
-          <p className="learning-page-subtitle">
-            Validate your learning with AI-generated and instructor-verified quizzes.
-          </p>
+          <p className="learning-page-subtitle">Validate your learning with AI-generated and instructor-verified quizzes.</p>
         </div>
       </div>
-
-      {/* 2. Filter & Search Bar Row */}
       <div className="learning-filter-bar-container">
         <QuizFilterBar 
-          searchQuery={searchInput}
-          setSearchQuery={setSearchInput}
-          selectedSubject={selectedSubject}
-          setSelectedSubject={setSelectedSubject}
-          selectedDifficulty={selectedDifficulty}
-          setSelectedDifficulty={setSelectedDifficulty}
-          selectedStatus={selectedStatus}
-          setSelectedStatus={setSelectedStatus}
-          subjects={SUBJECTS_LIST}
-          difficulties={DIFFICULTIES_LIST}
+          searchQuery={searchInput} setSearchQuery={setSearchInput}
+          selectedStatus={selectedStatus} setSelectedStatus={setSelectedStatus}
+          selectedCreator={selectedCreator} setSelectedCreator={setSelectedCreator}
+          creators={dynamicCreators.filter(c => c !== 'All')}
           statuses={STATUSES_LIST}
-          quizzes={quizzes}
-          onSearch={handleSearchSubmit}
+          quizzes={quizzes} onSearch={handleSearchSubmit}
         />
       </div>
-
-      {/* 3. Quiz Grid Cards */}
       <div className="quizzes-grid-layout">
-        {paginatedQuizzes.length > 0 ? (
-          paginatedQuizzes.map((quiz) => (
-            <QuizCard 
-              key={quiz.id}
-              quiz={quiz}
-              onAction={handleQuizAction}
-            />
-          ))
+        {isLoading ? (
+          <div style={{ textAlign: 'center', width: '100%', padding: '40px', color: '#64748B' }}>Đang tải dữ liệu bài thi...</div>
+        ) : paginatedQuizzes.length > 0 ? (
+          paginatedQuizzes.map((quiz) => <QuizCard key={quiz.id} quiz={quiz} onAction={handleQuizAction} />)
         ) : (
           <div className="quizzes-empty-state">
             <h3>No quizzes match your filters.</h3>
@@ -229,20 +273,12 @@ const Learning = () => {
           </div>
         )}
       </div>
-
-      {/* 4. Pagination Component */}
       {totalPages > 1 && (
         <div className="learning-pagination-container">
-          <Pagination 
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={(page) => setCurrentPage(page)}
-          />
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={(page) => setCurrentPage(page)} />
         </div>
       )}
-
     </div>
   );
 };
-
 export default Learning;

@@ -1,132 +1,278 @@
-import React, { useState } from 'react';
-import { accounts } from '../../../../data/mockDocuments';
+import React, { useState, useEffect } from 'react';
+import axiosClient from '../../../../utils/axiosClient';
+import { getDirectImageUrl } from '../../../../utils/imageHelper'; // ĐÃ THÊM IMPORT HÀM XỬ LÝ ẢNH
 import '../../../adminSettings/components/ProfileSettings/ProfileSettings.css';
 
 const ManagerProfileSettings = () => {
-  // Find the manager user in mock data
-  const initialManager = accounts.find(u => u.role === 'Manager') || accounts[3];
-  
   const [profile, setProfile] = useState({
-    fullName: initialManager.full_name,
-    email: initialManager.email,
-    bio: initialManager.bio || '',
-    role: initialManager.role,
-    avatar: initialManager.avatar_url
+    fullName: '',
+    email: '',
+    bio: '',
+    avatarUrl: ''
   });
-  
-  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = () => {
-    setIsSaving(true);
-    setTimeout(() => {
-      // Sync with mockDocument (accounts array)
-      initialManager.full_name = profile.fullName;
-      initialManager.name = profile.fullName;
-      initialManager.fullName = profile.fullName;
-      initialManager.email = profile.email;
-      initialManager.bio = profile.bio;
-      initialManager.avatar_url = profile.avatar;
-      initialManager.avatar = profile.avatar;
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  // =========================
+  // 1. LOAD PROFILE
+  // =========================
+  useEffect(() => {
+    const fetchMyProfile = async () => {
+      try {
+        const response = await axiosClient.get('/api/my-profile');
+        const data = response.result || response.data || response;
+
+        const fetchedAvatar = data.avatarUrl || data.avatar_url || data.avatar || localStorage.getItem('avatarUrl');
+
+        setProfile({
+          fullName: data.fullName || data.userName || '',
+          email: data.email || '',
+          bio: data.bio || '',
+          avatarUrl: fetchedAvatar || ''
+        });
+
+        if (fetchedAvatar) {
+          localStorage.setItem('avatarUrl', fetchedAvatar);
+        }
+      } catch (error) {
+        console.error('Lỗi khi lấy thông tin cá nhân:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMyProfile();
+  }, []);
+
+  // =========================
+  // 2. LOGIC UPLOAD & REMOVE PHOTO
+  // =========================
+  const handleUploadPhoto = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Ảnh quá lớn! Vui lòng chọn ảnh dưới 5MB.");
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
       
+      const response = await axiosClient.post(`/api/my-profile/upload-avatar`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      const updatedAccount = response.result || response.data || response;
+      const newAvatarUrl = updatedAccount.avatarUrl || updatedAccount.avatar_url || updatedAccount.avatar;
+      
+      setProfile(prev => ({ ...prev, avatarUrl: newAvatarUrl }));
+      
+      if (newAvatarUrl) {
+        localStorage.setItem('avatarUrl', newAvatarUrl);
+      }
+      window.dispatchEvent(new Event('notificationsUpdated'));
+      
+      alert("Tải ảnh đại diện thành công! Vui lòng lưu thay đổi.");
+    } catch (error) {
+      console.error("Lỗi upload ảnh:", error);
+      alert("Upload ảnh thất bại! Vui lòng thử lại.");
+    } finally {
+      setIsUploading(false);
+      e.target.value = ''; 
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setProfile(prev => ({ ...prev, avatarUrl: '' }));
+  };
+
+  // =========================
+  // 3. SAVE PROFILE
+  // =========================
+  const handleSave = async () => {
+    setIsSaving(true);
+
+    try {
+      await axiosClient.put(
+        '/api/my-profile',
+        {
+          fullName: profile.fullName,
+          email: profile.email,
+          bio: profile.bio,
+          avatarUrl: profile.avatarUrl 
+        }
+      );
+
+      if (profile.avatarUrl) {
+        localStorage.setItem('avatarUrl', profile.avatarUrl);
+      }
+      window.dispatchEvent(new Event('notificationsUpdated'));
+
+      alert('Cập nhật thông tin hồ sơ thành công!');
+    } catch (error) {
+      alert(error.response?.data?.message || 'Có lỗi xảy ra khi lưu thay đổi!');
+    } finally {
       setIsSaving(false);
-      alert('Profile settings saved successfully!');
-    }, 600);
+    }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfile(prev => ({ ...prev, [name]: value }));
+    if (name === 'bio' && value.length > 500) return;
+
+    setProfile((prev) => ({
+      ...prev,
+      [name]: value
+    }));
   };
+
+  if (isLoading) {
+    return (
+      <div style={{ padding: '40px' }}>
+        Đang tải thông tin cá nhân...
+      </div>
+    );
+  }
 
   return (
     <div className="settings-card">
+
+      {/* =========================
+          PROFILE IMAGE
+      ========================== */}
       <div className="profile-picture-section">
+
         <div className="profile-avatar-wrapper">
-          <img 
-            src={profile.avatar} 
-            alt="Profile" 
+          {/* ĐÃ SỬA: SỬ DỤNG HÀM getDirectImageUrl ĐỂ RENDER ẢNH CHUẨN XÁC */}
+          <img
+            src={profile.avatarUrl ? getDirectImageUrl(profile.avatarUrl) : `https://ui-avatars.com/api/?name=${profile.fullName || 'Manager'}&background=random`}
+            alt="Profile"
             className="profile-avatar-large"
+            referrerPolicy="no-referrer"
+            onError={(e) => {
+              e.target.src = `https://ui-avatars.com/api/?name=${profile.fullName || 'Manager'}&background=random`;
+            }}
           />
         </div>
+
         <div className="profile-picture-info">
-          <h3 className="settings-sub-title">Profile Picture</h3>
-          <p className="settings-desc">PNG, JPG or GIF up to 5MB.</p>
+          <h3 className="settings-sub-title">
+            Profile Picture
+          </h3>
+
+          <p className="settings-desc">
+            PNG, JPG or GIF up to 5MB.
+          </p>
+
           <div className="profile-picture-actions">
-            <button className="btn-primary-small">Upload New</button>
-            <button className="btn-secondary-small">Remove</button>
+            <input
+              type="file"
+              id="managerAvatarUpload"
+              style={{ display: 'none' }}
+              accept="image/*"
+              onChange={handleUploadPhoto}
+            />
+            <label 
+              htmlFor="managerAvatarUpload" 
+              className="btn-primary-small" 
+              style={{ cursor: isUploading ? 'not-allowed' : 'pointer', display: 'inline-block', textAlign: 'center', lineHeight: '36px' }}
+            >
+              {isUploading ? 'Uploading...' : 'Upload New'}
+            </label>
+
+            <button 
+              className="btn-secondary-small" 
+              onClick={handleRemovePhoto} 
+              disabled={isUploading}
+            >
+              Remove
+            </button>
           </div>
         </div>
       </div>
 
+      {/* =========================
+          FORM ROW
+      ========================== */}
       <div className="settings-form-row">
+
         <div className="settings-form-group">
-          <label className="settings-label">Full Name</label>
-          <input 
-            type="text" 
-            className="settings-input" 
+          <label className="settings-label">
+            Full Name
+          </label>
+
+          <input
+            type="text"
+            className="settings-input"
             name="fullName"
-            value={profile.fullName} 
+            value={profile.fullName || ''}
             onChange={handleChange}
+            placeholder="Enter your name"
           />
         </div>
+
         <div className="settings-form-group">
-          <label className="settings-label">Email Address</label>
-          <input 
-            type="email" 
-            className="settings-input" 
+          <label className="settings-label">
+            Email Address (Read-only)
+          </label>
+
+          <input
+            type="email"
+            className="settings-input disabled"
             name="email"
-            value={profile.email} 
-            onChange={handleChange}
+            value={profile.email || ''}
+            readOnly
+            title="Email không thể thay đổi"
           />
         </div>
       </div>
 
+      {/* =========================
+          BIO
+      ========================== */}
       <div className="settings-form-group">
-        <label className="settings-label">Bio</label>
-        <textarea 
-          className="settings-textarea" 
-          rows="4" 
+
+        <label className="settings-label">
+          Bio
+        </label>
+
+        <textarea
+          className="settings-textarea"
+          rows="4"
           name="bio"
-          value={profile.bio}
+          value={profile.bio || ''}
           onChange={handleChange}
+          placeholder="Tell us a little bit about yourself..."
         ></textarea>
+
         <div className="textarea-footer">
-          <span className="char-count">{profile.bio.length} / 500</span>
+          <span className="char-count">
+            {profile.bio?.length || 0} / 500
+          </span>
         </div>
       </div>
 
-      <div className="settings-form-group">
-        <label className="settings-label">Primary Role</label>
-        <select 
-          className="settings-select" 
-          name="role"
-          value={profile.role}
-          onChange={handleChange}
-          disabled
-        >
-          <option value="Student">Student</option>
-          <option value="Manager">Manager</option>
-          <option value="Admin">Admin</option>
-        </select>
-      </div>
-
+      {/* =========================
+          FOOTER
+      ========================== */}
       <div className="settings-footer">
-        <button 
-          className="btn-cancel" 
-          onClick={() => setProfile({
-            fullName: initialManager.full_name,
-            email: initialManager.email,
-            bio: initialManager.bio || '',
-            role: initialManager.role,
-            avatar: initialManager.avatar_url
-          })}
+
+        <button
+          className="btn-cancel"
+          onClick={() => window.location.reload()}
         >
           Cancel
         </button>
-        <button 
-          className="btn-save" 
-          onClick={handleSave} 
-          disabled={isSaving}
+
+        <button
+          className="btn-save"
+          onClick={handleSave}
+          disabled={isSaving || isUploading}
         >
           {isSaving ? 'Saving...' : 'Save Changes'}
         </button>

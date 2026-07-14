@@ -23,10 +23,9 @@ import Community from "../features/pages/Community.jsx";
 import Account from "../features/pages/Account.jsx";
 import UploadDocument from "../features/pages/UploadDocument.jsx";
 import Notifications from "../features/pages/Notifications.jsx";
+
 import Quizzes from "../features/pages/Quizzes.jsx";
 import CreateQuiz from "../features/pages/CreateQuiz.jsx";
-
-
 import QuestionSet from "../features/pages/QuestionSet.jsx";
 import GenerateQuizPage from "../features/pages/GenerateQuizPage.jsx";
 import QuizAnalyticsPage from "../features/pages/QuizAnalyticsPage.jsx";
@@ -50,7 +49,7 @@ export const publicRoutes = [
 
   { path: "/question-sets", component: QuestionSet },
   { path: "/generate-quiz", component: GenerateQuizPage },
-  { path: "/analytics", component: QuizAnalyticsPage },
+  { path: "/analytics/:id", component: QuizAnalyticsPage },
 
 
 ];

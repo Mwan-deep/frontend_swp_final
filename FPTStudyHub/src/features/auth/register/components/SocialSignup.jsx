@@ -1,8 +1,10 @@
 import React from 'react';
+import { authService, parseJwt } from '../../../../service/authService';
+
 
 const SocialSignup = () => {
   const handleGoogleSignup = () => {
-    alert("Signing up with Google...");
+    authService.loginWithGoogle();
   };
 
   return (
