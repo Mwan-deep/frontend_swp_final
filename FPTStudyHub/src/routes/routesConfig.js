@@ -3,6 +3,7 @@ import DocumentLibrary from "../features/pages/DocumentLibrary.jsx";
 import Dashboard from "../features/pages/Dashboard.jsx";
 import LandingPage from "../features/pages/LandingPage.jsx";
 import Login from "../features/auth/login/login.jsx";
+import ForgotPassword from "../features/auth/login/components/ForgotPassword.jsx";
 import AdminDashboard from "../features/pages/AdminDashboard.jsx";
 import ReportManagement from "../features/pages/ReportManagement.jsx";
 import AdminSettings from "../features/pages/AdminSettings.jsx";
@@ -35,6 +36,7 @@ export const publicRoutes = [
   { path: "documents", component: DocumentLibrary },
   { path: "/", component: LandingPage, noLayout: true },
   { path: "login", component: Login, noLayout: true },
+  { path: "forgot-password", component: ForgotPassword, noLayout: true },
   // Route Register đã được định nghĩa trực tiếp trong App.jsx nên không cần ở đây
   { path: "/ai-features", component: AIFeatures },
   { path: "/learning", component: Learning },

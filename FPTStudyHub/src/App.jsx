@@ -6,6 +6,7 @@ import LandingPage from './features/pages/LandingPage';
 import { publicRoutes, adminRoutes, managerRoutes } from './routes/routesConfig';
 import Login from './features/auth/login/login';
 import Register from './features/auth/register/register';
+import ForgotPassword from './features/auth/login/components/ForgotPassword';
 import ManagerLayout from "./layout/ManagerLayout.jsx";
 import DocumentDetail from './features/pages/DocumentDetail.jsx';
 import QuestionSetDetail from './features/pages/QuestionSetDetail.jsx';
@@ -49,7 +50,7 @@ function App() {
     const checkSecurity = () => {
       const token = localStorage.getItem('token') || localStorage.getItem('api_token');
       const path = window.location.pathname;
-      const isPublic = path === '/' || path.startsWith('/login') || path.startsWith('/register');
+      const isPublic = path === '/' || path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/forgot-password');
 
       if ((!token || isTokenExpired(token)) && !isPublic) {
         localStorage.clear();
@@ -77,6 +78,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/documents/:id" element={<DocumentDetail />} />
         <Route path="/question-sets/:id" element={<QuestionSetDetail />} />
 

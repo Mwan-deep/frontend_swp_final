@@ -4,7 +4,7 @@ import LoginHeader from './components/LoginHeader';
 import LoginForm from './components/LoginForm';
 import LoginSocial from './components/LoginSocial';
 import LoginFooter from './components/LoginFooter';
-import ForgotPassword from './components/ForgotPassword';
+
 import { authService, parseJwt } from '../../../service/authService';
 import axiosClient from '../../../utils/axiosClient'; // Đảm bảo đã import axiosClient
 import './login.css';
@@ -24,7 +24,6 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [view, setView] = useState('login'); // 'login' or 'forgot-password'
 
   // --- STATE DÀNH CHO XÁC THỰC OTP ---
   const [showOtpModal, setShowOtpModal] = useState(false);
@@ -121,85 +120,71 @@ const Login = () => {
 
   return (
     <div className="login-page-container">
-      <div 
-        className="back-to-home-nav" 
-        onClick={() => {
-          if (view === 'forgot-password') {
-            setView('login');
-          } else {
-            navigate('/');
-          }
-        }}
-      >
-        ← {view === 'forgot-password' ? 'Back to Login' : 'Back to Home'}
+      <div className="back-to-home-nav" onClick={() => navigate('/')}>
+        ← Back to Home
       </div>
 
-      {view === 'forgot-password' ? (
-        <ForgotPassword onBackToLogin={() => setView('login')} />
-      ) : (
-        <div className="login-card-wrapper">
-          <LoginHeader />
-          
-          {errorMessage && (
-            <div style={{ color: '#dc3545', textAlign: 'center', marginBottom: '15px', backgroundColor: '#f8d7da', padding: '10px', borderRadius: '5px' }}>
-              {errorMessage}
+      <div className="login-card-wrapper">
+        <LoginHeader />
+        
+        {errorMessage && (
+          <div style={{ color: '#dc3545', textAlign: 'center', marginBottom: '15px', backgroundColor: '#f8d7da', padding: '10px', borderRadius: '5px' }}>
+            {errorMessage}
+          </div>
+        )}
+
+        {/* NẾU ĐANG CẦN NHẬP OTP THÌ HIỆN FORM OTP, NGƯỢC LẠI HIỆN FORM LOGIN CHÍNH */}
+        {showOtpModal ? (
+          <form onSubmit={handleVerifyOtpSubmit} className="login-form-content">
+            <div style={{ textAlign: 'center', marginBottom: '20px', color: '#4b5563' }}>
+              Chúng tôi phát hiện bạn đăng nhập trên thiết bị mới.<br />
+              Vui lòng nhập mã OTP gồm 6 số vừa được gửi đến <b>{pendingEmail}</b>.
             </div>
-          )}
-
-          {/* NẾU ĐANG CẦN NHẬP OTP THÌ HIỆN FORM OTP, NGƯỢC LẠI HIỆN FORM LOGIN CHÍNH */}
-          {showOtpModal ? (
-            <form onSubmit={handleVerifyOtpSubmit} className="login-form-content">
-              <div style={{ textAlign: 'center', marginBottom: '20px', color: '#4b5563' }}>
-                Chúng tôi phát hiện bạn đăng nhập trên thiết bị mới.<br />
-                Vui lòng nhập mã OTP gồm 6 số vừa được gửi đến <b>{pendingEmail}</b>.
-              </div>
-              
-              <div className="form-group-item">
-                <input
-                  type="text"
-                  className="form-text-input"
-                  placeholder="Nhập mã OTP..."
-                  value={otpCode}
-                  onChange={(e) => setOtpCode(e.target.value)}
-                  required
-                  disabled={isLoading}
-                  style={{ textAlign: 'center', letterSpacing: '5px', fontSize: '18px', fontWeight: 'bold' }}
-                  maxLength={6}
-                />
-              </div>
-              
-              <button type="submit" className="login-submit-button" disabled={isLoading || otpCode.length < 4}>
-                <span>{isLoading ? 'Đang xác thực...' : 'Xác nhận OTP'}</span>
-              </button>
-
-              <div style={{ textAlign: 'center', marginTop: '15px' }}>
-                <span 
-                  className="forgot-link" 
-                  onClick={() => { setShowOtpModal(false); setErrorMessage(''); }}
-                >
-                  Quay lại đăng nhập
-                </span>
-              </div>
-            </form>
-          ) : (
-            <>
-              <LoginForm 
-                onSubmit={handleLoginSubmit} 
-                isLoading={isLoading} 
-                onForgotPassword={() => setView('forgot-password')} 
+            
+            <div className="form-group-item">
+              <input
+                type="text"
+                className="form-text-input"
+                placeholder="Nhập mã OTP..."
+                value={otpCode}
+                onChange={(e) => setOtpCode(e.target.value)}
+                required
+                disabled={isLoading}
+                style={{ textAlign: 'center', letterSpacing: '5px', fontSize: '18px', fontWeight: 'bold' }}
+                maxLength={6}
               />
-              <LoginSocial 
-                onGoogleLogin={() => { 
-                  window.location.href = 'http://localhost:8080/oauth2/authorization/google';
-                }} 
-                onRegisterClick={() => navigate('/register')} 
-              />
-            </>
-          )}
-        </div>
-      )}
-      
-      {view === 'login' && <LoginFooter />}
+            </div>
+            
+            <button type="submit" className="login-submit-button" disabled={isLoading || otpCode.length < 4}>
+              <span>{isLoading ? 'Đang xác thực...' : 'Xác nhận OTP'}</span>
+            </button>
+
+            <div style={{ textAlign: 'center', marginTop: '15px' }}>
+              <span 
+                className="forgot-link" 
+                onClick={() => { setShowOtpModal(false); setErrorMessage(''); }}
+              >
+                Quay lại đăng nhập
+              </span>
+            </div>
+          </form>
+        ) : (
+          <>
+            <LoginForm 
+              onSubmit={handleLoginSubmit} 
+              isLoading={isLoading} 
+              onForgotPassword={() => navigate('/forgot-password')} 
+            />
+            <LoginSocial 
+              onGoogleLogin={() => { 
+                window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+              }} 
+              onRegisterClick={() => navigate('/register')} 
+            />
+          </>
+        )}
+      </div>
+      <LoginFooter />
     </div>
   );
 };
