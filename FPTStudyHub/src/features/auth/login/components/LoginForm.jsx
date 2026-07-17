@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 
-const LoginForm = ({ onSubmit, isLoading }) => {
+const LoginForm = ({ onSubmit, isLoading, onForgotPassword }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -33,7 +33,7 @@ const LoginForm = ({ onSubmit, isLoading }) => {
       <div className="form-group-item">
         <div className="password-label-container">
           <label htmlFor="password-input">Password</label>
-          <span className="forgot-link" onClick={() => alert('Recovery code has been sent to your email!')}>
+          <span className="forgot-link" onClick={onForgotPassword}>
             Forgot password?
           </span>
         </div>
