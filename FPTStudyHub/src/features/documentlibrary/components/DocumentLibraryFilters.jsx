@@ -9,7 +9,8 @@ const DocumentLibraryFilters = ({
   selectedSort,
   setSelectedSort,
   showMoreFilters,
-  setShowMoreFilters
+  setShowMoreFilters,
+  categories // ĐÃ THÊM: Nhận mảng chuyên ngành động từ component cha
 }) => {
   return (
     <div className="filters-container">
@@ -21,10 +22,10 @@ const DocumentLibraryFilters = ({
           aria-label="Filter by Category"
         >
           <option value="All">All Categories</option>
-          <option value="Computer Science">Computer Science</option>
-          <option value="Software Engineering">Software Engineering</option>
-          <option value="Economics">Economics</option>
-          <option value="AI Applications">AI Applications</option>
+          {/* ĐÃ SỬA: Lặp qua danh sách chuyên ngành thực tế từ Backend */}
+          {categories && categories.map((cat, idx) => (
+            <option key={idx} value={cat}>{cat}</option>
+          ))}
         </select>
 
         <select

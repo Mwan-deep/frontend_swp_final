@@ -145,7 +145,7 @@ const AdminDocumentInvestigation = () => {
         <div className="report-details-header mb-24">
           <div className="report-title-wrapper">
             <h1 className="admin-page-title mb-0">{documentInfo.title}</h1>
-            {totalReports > 0 && <span className="badge-critical"><ShieldAlert size={14} /> Cần xử lý</span>}
+            {totalReports > 0 && <span className="badge-critical"><ShieldAlert size={14} /> Needs to be addressed</span>}
           </div>
         </div>
 
@@ -157,11 +157,11 @@ const AdminDocumentInvestigation = () => {
             </div>
             <div className="doc-info-cols">
               <div className="doc-info-col">
-                <span className="doc-info-label">Mã Tài Liệu</span>
+                <span className="doc-info-label">Document ID</span>
                 <span className="doc-info-value">{documentInfo.id}</span>
               </div>
               <div className="doc-info-col">
-                <span className="doc-info-label">Người Đăng (Uploader)</span>
+                <span className="doc-info-label">Uploader</span>
                 <div className="uploader-info">
                   {/* ĐÃ CẬP NHẬT CẤU TRÚC ẢNH AVATAR NGƯỜI ĐĂNG */}
                   <img 
@@ -177,7 +177,7 @@ const AdminDocumentInvestigation = () => {
                 </div>
               </div>
               <div className="doc-info-col">
-                <span className="doc-info-label">Tổng Báo Cáo</span>
+                <span className="doc-info-label">Total Reports</span>
                 <span className="doc-info-value text-danger font-bold">{totalReports}</span>
               </div>
             </div>
@@ -197,26 +197,26 @@ const AdminDocumentInvestigation = () => {
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                 >
-                  <option value="all">Cần xử lý (Pending + Review)</option>
-                  <option value="Pending">Chờ xử lý (Pending)</option>
-                  <option value="Under Review">Đang điều tra (In Review)</option>
-                  <option value="Resolved">Đã giải quyết (Resolved)</option>
+                  <option value="all">Needs to be addressed (Pending + Review)</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Under Review">Under Review</option>
+                  <option value="Resolved">Resolved</option>
                 </select>
               </div>
             </div>
             
             {isLoading ? (
-              <div style={{ padding: '40px', textAlign: 'center' }}>Đang tải danh sách báo cáo...</div>
+              <div style={{ padding: '40px', textAlign: 'center' }}>Loading report list...</div>
             ) : (
               <table className="admin-table">
                 <thead>
                   <tr>
                     <th>Report ID</th>
-                    <th>Người Tố Cáo</th>
-                    <th>Lý do</th>
-                    <th>Ngày gửi</th>
-                    <th>Trạng thái</th>
-                    <th>Hành động</th>
+                    <th>Reporter</th>
+                    <th>Reason</th>
+                    <th>Submitted Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -252,14 +252,14 @@ const AdminDocumentInvestigation = () => {
                       <td>{getStatusBadge(report.status)}</td>
                       <td className="td-actions">
                         <button className="text-action-btn view-record" onClick={(e) => { e.stopPropagation(); openReportDetails(report); }}>
-                          Chi tiết
+                          View Details
                         </button>
                       </td>
                     </tr>
                   ))}
                   {filteredReports.length === 0 && (
                      <tr>
-                        <td colSpan="6" style={{ textAlign: 'center', padding: '30px' }}>Không có báo cáo nào ở trạng thái này.</td>
+                        <td colSpan="6" style={{ textAlign: 'center', padding: '30px' }}>No reports found in this status.</td>
                      </tr>
                   )}
                 </tbody>
@@ -275,13 +275,13 @@ const AdminDocumentInvestigation = () => {
           {selectedReport && (
             <div className="investigation-side-panel">
               <div className="side-panel-header">
-                <h3 className="side-panel-title">Chi tiết Báo cáo #{selectedReport.reportId}</h3>
+                <h3 className="side-panel-title">Report Details #{selectedReport.reportId}</h3>
                 <button className="btn-close-panel" onClick={closeReportDetails}><X size={20} /></button>
               </div>
               
               <div className="side-panel-content">
                 <div className="panel-section mb-24">
-                  <h4 className="panel-section-title">Nội dung Tố cáo</h4>
+                  <h4 className="panel-section-title">Report Content</h4>
                   <div className="bg-light-gray p-16 br-8">
                     <p className="investigation-text m-0" style={{ whiteSpace: 'pre-line' }}>{selectedReport.description}</p>
                   </div>
@@ -290,30 +290,30 @@ const AdminDocumentInvestigation = () => {
                 <div className="panel-section">
                   <div className="d-flex-align-center gap-8 mb-16 text-warning">
                     <ShieldAlert size={18} />
-                    <h4 className="panel-section-title m-0">Quyết định Xử lý</h4>
+                    <h4 className="panel-section-title m-0">Processing Decision</h4>
                   </div>
                   
                   <div className="form-group mb-16">
-                    <label className="form-label">Cập nhật đơn Báo cáo</label>
+                    <label className="form-label">Update Report Status</label>
                     <select className="form-select" value={reportStatus} onChange={(e) => setReportStatus(e.target.value)}>
-                      <option value="PENDING">Chờ xử lý (Pending)</option>
-                      <option value="UNDER_REVIEW">Đang điều tra (In Review)</option>
-                      <option value="RESOLVED">Đã giải quyết (Resolved)</option>
+                      <option value="PENDING">Pending</option>
+                      <option value="UNDER_REVIEW">Under Review</option>
+                      <option value="RESOLVED">Resolved</option>
                     </select>
                   </div>
 
                   <div className="form-group mb-16">
-                    <label className="form-label">Phạt Tài Khoản (Người đăng)</label>
+                    <label className="form-label">Penalty for Violating Account</label>
                     <select className="form-select" value={userStatus} onChange={(e) => setUserStatus(e.target.value)}>
-                      <option value="ACTIVE">Bình thường (Active)</option>
-                      <option value="INACTIVE">Khóa tài khoản (Inactive)</option>
+                      <option value="ACTIVE">Normal (Active)</option>
+                      <option value="INACTIVE">Lock Account (Inactive)</option>
                     </select>
                   </div>
 
                   <div className="form-group mb-24">
                     <div className="d-flex-between mb-8">
-                      <label className="form-label mb-0">Ghi chú nội bộ</label>
-                      <span className="text-muted text-xs">Chỉ Admin thấy</span>
+                      <label className="form-label mb-0">Internal Notes</label>
+                      <span className="text-muted text-xs">Only Admin can see</span>
                     </div>
                     <textarea 
                       className="form-textarea" 
@@ -330,7 +330,7 @@ const AdminDocumentInvestigation = () => {
                       {isSaving ? 'Đang lưu...' : 'Lưu Quyết Định'}
                     </button>
                     <button className="btn-action-secondary" onClick={closeReportDetails}>
-                      Hủy
+                      Cancel
                     </button>
                   </div>
                 </div>

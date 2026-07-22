@@ -5,6 +5,7 @@ import StepEmail from './StepEmail';
 import StepOtp from './StepOtp';
 import StepNewPassword from './StepNewPassword';
 import StepDone from './StepDone';
+import axiosClient from '../../../../utils/axiosClient'; // ĐÃ THÊM: Import axiosClient để gọi API
 import './ForgotPassword.css';
 
 // Main Export Component
@@ -29,13 +30,22 @@ const ForgotPassword = ({ onBackToLogin }) => {
     return () => clearInterval(interval);
   }, [step, timer]);
 
-  const handleEmailSubmit = (e) => {
+  // BƯỚC 1: GỬI EMAIL ĐỂ NHẬN OTP
+  const handleEmailSubmit = async (e) => {
     e.preventDefault();
     if (!email.trim()) return;
-    setStep(2);
-    setTimer(60);
+
+    try {
+      // Gọi API Forgot Password. Backend yêu cầu biến tên là 'gmail'
+      await axiosClient.post('/api/auth/forgot-password', { gmail: email });
+      setStep(2);
+      setTimer(60);
+    } catch (error) {
+      alert(error.response?.data?.message || 'Có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại!');
+    }
   };
 
+  // BƯỚC 2: NHẬP OTP (Chuyển sang bước 3 nhập mật khẩu)
   const handleOtpSubmit = (e) => {
     e.preventDefault();
     const otpCode = otp.join('');
@@ -43,10 +53,12 @@ const ForgotPassword = ({ onBackToLogin }) => {
       alert('Please enter all 6 digits of the OTP code.');
       return;
     }
+    // Vì Backend xác thực OTP cùng lúc với Đổi mật khẩu nên ở bước này chỉ cần cho qua Step 3
     setStep(3);
   };
 
-  const handlePasswordSubmit = (e) => {
+  // BƯỚC 3: GỬI MẬT KHẨU MỚI VÀ OTP LÊN BACKEND
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     if (newPassword.length < 8) {
       alert('Password must be at least 8 characters long.');
@@ -56,13 +68,31 @@ const ForgotPassword = ({ onBackToLogin }) => {
       alert('Passwords do not match.');
       return;
     }
-    setStep(4);
+
+    try {
+      // Gọi API Reset Password với đầy đủ payload Backend yêu cầu
+      await axiosClient.post('/api/auth/reset-password', {
+        gmail: email,
+        otp: otp.join(''),
+        newPassword: newPassword,
+        confirmPassword: confirmPassword
+      });
+      setStep(4); // Thành công -> Chuyển sang màn hình Done
+    } catch (error) {
+      alert(error.response?.data?.message || 'Mã OTP không chính xác hoặc đã hết hạn!');
+    }
   };
 
-  const handleResendOtp = () => {
-    setTimer(60);
-    setOtp(['', '', '', '', '', '']);
-    alert('A new verification code has been sent to your email.');
+  // GỬI LẠI MÃ OTP
+  const handleResendOtp = async () => {
+    try {
+      await axiosClient.post('/api/auth/forgot-password', { gmail: email });
+      setTimer(60);
+      setOtp(['', '', '', '', '', '']);
+      alert('A new verification code has been sent to your email.');
+    } catch (error) {
+      alert(error.response?.data?.message || 'Vui lòng chờ hết thời gian Cooldown (1 phút) để gửi lại.');
+    }
   };
 
   const handleBackToLogin = () => {

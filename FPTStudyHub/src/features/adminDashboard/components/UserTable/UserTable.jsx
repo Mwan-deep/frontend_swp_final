@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Edit2 } from 'lucide-react';
+import { Search, Edit2, Trash2 } from 'lucide-react'; // ĐÃ THÊM Trash2
 import Pagination from '../../../../shared/components/Pagination/Pagination';
 import axiosClient from '../../../../utils/axiosClient';
-import { getDirectImageUrl } from '../../../../utils/imageHelper'; // ĐÃ THÊM IMPORT XỬ LÝ ẢNH
+import { getDirectImageUrl } from '../../../../utils/imageHelper';
 import './UserTable.css';
-
 
 const getMainRole = (roles) => {
   if (!roles || roles.length === 0) return 'USER';
@@ -45,25 +44,40 @@ const UserTable = ({ users, isLoading, onRefresh }) => {
   const endIndex = startIndex + itemsPerPage;
   const currentUsers = filteredUsers.slice(startIndex, endIndex);
 
-  // HÀM GỌI API ĐỔI TRẠNG THÁI TỐI ƯU
-  const handleToggleStatus = async (user) => {
-    // Tự động tìm đúng khóa ID (Phòng hờ MapStruct map sai tên biến)
-    const targetId = user.accountId || user.id; 
-    
-    if (!targetId) {
-      alert("🚨 Lỗi Frontend: Không tìm thấy ID của tài khoản này trong dữ liệu tải về!");
+  // HÀM XÓA CỨNG (HARD DELETE) 
+  const handleDeleteUser = async (user) => {
+    if (getMainRole(user.roles) === 'ADMIN') {
+      alert("Lỗi: Không thể xóa tài khoản Quản trị viên!");
       return;
     }
 
+    const targetId = user.accountId || user.id;
+    if (window.confirm(`⚠️ CẢNH BÁO NGUY HIỂM:\nBạn sắp xóa vĩnh viễn tài khoản [${user.userName}] và TOÀN BỘ dữ liệu liên quan (tài liệu, lịch sử chat, ...).\n\nHành động này KHÔNG THỂ HOÀN TÁC. Bạn chắc chắn chứ?`)) {
+      try {
+        await axiosClient.delete(`/api/account/${targetId}`);
+        alert("Đã xóa vĩnh viễn tài khoản thành công!");
+        onRefresh();
+      } catch (error) {
+        alert(`❌ Lỗi từ Server: ${error.response?.data?.message || 'Không thể xóa tài khoản!'}`);
+      }
+    }
+  };
+
+  // HÀM GỌI API ĐỔI TRẠNG THÁI
+  const handleToggleStatus = async (user) => {
+    if (getMainRole(user.roles) === 'ADMIN') {
+      alert("Lỗi: Không thể khóa tài khoản Quản trị viên!");
+      return;
+    }
+
+    const targetId = user.accountId || user.id; 
     const action = user.accountStatus === 'ACTIVE' ? 'KHÓA (Inactive)' : 'MỞ KHÓA (Active)';
     if (!window.confirm(`Bạn có chắc chắn muốn ${action} tài khoản [${user.userName}] không?`)) return;
 
     try {
-      // GỌI API PUT
       await axiosClient.put(`/api/account/${targetId}/status`);
-      onRefresh(); // Refresh lại bảng ngay lập tức
+      onRefresh(); 
     } catch (error) {
-      console.error("Lỗi chi tiết từ Backend:", error);
       alert(`❌ Lỗi từ Server: ${error.response?.data?.message || 'Kiểm tra lại quyền Admin hoặc API endpoint!'}`);
     }
   };
@@ -133,83 +147,100 @@ const UserTable = ({ users, isLoading, onRefresh }) => {
               </tr>
             </thead>
             <tbody>
-              {currentUsers.map((user) => (
-                <tr key={user.accountId || user.id}>
-                  <td className="td-checkbox"><input type="checkbox" /></td>
-                  <td>
-                    <div className="user-cell">
-                      {/* ĐÃ CẬP NHẬT CẤU TRÚC ẢNH AVATAR */}
-                      <img 
-                        src={user.avatarUrl ? getDirectImageUrl(user.avatarUrl) : "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.fullName || user.userName || 'User') + "&background=random"} 
-                        alt={user.fullName || user.userName || 'User'} 
-                        className="user-cell-avatar" 
-                        referrerPolicy="no-referrer"
-                        onError={(e) => {
-                          e.target.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.fullName || user.userName || 'User') + "&background=random";
-                        }}
-                      />
-                      <div className="user-cell-info">
-                        <p className="user-cell-name">{user.fullName || 'No Name'}</p>
-                        <p className="user-cell-email">{user.email}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="user-id-cell">{user.userName}</td>
-                  <td>
-                    <span className={`admin-badge ${getRoleBadgeClass(getMainRole(user.roles))}`}>
-                      {getMainRole(user.roles)}
-                    </span>
-                  </td>
+              {currentUsers.map((user) => {
+                const isAdmin = getMainRole(user.roles) === 'ADMIN';
 
-                  {/* CỘT STATUS CHỨA BADGE VÀ NÚT TOGGLE SWITCH */}
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span className={`admin-badge badge-status ${getStatusBadgeClass(user.accountStatus)}`} style={{ minWidth: '85px', justifyContent: 'center' }}>
-                        <span className="status-dot"></span>
-                        {user.accountStatus || 'UNKNOWN'}
-                      </span>
-                      
-                      {/* CÔNG TẮC CHUYỂN ĐỔI GIAO DIỆN */}
-                      <div 
-                        onClick={() => handleToggleStatus(user)}
-                        style={{
-                          width: '40px',
-                          height: '22px',
-                          backgroundColor: user.accountStatus === 'ACTIVE' ? '#10b981' : '#e5e7eb',
-                          borderRadius: '22px',
-                          position: 'relative',
-                          cursor: 'pointer',
-                          transition: 'background-color 0.3s ease',
-                          border: user.accountStatus === 'ACTIVE' ? 'none' : '1px solid #d1d5db',
-                          flexShrink: 0
-                        }}
-                        title="Click để Đóng/Mở tài khoản"
-                      >
-                        <div 
-                          style={{
-                            width: '18px',
-                            height: '18px',
-                            backgroundColor: 'white',
-                            borderRadius: '50%',
-                            position: 'absolute',
-                            top: user.accountStatus === 'ACTIVE' ? '2px' : '1px',
-                            left: user.accountStatus === 'ACTIVE' ? '20px' : '1px',
-                            transition: 'left 0.3s ease',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                return (
+                  <tr key={user.accountId || user.id}>
+                    <td className="td-checkbox"><input type="checkbox" /></td>
+                    <td>
+                      <div className="user-cell">
+                        <img 
+                          src={user.avatarUrl ? getDirectImageUrl(user.avatarUrl) : "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.fullName || user.userName || 'User') + "&background=random"} 
+                          alt={user.fullName || user.userName || 'User'} 
+                          className="user-cell-avatar" 
+                          referrerPolicy="no-referrer"
+                          onError={(e) => {
+                            e.target.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.fullName || user.userName || 'User') + "&background=random";
                           }}
                         />
+                        <div className="user-cell-info">
+                          <p className="user-cell-name">{user.fullName || 'No Name'}</p>
+                          <p className="user-cell-email">{user.email}</p>
+                        </div>
                       </div>
-                    </div>
-                  </td>
+                    </td>
+                    <td className="user-id-cell">{user.userName}</td>
+                    <td>
+                      <span className={`admin-badge ${getRoleBadgeClass(getMainRole(user.roles))}`}>
+                        {getMainRole(user.roles)}
+                      </span>
+                    </td>
 
-                  <td className="date-cell">{formatDate(user.createdAt)}</td>
-                  <td className="td-actions">
-                    <button className="action-btn" onClick={() => navigate('/admin/account-details', { state: { userId: user.accountId || user.id } })}>
-                      <Edit2 size={16} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                    {/* CỘT STATUS */}
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span className={`admin-badge badge-status ${getStatusBadgeClass(user.accountStatus)}`} style={{ minWidth: '85px', justifyContent: 'center' }}>
+                          <span className="status-dot"></span>
+                          {user.accountStatus || 'UNKNOWN'}
+                        </span>
+                        
+                        {/* Ẩn công tắc đi nếu là ADMIN để tránh hiểu lầm */}
+                        {!isAdmin && (
+                          <div 
+                            onClick={() => handleToggleStatus(user)}
+                            style={{
+                              width: '40px',
+                              height: '22px',
+                              backgroundColor: user.accountStatus === 'ACTIVE' ? '#10b981' : '#e5e7eb',
+                              borderRadius: '22px',
+                              position: 'relative',
+                              cursor: 'pointer',
+                              transition: 'background-color 0.3s ease',
+                              border: user.accountStatus === 'ACTIVE' ? 'none' : '1px solid #d1d5db',
+                              flexShrink: 0
+                            }}
+                            title="Click để Đóng/Mở tài khoản"
+                          >
+                            <div 
+                              style={{
+                                width: '18px',
+                                height: '18px',
+                                backgroundColor: 'white',
+                                borderRadius: '50%',
+                                position: 'absolute',
+                                top: user.accountStatus === 'ACTIVE' ? '2px' : '1px',
+                                left: user.accountStatus === 'ACTIVE' ? '20px' : '1px',
+                                transition: 'left 0.3s ease',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </td>
+
+                    <td className="date-cell">{formatDate(user.createdAt)}</td>
+                    <td className="td-actions">
+                      <button className="action-btn" onClick={() => navigate('/admin/account-details', { state: { userId: user.accountId || user.id } })} title="Chỉnh sửa">
+                        <Edit2 size={16} />
+                      </button>
+
+                      {/* Ẩn nút xóa đi nếu là ADMIN */}
+                      {!isAdmin && (
+                        <button 
+                          className="action-btn delete-btn" 
+                          onClick={() => handleDeleteUser(user)} 
+                          title="Xóa vĩnh viễn"
+                          style={{ color: '#ef4444', marginLeft: '8px' }}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
               {currentUsers.length === 0 && (
                 <tr>
                   <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>Không tìm thấy tài khoản nào!</td>

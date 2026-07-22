@@ -1,9 +1,34 @@
 import React from 'react';
 
 const ChatSessions = ({ sessions, activeSessionId, onSelectSession, onNewChat }) => {
-  // Nhóm các session theo thời gian
-  const todaySessions = sessions.filter(s => s.category === 'today');
-  const pastSessions = sessions.filter(s => s.category === 'past');
+  
+  // HÀM TỰ ĐỘNG PHÂN LOẠI PHIÊN CHAT THEO THỜI GIAN THỰC TẾ
+  const categorizeSessions = (sessionList) => {
+    const today = [];
+    const past = [];
+    
+    // Mốc thời gian 00:00 của ngày hôm nay
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+
+    (sessionList || []).forEach(session => {
+      if (!session.createdAt) {
+        past.push(session); // Nếu không có ngày tháng, mặc định đẩy xuống past
+        return;
+      }
+      
+      const sessionDate = new Date(session.createdAt);
+      if (sessionDate >= todayDate) {
+        today.push(session);
+      } else {
+        past.push(session);
+      }
+    });
+
+    return { today, past };
+  };
+
+  const { today: todaySessions, past: pastSessions } = categorizeSessions(sessions);
 
   return (
     <div className="ai-chat-sessions-sidebar">
@@ -17,42 +42,46 @@ const ChatSessions = ({ sessions, activeSessionId, onSelectSession, onNewChat })
       </button>
 
       {/* Hôm nay */}
-      <div className="session-group">
-        <h4 className="session-group-title">TODAY</h4>
-        <div className="session-items-list">
-          {todaySessions.map((session) => (
-            <button
-              key={session.id}
-              className={`session-item-btn ${activeSessionId === session.id ? 'active' : ''}`}
-              onClick={() => onSelectSession(session.id)}
-            >
-              <svg className="session-item-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-              </svg>
-              <span className="session-item-title-text">{session.title}</span>
-            </button>
-          ))}
+      {todaySessions.length > 0 && (
+        <div className="session-group">
+          <h4 className="session-group-title">TODAY</h4>
+          <div className="session-items-list">
+            {todaySessions.map((session) => (
+              <button
+                key={session.id}
+                className={`session-item-btn ${activeSessionId === session.id ? 'active' : ''}`}
+                onClick={() => onSelectSession(session.id)}
+              >
+                <svg className="session-item-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span className="session-item-title-text">{session.title}</span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* 7 ngày qua */}
-      <div className="session-group">
-        <h4 className="session-group-title">PREVIOUS 7 DAYS</h4>
-        <div className="session-items-list">
-          {pastSessions.map((session) => (
-            <button
-              key={session.id}
-              className={`session-item-btn ${activeSessionId === session.id ? 'active' : ''}`}
-              onClick={() => onSelectSession(session.id)}
-            >
-              <svg className="session-item-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-              </svg>
-              <span className="session-item-title-text">{session.title}</span>
-            </button>
-          ))}
+      {/* Những ngày trước đó */}
+      {pastSessions.length > 0 && (
+        <div className="session-group">
+          <h4 className="session-group-title">PREVIOUS</h4>
+          <div className="session-items-list">
+            {pastSessions.map((session) => (
+              <button
+                key={session.id}
+                className={`session-item-btn ${activeSessionId === session.id ? 'active' : ''}`}
+                onClick={() => onSelectSession(session.id)}
+              >
+                <svg className="session-item-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span className="session-item-title-text">{session.title}</span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -11,16 +11,16 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
         <div className="logout-modal-icon-wrapper">
           <LogOut size={28} className="logout-modal-icon" />
         </div>
-        <h2 className="logout-modal-title">Bạn có chắc chắn muốn đăng xuất?</h2>
+        <h2 className="logout-modal-title">Are you sure you want to log out??</h2>
         <p className="logout-modal-subtitle">
-          Mọi phiên làm việc hiện tại của bạn sẽ kết thúc.<br/>Đừng quên quay lại sớm nhé!
+          Any current sessions will be terminated.<br/>Don't forget to come back soon!
         </p>
         <div className="logout-modal-actions">
           <button className="btn-cancel" onClick={onClose}>
-            Hủy
+            Cancel
           </button>
           <button className="btn-confirm" onClick={onConfirm}>
-            Đăng xuất
+            Log Out
           </button>
         </div>
       </div>

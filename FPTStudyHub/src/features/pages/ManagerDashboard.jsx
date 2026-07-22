@@ -102,16 +102,16 @@ const ManagerDashboard = () => {
   };
 
   if (isLoading) {
-    return <div style={{ padding: '50px', textAlign: 'center' }}>Đang tải hệ thống quản lý...</div>;
+    return <div style={{ padding: '50px', textAlign: 'center' }}>Loading management system...</div>;
   }
 
   return (
     <div className="manager-dashboard">
       <div className="dashboard-left-column">
         <div className="dashboard-header">
-          <h1 className="dashboard-title">Chào mừng trở lại, Manager</h1>
+          <h1 className="dashboard-title">Welcome back, Manager</h1>
           <p className="dashboard-subtitle">
-            Hệ thống của bạn đang hoạt động ổn định. Dưới đây là kho tài liệu cần kiểm duyệt.
+            Your system is running smoothly. Below is the document library that needs review.
           </p>
         </div>
 
@@ -121,9 +121,9 @@ const ManagerDashboard = () => {
               <div className="stat-icon-wrapper user-icon">
                 <User size={20} />
               </div>
-              <span className="stat-change positive">Hệ thống</span>
+              <span className="stat-change positive">System</span>
             </div>
-            <p className="stat-label">Tổng người dùng</p>
+            <p className="stat-label">Total Users</p>
             <h2 className="stat-value">{users.length.toLocaleString()}</h2>
           </div>
 
@@ -132,9 +132,9 @@ const ManagerDashboard = () => {
               <div className="stat-icon-wrapper doc-icon">
                 <FileText size={20} />
               </div>
-              <span className="stat-change neutral">Hệ thống</span>
+              <span className="stat-change neutral">System</span>
             </div>
-            <p className="stat-label">Tổng Tài liệu</p>
+            <p className="stat-label">Total Documents</p>
             <h2 className="stat-value">{documents.length.toLocaleString()}</h2>
           </div>
         </div>
@@ -144,9 +144,9 @@ const ManagerDashboard = () => {
           <div className="report-queue-header" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '16px' }}>
             
             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-              <h3>Kho Tài Liệu Hệ Thống</h3>
+              <h3>System Document Library</h3>
               <div className="report-queue-actions">
-                <button className="btn-filter" onClick={fetchDashboardData}>Làm mới</button>
+                <button className="btn-filter" onClick={fetchDashboardData}>Refresh</button>
                 <button className="btn-export">Export CSV</button>
               </div>
             </div>
@@ -157,7 +157,7 @@ const ManagerDashboard = () => {
                 <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748B' }}/>
                 <input 
                     type="text" 
-                    placeholder="Tìm kiếm theo tên tài liệu..." 
+                    placeholder="Search by document name..." 
                     value={searchTerm}
                     onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                     style={{ width: '100%', padding: '10px 12px 10px 38px', borderRadius: '8px', border: '1px solid #E2E8F0', outline: 'none' }}
@@ -171,7 +171,7 @@ const ManagerDashboard = () => {
                     onChange={(e) => { setSelectedUploader(e.target.value); setCurrentPage(1); }}
                     style={{ width: '100%', padding: '10px 12px 10px 38px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: 'white', cursor: 'pointer', outline: 'none' }}
                 >
-                    <option value="">Tất cả người đăng tải</option>
+                    <option value="">All Uploaders</option>
                     {users.map(u => (
                         <option key={u.accountId} value={u.userName}>
                             {u.fullName ? `${u.fullName} (${u.userName})` : u.userName}
@@ -187,19 +187,19 @@ const ManagerDashboard = () => {
             <table className="report-table">
               <thead>
                 <tr>
-                  <th>Tên Tài liệu</th>
-                  <th>Người đăng</th>
-                  <th>Lượt xem</th>
-                  <th>Tải về</th>
-                  <th>Trạng thái</th>
-                  <th>Hành động</th>
+                  <th>Document Name</th>
+                  <th>Uploader</th>
+                  <th>Views</th>
+                  <th>Downloads</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {currentTableData.length === 0 ? (
                   <tr>
                     <td colSpan="6" style={{ textAlign: 'center', padding: '30px', color: '#64748B' }}>
-                      Không tìm thấy tài liệu nào phù hợp với bộ lọc.
+                      No documents found matching the filter criteria.
                     </td>
                   </tr>
                 ) : (
@@ -246,7 +246,7 @@ const ManagerDashboard = () => {
 
           <div className="pagination-wrapper">
             <span className="pagination-info">
-              Hiển thị {currentTableData.length} trong {filteredDocuments.length} tài liệu
+              Displaying {currentTableData.length} of {filteredDocuments.length} documents
             </span>
             {totalPages > 1 && (
               <Pagination 
@@ -263,14 +263,14 @@ const ManagerDashboard = () => {
         {/* --- BẢNG XẾP HẠNG NHANH --- */}
         <div className="leaderboard-section">
           <div className="leaderboard-header">
-            <h3>Bảng xếp hạng nhanh</h3>
+            <h3>Quick Leaderboard</h3>
             <div className="star-icon-wrapper">
               <Star size={16} />
             </div>
           </div>
 
           <div className="leaderboard-list">
-            <p className="leaderboard-subtitle">Top 5 Cống Hiến</p>
+            <p className="leaderboard-subtitle">Top 5 Contributors</p>
             {topContributors.map((user, index) => (
               <div key={user.accountId} className="leaderboard-item" style={{ alignItems: 'center' }}>
                 <div className="user-rank">{index + 1}</div>
@@ -290,11 +290,11 @@ const ManagerDashboard = () => {
                 </span>
               </div>
             ))}
-            {topContributors.length === 0 && <span style={{ fontSize: '13px', color: '#666' }}>Đang cập nhật bảng xếp hạng...</span>}
+            {topContributors.length === 0 && <span style={{ fontSize: '13px', color: '#666' }}>Updating leaderboard...</span>}
           </div>
 
           <div className="leaderboard-managers mt-4">
-            <p className="leaderboard-subtitle">Đội ngũ Quản trị (Managers)</p>
+            <p className="leaderboard-subtitle">Management Team (Managers)</p>
             <div className="manager-avatars">
               {topManagers.map((manager, index) => (
                 <div key={manager.accountId} className="manager-avatar-wrapper" title={manager.fullName || manager.userName}>
@@ -307,7 +307,7 @@ const ManagerDashboard = () => {
                   <span className="manager-rank-badge">#{index + 1} {manager.userName}</span>
                 </div>
               ))}
-              {topManagers.length === 0 && <span style={{ fontSize: '13px', color: '#666' }}>Chưa có quản trị viên.</span>}
+              {topManagers.length === 0 && <span style={{ fontSize: '13px', color: '#666' }}>No managers found.</span>}
             </div>
           </div>
         </div>

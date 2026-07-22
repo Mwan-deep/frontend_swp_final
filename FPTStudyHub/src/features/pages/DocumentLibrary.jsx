@@ -9,12 +9,8 @@ import axiosClient from '../../utils/axiosClient';
 import { AlertTriangle, X } from 'lucide-react';
 
 const enrichDocument = (doc) => {
-  const title = (doc.title || '').toLowerCase();
-  let category = 'Computer Science'; 
-  if (title.includes('calculus') || title.includes('math')) category = 'AI Applications';
-  else if (title.includes('python') || title.includes('scripting')) category = 'Computer Science';
-  else if (title.includes('web') || title.includes('boilerplate')) category = 'Software Engineering';
-  else if (title.includes('macroeconomics') || title.includes('economics')) category = 'Economics';
+  // ĐÃ SỬA: Thay vì lấy subjectName, giờ ta lấy majorName từ Backend
+  const category = doc.subject?.majorName || 'Chung (General)';
 
   const semester = doc.semester?.displayName || doc.semester?.semesterName || 'Khác';
   const format = doc.fileName ? doc.fileName.split('.').pop().toUpperCase() : 'DOC';
@@ -56,7 +52,6 @@ const DocumentLibrary = () => {
   const [reportReason, setReportReason] = useState('');
   const [isSubmittingReport, setIsSubmittingReport] = useState(false);
 
-  // Lấy Username từ JWT Token
   const getUsernameFromToken = () => {
     const token = localStorage.getItem('token') || localStorage.getItem('api_token');
     if (!token) return '';
@@ -139,13 +134,11 @@ const DocumentLibrary = () => {
     }
   };
 
-  // --- HÀM MỚI: XÓA TÀI LIỆU ---
   const handleDeleteDocument = async (doc) => {
     if (window.confirm(`Bạn có chắc chắn muốn xóa vĩnh viễn tài liệu "${doc.title}" không? Hành động này không thể hoàn tác.`)) {
       try {
         await axiosClient.delete(`/api/v1/documents/${doc.materialId}`);
         alert("Đã xóa tài liệu thành công!");
-        // Xóa tài liệu khỏi state để mất khỏi giao diện ngay lập tức
         setDocuments(prev => prev.filter(d => d.materialId !== doc.materialId));
       } catch (error) {
         alert(error.response?.data?.message || "Lỗi khi xóa tài liệu!");
@@ -153,7 +146,6 @@ const DocumentLibrary = () => {
     }
   };
 
-  // --- HÀM MỚI: ĐỔI TRẠNG THÁI PUBLIC / PRIVATE ---
   const handleToggleVisibility = async (doc) => {
     const newVisibility = doc.visibility === 'PRIVATE' ? 'PUBLIC' : 'PRIVATE';
     const confirmMsg = newVisibility === 'PUBLIC' 
@@ -161,18 +153,15 @@ const DocumentLibrary = () => {
       : `Bạn muốn ẨN tài liệu "${doc.title}" thành RIÊNG TƯ?`;
 
     if (window.confirm(confirmMsg)) {
-      // 1. Cập nhật UI ngay lập tức để người dùng thấy phản hồi nhanh
       setDocuments(prev => prev.map(d => 
         d.materialId === doc.materialId ? { ...d, visibility: newVisibility } : d
       ));
 
       try {
-        // 2. Gọi API cập nhật. (Đảm bảo backend có hỗ trợ PUT /visibility)
         await axiosClient.put(`/api/v1/documents/${doc.materialId}/visibility`, {
           visibility: newVisibility
         });
       } catch (error) {
-        // 3. Nếu lỗi, khôi phục lại trạng thái cũ
         setDocuments(prev => prev.map(d => 
           d.materialId === doc.materialId ? { ...d, visibility: doc.visibility } : d
         ));
@@ -186,11 +175,17 @@ const DocumentLibrary = () => {
   }, [selectedCategory, selectedFormat, selectedSort, selectedSemester, selectedInstructor, selectedStatus]);
 
   const enrichedDocs = documents.map(enrichDocument);
+
+  // ĐÃ SỬA: Tự động trích xuất danh sách các Chuyên Ngành/Môn học hiện có từ dữ liệu tải về
+  const categories = Array.from(new Set(enrichedDocs.map(doc => doc.category)));
   const instructors = Array.from(new Set(enrichedDocs.map(doc => doc.instructor)));
   const semesters = Array.from(new Set(enrichedDocs.map(doc => doc.semester)));
 
   let filtered = enrichedDocs;
+  
+  // BỘ LỌC CHUYÊN NGÀNH HOẠT ĐỘNG
   if (selectedCategory !== 'All') filtered = filtered.filter(doc => doc.category === selectedCategory);
+  
   if (selectedFormat !== 'All') {
     if (selectedFormat === 'ZIP/RAR') filtered = filtered.filter(doc => doc.format === 'ZIP' || doc.format === 'RAR');
     else filtered = filtered.filter(doc => doc.format === selectedFormat);
@@ -218,11 +213,14 @@ const DocumentLibrary = () => {
   return (
     <div className="doc-library-container">
       <DocumentLibraryHeader viewType={viewType} setViewType={setViewType} />
+      
+      {/* ĐÃ THÊM: Truyền mảng categories (Chuyên ngành động) xuống component con */}
       <DocumentLibraryFilters 
         selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory}
         selectedFormat={selectedFormat} setSelectedFormat={setSelectedFormat}
         selectedSort={selectedSort} setSelectedSort={setSelectedSort}
         showMoreFilters={showMoreFilters} setShowMoreFilters={setShowMoreFilters}
+        categories={categories} 
       />
 
       {showMoreFilters && (
@@ -269,8 +267,8 @@ const DocumentLibrary = () => {
                 onToggleFavorite={handleToggleFavorite}
                 onMarkAsRead={handleMarkAsRead}
                 onReport={handleOpenReport}
-                onDelete={handleDeleteDocument}       // ĐÃ TRUYỀN HÀM XÓA
-                onToggleVisibility={handleToggleVisibility} // ĐÃ TRUYỀN HÀM ĐỔI TRẠNG THÁI
+                onDelete={handleDeleteDocument}
+                onToggleVisibility={handleToggleVisibility}
               />
             ))}
           </div>

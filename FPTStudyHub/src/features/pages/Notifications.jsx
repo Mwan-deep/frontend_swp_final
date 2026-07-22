@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Info, FileText, Sparkles, MessageSquare, Check, Settings } from 'lucide-react';
-import axiosClient from '../../utils/axiosClient'; // Đảm bảo đường dẫn này đúng
+import { Info, FileText, Sparkles, MessageSquare, Check, Settings, Trash2 } from 'lucide-react'; // Đã thêm Trash2
+import axiosClient from '../../utils/axiosClient'; 
 import './Notifications.css';
 
 // Hàm tính thời gian trôi qua
@@ -34,15 +34,13 @@ const Notifications = () => {
       const mappedData = data.map(n => ({
         id: n.id,
         title: n.title,
-        description: n.message, // Map biến message từ backend sang description của UI
+        description: n.message,
         type: n.type || 'system',
         read: n.isRead,
         timeAgo: calculateTimeAgo(n.createdAt)
       }));
       
       setNotifications(mappedData);
-      
-      // Bắn event để cái Chuông Header cập nhật lại số chấm đỏ
       window.dispatchEvent(new Event('notificationsUpdated'));
     } catch (error) {
       console.error("Lỗi khi tải thông báo:", error);
@@ -57,14 +55,12 @@ const Notifications = () => {
 
   // 2. ĐÁNH DẤU ĐỌC 1 THÔNG BÁO
   const handleMarkAsRead = async (id) => {
-    // Tối ưu UI: Đổi trạng thái hiển thị ngay lập tức (Optimistic UI)
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
     window.dispatchEvent(new Event('notificationsUpdated'));
 
     try {
       await axiosClient.put(`/api/notifications/${id}/read`);
     } catch (error) {
-      // Nếu lỗi thì gọi lại API để load lại dữ liệu chuẩn
       fetchNotifications();
     }
   };
@@ -78,6 +74,24 @@ const Notifications = () => {
       await axiosClient.put('/api/notifications/read-all');
     } catch (error) {
       fetchNotifications();
+    }
+  };
+
+  // ĐÃ THÊM: 4. XÓA THÔNG BÁO
+  const handleDelete = async (id, e) => {
+    e.stopPropagation(); // Rất quan trọng: Ngăn không cho click trigger handleMarkAsRead của thẻ cha
+    
+    if (!window.confirm("Bạn có chắc chắn muốn xóa thông báo này?")) return;
+
+    // Optimistic UI: Xóa ngay lập tức trên giao diện cho mượt
+    setNotifications(prev => prev.filter(n => n.id !== id));
+    window.dispatchEvent(new Event('notificationsUpdated'));
+
+    try {
+      await axiosClient.delete(`/api/notifications/${id}`);
+    } catch (error) {
+      console.error("Lỗi khi xóa thông báo:", error);
+      fetchNotifications(); // Nếu lỗi thì load lại data gốc
     }
   };
 
@@ -154,7 +168,7 @@ const Notifications = () => {
                 key={notif.id} 
                 className={`notification-item ${notif.read ? 'read' : 'unread'}`}
                 onClick={() => handleMarkAsRead(notif.id)}
-                style={{ cursor: notif.read ? 'default' : 'pointer' }}
+                style={{ cursor: notif.read ? 'default' : 'pointer', position: 'relative' }}
               >
                 {!notif.read && <div className="unread-dot"></div>}
                 
@@ -167,8 +181,31 @@ const Notifications = () => {
                   <p className="notification-description">{notif.description}</p>
                 </div>
 
-                <div className="notification-time">
-                  {notif.timeAgo}
+                <div className="notification-time-actions" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  <div className="notification-time">{notif.timeAgo}</div>
+                  
+                  {/* ĐÃ THÊM: Nút xóa thông báo */}
+                  <button 
+                    className="delete-notif-btn" 
+                    onClick={(e) => handleDelete(notif.id, e)}
+                    title="Xóa thông báo"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#9ca3af',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '4px',
+                      borderRadius: '4px',
+                      transition: 'color 0.2s, background-color 0.2s'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = '#ef4444'; e.currentTarget.style.backgroundColor = '#fee2e2'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = '#9ca3af'; e.currentTarget.style.backgroundColor = 'transparent'; }}
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               </div>
             );

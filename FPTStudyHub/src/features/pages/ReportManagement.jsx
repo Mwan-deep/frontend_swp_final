@@ -36,9 +36,9 @@ const ReportManagement = () => {
     <>
       <div className="admin-page-header report-page-header">
         <div>
-          <h1 className="admin-page-title">Quản lý Báo cáo (Report Management)</h1>
+          <h1 className="admin-page-title">Report Management</h1>
           <p className="admin-page-subtitle">
-            Xem xét và xử lý các nội dung vi phạm do người dùng báo cáo.
+            Review and handle content violations reported by users.
           </p>
         </div>
 
@@ -47,7 +47,7 @@ const ReportManagement = () => {
             <Search size={18} className="report-search-icon" />
             <input
               type="text"
-              placeholder="Tìm theo ID báo cáo hoặc tên..."
+              placeholder="Search by report ID or name..."
               className="report-search-input"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -67,10 +67,10 @@ const ReportManagement = () => {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="all">Tất cả trạng thái</option>
-            <option value="PENDING">Chờ xử lý (Pending)</option>
-            <option value="UNDER_REVIEW">Đang điều tra (Under Review)</option>
-            <option value="RESOLVED">Đã giải quyết (Resolved)</option>
+            <option value="all">All Status</option>
+            <option value="PENDING">Pending</option>
+            <option value="UNDER_REVIEW">Under Review</option>
+            <option value="RESOLVED">Resolved</option>
           </select>
         </div>
       </div>

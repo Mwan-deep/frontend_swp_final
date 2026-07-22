@@ -68,7 +68,7 @@ const AdminHeader = () => {
         </h2>
 
         <p className="admin-header-subtitle">
-          Quản trị và giám sát toàn bộ hệ thống
+          Administer and monitor the entire system
         </p>
 
       </div>

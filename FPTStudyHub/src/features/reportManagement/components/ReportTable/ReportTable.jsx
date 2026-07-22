@@ -60,36 +60,36 @@ const ReportTable = ({ reports = [], isLoading = false, searchTerm = '', statusF
   const getReasonBadge = (reason) => {
     if (!reason) return <span className="reason-badge">Unknown</span>;
     if (reason.includes('Bản quyền') || reason.toLowerCase().includes('copyright')) {
-      return <span className="reason-badge spam">© Bản quyền</span>;
+      return <span className="reason-badge spam">© Copyright</span>;
     }
     if (reason.includes('Spam') || reason.toLowerCase().includes('spam')) {
        return <span className="reason-badge spam"><Mail size={14} /> Spam</span>;
     }
-    return <span className="reason-badge inappropriate"><AlertTriangle size={14} /> Vi phạm</span>;
+    return <span className="reason-badge inappropriate"><AlertTriangle size={14} /> Inappropriate Content</span>;
   };
 
   const getStatusBadge = (status) => {
     switch (status) {
       case 'PENDING':
-        return <span className="status-badge pending">Chờ xử lý</span>;
+        return <span className="status-badge pending">Waiting for Review</span>;
       case 'UNDER_REVIEW':
-        return <span className="status-badge review">Đang điều tra</span>;
+        return <span className="status-badge review">Under Review</span>;
       case 'RESOLVED':
-        return <span className="status-badge resolved">Đã xử lý</span>;
+        return <span className="status-badge resolved">Resolved</span>;
       default:
         return <span className="status-badge">{status}</span>;
     }
   };
 
   if (isLoading) {
-    return <div style={{ padding: '40px', textAlign: 'center', backgroundColor: '#fff', borderRadius: '8px' }}>Đang tải dữ liệu...</div>;
+    return <div style={{ padding: '40px', textAlign: 'center', backgroundColor: '#fff', borderRadius: '8px' }}>Loading data...</div>;
   }
 
   return (
     <div className="report-table-container">
       {/* Table Header */}
       <div className="report-table-header">
-        <h2 className="report-table-title">Danh sách Báo cáo hoạt động (Active Reports)</h2>
+        <h2 className="report-table-title">Activity Report List (Active Reports)</h2>
         <div className="report-table-actions">
           <button className="icon-btn-small" onClick={() => window.location.reload()}><RefreshCcw size={18} /></button>
           <button className="icon-btn-small"><MoreVertical size={18} /></button>
@@ -102,19 +102,19 @@ const ReportTable = ({ reports = [], isLoading = false, searchTerm = '', statusF
           <thead>
             <tr>
               <th>Report ID</th>
-              <th>Người Tố Cáo</th>
-              <th>Tài Liệu Vi Phạm</th>
-              <th>Lý Do (Tóm tắt)</th>
-              <th>Tổng số lượng</th>
-              <th>Ngày Gửi</th>
-              <th>Trạng thái</th>
-              <th className="th-actions">Hành động</th>
+              <th>Reporter</th>
+              <th>Violating Document</th>
+              <th>Reason (Summary)</th>
+              <th>Total Count</th>
+              <th>Report Date</th>
+              <th>Status</th>
+              <th className="th-actions">Actions</th>
             </tr>
           </thead>
           <tbody>
             {currentReports.length === 0 ? (
               <tr>
-                <td colSpan="8" style={{ textAlign: 'center', padding: '30px' }}>Không tìm thấy báo cáo nào phù hợp.</td>
+                <td colSpan="8" style={{ textAlign: 'center', padding: '30px' }}>No matching reports found.</td>
               </tr>
             ) : (
               currentReports.map((report) => {
@@ -147,14 +147,14 @@ const ReportTable = ({ reports = [], isLoading = false, searchTerm = '', statusF
                           <p className="user-cell-name" title={report.material?.title}>
                             {report.material?.title?.length > 20 ? report.material?.title.substring(0, 20) + '...' : report.material?.title}
                           </p>
-                          <p className="user-cell-email">Chủ sở hữu: {report.reportedUser?.userName}</p>
+                          <p className="user-cell-email">Owner: {report.reportedUser?.userName}</p>
                         </div>
                       </div>
                     </td>
                     <td>{getReasonBadge(report.description)}</td>
                     <td>
                       <span className="total-reports-badge">
-                        {reportCount} Đơn <ExternalLink size={12} style={{ marginLeft: '2px' }} />
+                        {reportCount} Reports <ExternalLink size={12} style={{ marginLeft: '2px' }} />
                       </span>
                     </td>
                     <td className="date-cell whitespace-pre-line">{new Date(report.createdAt).toLocaleDateString('vi-VN')}</td>
@@ -172,7 +172,7 @@ const ReportTable = ({ reports = [], isLoading = false, searchTerm = '', statusF
                           }
                         }}
                       >
-                        {reportCount > 1 ? 'Điều tra gộp' : 'Xem chi tiết'}
+                        {reportCount > 1 ? 'Review All' : 'See details'}
                       </button>
                     </td>
                   </tr>
@@ -186,7 +186,7 @@ const ReportTable = ({ reports = [], isLoading = false, searchTerm = '', statusF
       {/* Pagination Footer */}
       <div className="table-footer">
         <div className="pagination-info">
-          Đang hiển thị {totalItems === 0 ? 0 : startIndex + 1}-{Math.min(endIndex, totalItems)} / {totalItems} kết quả
+          Displaying {totalItems === 0 ? 0 : startIndex + 1}-{Math.min(endIndex, totalItems)} / {totalItems} results
         </div>
         <div className="simple-pagination-controls">
           <button className="nav-arrow-btn" disabled={currentPage === 1} onClick={() => setCurrentPage(p => Math.max(1, p - 1))}>&lt;</button>

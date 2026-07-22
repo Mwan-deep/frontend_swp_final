@@ -2,27 +2,15 @@ import React, { useState } from 'react';
 import { Sparkles } from 'lucide-react';
 
 const QuizConfigurator = ({ onSubmit, isGenerating }) => {
-  // Các state đồng bộ với QuizCreateRequest DTO
-  const [title, setTitle] = useState('');
+  // Chỉ giữ lại duy nhất state số lượng câu hỏi
   const [questionsCount, setQuestionsCount] = useState(15);
-  const [durationMinutes, setDurationMinutes] = useState(15);
-  const [passScore, setPassScore] = useState(50);
-  const [visibility, setVisibility] = useState('PRIVATE');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title.trim()) {
-      alert("Vui lòng nhập tên đề thi!");
-      return;
-    }
     
-    // Trả dữ liệu lên component cha (CreateQuiz)
+    // Trả duy nhất trường quantity lên component cha (CreateQuiz)
     onSubmit({
-      title,
-      quantity: questionsCount,
-      durationMinutes,
-      passScore,
-      visibility
+      quantity: questionsCount
     });
   };
 
@@ -30,29 +18,15 @@ const QuizConfigurator = ({ onSubmit, isGenerating }) => {
     <div className="create-card quiz-configurator-card">
       <div className="card-header">
         <div className="header-titles">
-          <h2 className="card-title">2. Quiz Configuration</h2>
-          <p className="card-subtitle">Customize settings to generate questions.</p>
+          <h2 className="card-title">2. AI Configuration</h2>
+          <p className="card-subtitle">Select the number of questions for AI to generate.</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="config-form">
         
-        {/* Quiz Title */}
-        <div className="form-group">
-          <label className="group-label">QUIZ TITLE</label>
-          <input 
-            type="text" 
-            placeholder="e.g. Midterm Exam - Java OOP"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="config-textarea"
-            style={{ height: '40px' }}
-            required
-          />
-        </div>
-
         {/* Questions Count Slider */}
-        <div className="form-group">
+        <div className="form-group" style={{ marginBottom: '32px' }}>
           <div className="group-label-row">
             <label className="group-label">NUMBER OF QUESTIONS</label>
             <span className="slider-value-badge">{questionsCount}</span>
@@ -70,51 +44,10 @@ const QuizConfigurator = ({ onSubmit, isGenerating }) => {
           </div>
         </div>
 
-        {/* Duration & Pass Score */}
-        <div className="form-group">
-          <label className="group-label">EXAM SETTINGS</label>
-          <div className="datetime-inputs-row">
-            <div className="sub-input-group">
-              <span className="sub-label">DURATION (MINUTES)</span>
-              <input 
-                type="number" min="5" max="180"
-                value={durationMinutes}
-                onChange={(e) => setDurationMinutes(parseInt(e.target.value))}
-                className="datetime-input"
-              />
-            </div>
-            <div className="sub-input-group">
-              <span className="sub-label">PASS SCORE (%)</span>
-              <input 
-                type="number" min="10" max="100" step="10"
-                value={passScore}
-                onChange={(e) => setPassScore(parseInt(e.target.value))}
-                className="datetime-input"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Visibility */}
-        <div className="form-group">
-          <label className="group-label">ACCESS MODE</label>
-          <div className="segmented-control">
-            {['PRIVATE', 'PUBLIC'].map((mode) => (
-              <button
-                key={mode} type="button"
-                className={`segment-btn ${visibility === mode ? 'selected' : ''}`}
-                onClick={() => setVisibility(mode)}
-              >
-                {mode === 'PRIVATE' ? '🔒 Private' : '🌐 Public'}
-              </button>
-            ))}
-          </div>
-        </div>
-
         {/* Submit Button */}
         <button type="submit" className="btn-generate-ai-quiz" disabled={isGenerating}>
           <Sparkles size={16} fill="currentColor" />
-          {isGenerating ? 'AI is Generating...' : 'Generate & Create Quiz'}
+          {isGenerating ? 'AI is Generating...' : 'Generate Questions'}
         </button>
       </form>
     </div>

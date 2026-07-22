@@ -75,7 +75,7 @@ const AdminReportDetails = () => {
   };
 
   if (isLoading || !reportData) {
-    return <div style={{ padding: '40px', textAlign: 'center' }}>Đang tải dữ liệu điều tra...</div>;
+    return <div style={{ padding: '40px', textAlign: 'center' }}>Loading survey data...</div>;
   }
 
   // Phân tách dữ liệu cho dễ render
@@ -111,16 +111,16 @@ const AdminReportDetails = () => {
           
           <div className="section-card mb-24">
             <div className="section-body">
-              <h3 className="section-subtitle">Thông tin siêu dữ liệu (Metadata)</h3>
+              <h3 className="section-subtitle">Metadata Information</h3>
               <div className="metadata-grid">
                 <div className="metadata-item">
-                  <span className="metadata-label">Mã tài liệu vi phạm</span>
+                  <span className="metadata-label">Violation Document ID</span>
                   <span className="metadata-value text-primary cursor-pointer">
-                    {material.materialId ? `#${material.materialId} - ${material.title}` : 'Không xác định'}
+                    {material.materialId ? `#${material.materialId} - ${material.title}` : 'Not specified'}
                   </span>
                 </div>
                 <div className="metadata-item">
-                  <span className="metadata-label">Ngày báo cáo</span>
+                  <span className="metadata-label">Report Date</span>
                   <span className="metadata-value">{new Date(reportData.createdAt).toLocaleString('vi-VN')}</span>
                 </div>
               </div>
@@ -133,7 +133,7 @@ const AdminReportDetails = () => {
             <div className="user-card reporter-card">
               <div className="user-card-header">
                 <User size={16} className="text-secondary" />
-                <span className="user-card-role">Người Tố Cáo (Reporter)</span>
+                <span className="user-card-role">Reporter</span>
               </div>
               <div className="user-card-body">
                 {/* ĐÃ CẬP NHẬT CẤU TRÚC ẢNH AVATAR NGƯỜI TỐ CÁO */}
@@ -159,9 +159,9 @@ const AdminReportDetails = () => {
               <div className="user-card-header d-flex-between">
                 <div className="d-flex-align-center gap-8">
                   <User size={16} className="text-secondary" />
-                  <span className="user-card-role">Người Bị Tố Cáo (Owner)</span>
+                  <span className="user-card-role">Reported User (Owner)</span>
                 </div>
-                <span className="badge-flagged">BỊ CẢNH BÁO</span>
+                <span className="badge-flagged">FLAGGED</span>
               </div>
               <div className="user-card-body">
                 {/* ĐÃ CẬP NHẬT CẤU TRÚC ẢNH AVATAR NGƯỜI BỊ TỐ CÁO */}
@@ -188,7 +188,7 @@ const AdminReportDetails = () => {
             <div className="section-header">
               <div className="section-title-wrapper">
                 <FileText size={18} className="text-warning" />
-                <h3 className="section-title">Lý do & Nội dung báo cáo</h3>
+                <h3 className="section-title">Reason & Content of Report</h3>
               </div>
             </div>
             <div className="section-body bg-light-gray">
@@ -205,53 +205,53 @@ const AdminReportDetails = () => {
             <div className="section-header border-bottom-0 pb-0">
               <div className="section-title-wrapper text-warning mb-16">
                 <AlertTriangle size={18} />
-                <h3 className="section-title">Quyết định xử lý</h3>
+                <h3 className="section-title">Processing Decision</h3>
               </div>
             </div>
             
             <div className="section-body pt-16">
               <div className="form-group">
-                <label className="form-label">Cập nhật đơn Báo cáo</label>
+                <label className="form-label">Update Report Status</label>
                 <select className="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
-                  <option value="PENDING">Đang chờ xử lý (Pending)</option>
-                  <option value="UNDER_REVIEW">Đang điều tra (Under Review)</option>
-                  <option value="RESOLVED">Đã giải quyết (Resolved)</option>
+                  <option value="PENDING">Pending</option>
+                  <option value="UNDER_REVIEW">Under Review</option>
+                  <option value="RESOLVED">Resolved</option>
                 </select>
               </div>
 
               {/* Phạt tài khoản người dùng */}
               <div className="form-group mt-16">
-                <label className="form-label">Phạt Tài Khoản Vi Phạm</label>
+                <label className="form-label">Penalty for Violating Account</label>
                 <select className="form-select" value={userStatus} onChange={(e) => setUserStatus(e.target.value)}>
-                  <option value="ACTIVE">Bình thường (Active)</option>
-                  <option value="INACTIVE">Khóa tài khoản (Inactive)</option>
+                  <option value="ACTIVE">Normal (Active)</option>
+                  <option value="INACTIVE">Lock Account (Inactive)</option>
                 </select>
                 <span style={{ fontSize: '12px', color: '#667085', marginTop: '4px', display: 'block' }}>
-                  Lưu ý: Thay đổi này sẽ tước quyền đăng nhập của người tải tài liệu lên.
+                  Note: This change will revoke the user's login privileges.
                 </span>
               </div>
 
               <div className="form-group mb-24 mt-16">
                 <div className="d-flex-between mb-8">
-                  <label className="form-label mb-0">Ghi chú nội bộ</label>
-                  <span className="text-muted text-xs">Chỉ Admin thấy</span>
+                  <label className="form-label mb-0">Internal Notes</label>
+                  <span className="text-muted text-xs">Only Admin can see</span>
                 </div>
                 <textarea 
                   className="form-textarea" 
                   rows="4" 
                   value={internalNotes}
                   onChange={(e) => setInternalNotes(e.target.value)}
-                  placeholder="Ghi lại kết quả điều tra của bạn..."
+                  placeholder="Record the results of your investigation...."
                 ></textarea>
               </div>
 
               <div className="action-buttons-group">
                 <button className="btn-action-warning" onClick={handleSave} disabled={isSaving}>
                   <AlertTriangle size={16} />
-                  {isSaving ? 'Đang lưu...' : 'Lưu Quyết Định'}
+                  {isSaving ? 'Saving...' : 'Save Decision'}
                 </button>
                 <button className="btn-action-secondary" onClick={() => navigate('/admin/reports')}>
-                  Hủy bỏ
+                  Cancel
                 </button>
               </div>
             </div>

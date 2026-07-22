@@ -10,7 +10,7 @@ const ManagerHeader = () => {
         </h2>
 
         <p className="manager-header-subtitle">
-          Quản lý hệ thống AI Study Hub
+          AI Study Hub System Management
         </p>
       </div>
     </header>

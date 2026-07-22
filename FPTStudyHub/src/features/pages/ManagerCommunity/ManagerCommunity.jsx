@@ -38,7 +38,7 @@ const ManagerCommunity = () => {
       setContributors(statsRes.result || []);
       setHallOfFame(hofRes.result || []);
     } catch (error) {
-      console.error("Lỗi tải dữ liệu Community:", error);
+      console.error("Data loading error Community:", error);
     } finally {
       setIsLoading(false);
     }
@@ -61,29 +61,29 @@ const ManagerCommunity = () => {
       };
       
       await axiosClient.post('/api/v1/community/hall-of-fame', payload);
-      alert(`Đã cấp danh hiệu "${awardForm.badgeName}" cho ${selectedUser.fullName || selectedUser.userName}!`);
+      alert(`Successfully awarded the "${awardForm.badgeName}" badge to ${selectedUser.fullName || selectedUser.userName}!`);
       
       fetchCommunityData();
       setIsModalOpen(false);
     } catch (error) {
-      alert("Lỗi khi cấp biểu dương: " + (error.response?.data?.message || error.message));
+      alert("Error awarding badge: " + (error.response?.data?.message || error.message));
     }
   };
 
   const handleDeleteAward = async (awardId, userName) => {
-    if(window.confirm(`Bạn có chắc chắn muốn THU HỒI danh hiệu của sinh viên ${userName}?`)) {
+    if(window.confirm(`Are you sure you want to REVOKE the badge from student ${userName}?`)) {
       try {
         await axiosClient.delete(`/api/v1/community/hall-of-fame/${awardId}`);
-        alert("Đã thu hồi danh hiệu thành công!");
+        alert("Successfully revoked the badge!");
         setHallOfFame(prev => prev.filter(item => item.id !== awardId));
       } catch (error) {
-        alert("Lỗi khi xóa danh hiệu: " + (error.response?.data?.message || error.message));
+        alert("Error revoking badge: " + (error.response?.data?.message || error.message));
       }
     }
   };
 
   if (isLoading) {
-    return <div style={{ padding: '50px', textAlign: 'center' }}>Đang tổng hợp dữ liệu cộng đồng...</div>;
+    return <div style={{ padding: '50px', textAlign: 'center' }}>Loading community data...</div>;
   }
 
   return (
@@ -91,22 +91,22 @@ const ManagerCommunity = () => {
       <div className="community-content">
         <div className="community-top-section">
           <div className="community-intro">
-            <h1 className="community-title"><TrendingUp size={28} className="title-icon" /> Thống Kê & Biểu Dương</h1>
-            <p className="community-subtitle">Xem chi tiết tương tác và cấp phát danh hiệu lên Bảng Vàng.</p>
+            <h1 className="community-title"><TrendingUp size={28} className="title-icon" /> Statistics and Commendations</h1>
+            <p className="community-subtitle">View detailed interactions and award badges to the Hall of Fame.</p>
           </div>
         </div>
 
         <div className="section-title-row">
-          <div className="section-title"><BookOpen size={18} /> Bảng xếp hạng Tương tác Cộng đồng</div>
+          <div className="section-title"><BookOpen size={18} /> Community Engagement Rankings</div>
         </div>
         <table className="community-table">
           <thead>
             <tr>
-              <th>TÀI KHOẢN</th>
-              <th>TỔNG VIEW</th>
-              <th>TỔNG TẢI XUỐNG</th>
-              <th>SỐ LẦN LÀM QUIZ</th>
-              <th>HÀNH ĐỘNG</th>
+              <th>ACCOUNT</th>
+              <th>TOTAL VIEWS</th>
+              <th>TOTAL DOWNLOADS</th>
+              <th>QUIZ ATTEMPTS</th>
+              <th>ACTIONS</th>
             </tr>
           </thead>
           <tbody>
@@ -132,7 +132,7 @@ const ManagerCommunity = () => {
                 <td><CheckCircle size={16} style={{ display: 'inline', color: '#f59e0b', marginRight: '4px' }} /> <strong>{user.totalQuizzes?.toLocaleString() || 0}</strong></td>
                 <td>
                   <button className="btn-award-action" onClick={() => handleOpenAwardModal(user)}>
-                    <Award size={16} /> Biểu dương
+                    <Award size={16} /> Commend
                   </button>
                 </td>
               </tr>
@@ -143,17 +143,17 @@ const ManagerCommunity = () => {
         <div className="hall-of-fame-section" style={{ marginTop: '50px' }}>
           <div className="hall-of-fame-header">
             <div className="section-title" style={{ color: '#d97706', fontSize: '20px' }}>
-              <Award size={24} /> Hall of Fame (Bảng Vàng Biểu Dương)
+              <Award size={24} /> Hall of Fame
             </div>
           </div>
           <table className="community-table hall-of-fame-table">
             <thead>
               <tr>
-                <th>KỲ BIỂU DƯƠNG</th>
-                <th>NGƯỜI ĐẠT GIẢI</th>
-                <th>LỜI NHẮN</th>
-                <th>DANH VỌNG</th>
-                <th>THU HỒI</th>
+                <th>MONTH</th>
+                <th>RECIPIENT</th>
+                <th>MESSAGE</th>
+                <th>BADGE</th>
+                <th>REVOKE</th>
               </tr>
             </thead>
             <tbody>
@@ -202,21 +202,21 @@ const ManagerCommunity = () => {
         <div className="award-modal-overlay">
           <div className="award-modal-content">
             <div className="modal-header">
-              <h3>Cấp phát Danh Vọng</h3>
+              <h3>Award Badge</h3>
               <X className="close-icon" onClick={() => setIsModalOpen(false)} />
             </div>
             <div className="modal-body">
               <form onSubmit={handleSubmitAward}>
                 <div className="form-group">
-                  <label>Kỳ biểu dương (Tháng/Năm):</label>
+                  <label>Month of Commendation (Month/Year):</label>
                   <input type="text" value={awardForm.month} onChange={(e) => setAwardForm({...awardForm, month: e.target.value})} required />
                 </div>
                 <div className="form-group">
-                  <label>Lời nhắn / Ghi chú (Sẽ lưu vào hệ thống):</label>
+                  <label>Message / Note (Will be saved to the system):</label>
                   <input type="text" value={awardForm.message} onChange={(e) => setAwardForm({...awardForm, message: e.target.value})} required />
                 </div>
                 <div className="form-group">
-                  <label>Chọn Danh Vọng trao tặng:</label>
+                  <label>Choose the Award of Honor:</label>
                   <div className="badge-selection" style={{ gridTemplateColumns: '1fr' }}>
                     {badgeOptions.map(badge => (
                       <div 
@@ -232,8 +232,8 @@ const ManagerCommunity = () => {
                   </div>
                 </div>
                 <div className="modal-footer">
-                  <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)}>Hủy</button>
-                  <button type="submit" className="btn-submit-award">Vinh Danh Sinh Viên</button>
+                  <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                  <button type="submit" className="btn-submit-award">Award Student</button>
                 </div>
               </form>
             </div>

@@ -13,7 +13,7 @@ const ReportStats = ({ reports = [], isLoading = false }) => {
       <div className="stat-card">
         <div className="stat-card-header">
           <div className="stat-card-content">
-            <p className="stat-label">TỔNG CHỜ XỬ LÝ (PENDING)</p>
+            <p className="stat-label">TOTAL WAITING TIME (PENDING)</p>
             <h2 className="stat-value">{isLoading ? '...' : pendingCount}</h2>
           </div>
           <div className="stat-icon-wrapper orange-bg">
@@ -23,7 +23,7 @@ const ReportStats = ({ reports = [], isLoading = false }) => {
         <div className="stat-card-footer">
           <span className="stat-trend positive">
             <TrendingUp size={14} />
-            Yêu cầu xem xét sớm
+            Early Review Request
           </span>
         </div>
       </div>
@@ -31,7 +31,7 @@ const ReportStats = ({ reports = [], isLoading = false }) => {
       <div className="stat-card">
         <div className="stat-card-header">
           <div className="stat-card-content">
-            <p className="stat-label">ĐÃ GIẢI QUYẾT (RESOLVED)</p>
+            <p className="stat-label">TOTAL RESOLVED (RESOLVED)</p>
             <h2 className="stat-value">{isLoading ? '...' : resolvedCount}</h2>
           </div>
           <div className="stat-icon-wrapper blue-bg">
@@ -40,7 +40,7 @@ const ReportStats = ({ reports = [], isLoading = false }) => {
         </div>
         <div className="stat-card-footer">
           <span className="stat-desc">
-            <CheckCircle size={14} className="inline-icon" /> Đã xử lý hoàn tất
+            <CheckCircle size={14} className="inline-icon" /> Total Resolved
           </span>
         </div>
       </div>

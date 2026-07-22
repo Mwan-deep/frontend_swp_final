@@ -118,7 +118,7 @@ const LeaderboardTable = ({ data }) => {
             {/* KHÔI PHỤC TIÊU ĐỀ: Stats (V/D/Q) */}
             <th style={{ width: '25%', padding: '16px', textAlign: 'left', color: '#64748B', fontWeight: '600' }}>Stats (V/D/Q)</th> 
             <th style={{ width: '12%', padding: '16px', textAlign: 'left', color: '#64748B', fontWeight: '600' }}>Score</th> 
-            <th style={{ width: '30%', padding: '16px', textAlign: 'left', color: '#64748B', fontWeight: '600' }}>Danh Vọng</th>
+            <th style={{ width: '30%', padding: '16px', textAlign: 'left', color: '#64748B', fontWeight: '600' }}>Goal</th>
           </tr>
         </thead>
         <tbody>

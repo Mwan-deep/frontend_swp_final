@@ -46,7 +46,7 @@ const Dashboard = () => {
   }, []);
 
   if (loading) {
-    return <div className="dashboard-container"><p style={{ padding: '20px' }}>Đang tải dữ liệu...</p></div>;
+    return <div className="dashboard-container"><p style={{ padding: '20px' }}>Loading data...</p></div>;
   }
 
   // --- HÀM TÍNH TOÁN ĐỘ THỊ ĐƯỜNG (SVG LINE CHART) TỰ ĐỘNG ---
@@ -197,12 +197,12 @@ const Dashboard = () => {
             </div>
 
             {/* Component Danh sách Hoạt động */}
-            <ActivityList />
+            <ActivityList activities={data?.recentActivities || []} />
           </div>
         </div>
 
         {/* Component Gợi ý AI */}
-        <AiSuggestions />
+        <AiSuggestions suggestions={data?.aiSuggestions || []} />
       </div>
     </div>
   );
