@@ -14,11 +14,11 @@ const UploadForm = ({ formData, onChange }) => {
         const headers = { 'Authorization': `Bearer ${token}` };
 
         // Lấy Semesters
-        const semRes = await fetch('http://localhost:8080/api/v1/master-data/semesters', { headers });
+        const semRes = await fetch('https://backend-swp-final.onrender.com/api/v1/master-data/semesters', { headers });
         if (semRes.ok) setSemesters(await semRes.json());
 
         // Lấy Majors
-        const majRes = await fetch('http://localhost:8080/api/v1/master-data/majors', { headers });
+        const majRes = await fetch('https://backend-swp-final.onrender.com/api/v1/master-data/majors', { headers });
         if (majRes.ok) setMajors(await majRes.json());
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu master:", error);
@@ -37,7 +37,7 @@ const UploadForm = ({ formData, onChange }) => {
     if (majorId) {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:8080/api/v1/master-data/majors/${majorId}/specializations`, {
+        const res = await fetch(`https://backend-swp-final.onrender.com/api/v1/master-data/majors/${majorId}/specializations`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) setSpecializations(await res.json());

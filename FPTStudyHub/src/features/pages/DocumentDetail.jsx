@@ -23,7 +23,7 @@ const DocumentDetail = () => {
         setIsLoading(true);
         const token = localStorage.getItem('token');
         
-        const response = await fetch(`http://localhost:8080/api/v1/documents/${id}`, {
+        const response = await fetch(`https://backend-swp-final.onrender.com/api/v1/documents/${id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -54,7 +54,7 @@ const DocumentDetail = () => {
     setIsDownloading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:8080/api/v1/documents/download/${id}`, {
+      const response = await fetch(`https://backend-swp-final.onrender.com/api/v1/documents/download/${id}`, {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${token}` }
       });

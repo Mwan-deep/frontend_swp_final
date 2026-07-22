@@ -64,7 +64,7 @@ const UploadDocument = () => {
       data.append('file', fileObj.file);
 
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', 'http://localhost:8080/api/v1/documents/upload', true);
+      xhr.open('POST', 'https://backend-swp-final.onrender.com/api/v1/documents/upload', true);
       xhr.setRequestHeader('Authorization', `Bearer ${token}`);
 
       // Lắng nghe tiến trình upload thật

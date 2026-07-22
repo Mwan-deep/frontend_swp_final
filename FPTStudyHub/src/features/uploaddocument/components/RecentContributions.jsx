@@ -9,7 +9,7 @@ const RecentContributions = () => {
     const fetchMyDocs = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:8080/api/v1/documents/my-contributions', {
+        const res = await fetch('https://backend-swp-final.onrender.com/api/v1/documents/my-contributions', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {

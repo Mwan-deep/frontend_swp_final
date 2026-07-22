@@ -45,7 +45,7 @@ const DocumentLibraryCard = ({
     setIsDownloading(true);
     try {
       const token = localStorage.getItem('token') || localStorage.getItem('api_token');
-      const response = await fetch(`http://localhost:8080/api/v1/documents/download/${doc.materialId}`, {
+      const response = await fetch(`https://backend-swp-final.onrender.com/api/v1/documents/download/${doc.materialId}`, {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${token}` }
       });
