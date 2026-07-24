@@ -1,6 +1,6 @@
 import React from 'react';
 
-// Nhận hàm onCreateClick từ thẻ cha truyền xuống
+// Receive onCreateClick function passed down from parent component
 const FilterBar = ({ onCreateClick }) => {
   return (
     <div className="gq-filter-bar">
@@ -21,7 +21,7 @@ const FilterBar = ({ onCreateClick }) => {
         </select>
       </div>
       
-      {/* Khi bấm, nó sẽ gọi hàm onCreateClick để báo cho thẻ cha bật Modal lên */}
+      {/* On click, it triggers onCreateClick to tell the parent to open the Modal */}
       <button className="gq-btn-create" onClick={onCreateClick}>
         CREATE QUIZ
       </button> 
