@@ -4,20 +4,19 @@ import axiosClient from '../../../utils/axiosClient';
 
 const ManualAddCard = ({ onSaveSuccess }) => {
   const [questionText, setQuestionText] = useState('');
-  const [subject, setSubject] = useState('Java Programming');
-  const [difficulty, setDifficulty] = useState('Easy');
   
-  // State xịn hơn: Lưu luôn nội dung text và cờ đúng/sai
+  // Chỉ tập trung vào câu hỏi và đáp án, ĐÃ BỎ subject và difficulty
   const [options, setOptions] = useState([
-    { id: 1, text: '', isCorrect: true },
-    { id: 2, text: '', isCorrect: false },
-    { id: 3, text: '', isCorrect: false },
-    { id: 4, text: '', isCorrect: false }
+    { id: 1, value: '', isCorrect: true },
+    { id: 2, value: '', isCorrect: false },
+    { id: 3, value: '', isCorrect: false },
+    { id: 4, value: '', isCorrect: false }
   ]);
+  
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleOptionChange = (id, newText) => {
-    setOptions(options.map(opt => opt.id === id ? { ...opt, text: newText } : opt));
+  const handleOptionChange = (id, newValue) => {
+    setOptions(options.map(opt => opt.id === id ? { ...opt, value: newValue } : opt));
   };
 
   const setCorrectOption = (id) => {
@@ -25,34 +24,54 @@ const ManualAddCard = ({ onSaveSuccess }) => {
   };
 
   const handleSave = async () => {
-    if (!questionText.trim() || options.some(o => !o.text.trim())) {
-      alert("Vui lòng điền đầy đủ câu hỏi và các đáp án!");
+    // 1. Tự động lọc ra những đáp án có điền chữ (bỏ qua ô trống)
+    const validOptions = options.filter(opt => opt.value.trim() !== '');
+
+    // 2. Kiểm tra điều kiện
+    if (!questionText.trim()) {
+      alert("Vui lòng nhập nội dung câu hỏi!");
+      return;
+    }
+    if (validOptions.length < 2) {
+      alert("Vui lòng điền ít nhất 2 đáp án để tạo thành câu hỏi trắc nghiệm!");
+      return;
+    }
+    if (!validOptions.some(opt => opt.isCorrect)) {
+      alert("Vui lòng chọn 1 đáp án đúng!");
       return;
     }
 
     setIsSaving(true);
     try {
+      // 3. Payload SIÊU SẠCH: Chỉ gửi chính xác những gì Backend Java đang dùng
       const payload = {
-        content: questionText,
-        subject: subject,
-        difficulty: difficulty.toUpperCase(),
-        options: options.map(opt => ({ text: opt.text, isCorrect: opt.isCorrect }))
+        content: questionText.trim(),
+        options: validOptions.map(opt => ({ 
+            text: opt.value.trim(), 
+            isCorrect: opt.isCorrect 
+        }))
       };
 
-      // Gọi API lưu xuống Database
       const response = await axiosClient.post('/api/v1/question-sets/questions/create', payload);
       const savedQuestion = response.result || response.data;
 
       if (onSaveSuccess) {
-        onSaveSuccess(savedQuestion); // Bắn câu hỏi thật (có ID thật) ra bảng
+        onSaveSuccess(savedQuestion); 
       }
 
       alert("Lưu câu hỏi thành công!");
+      
+      // Reset form sau khi lưu
       setQuestionText('');
-      setOptions(options.map((opt, i) => ({ ...opt, text: '', isCorrect: i === 0 })));
+      setOptions(options.map((opt, i) => ({ ...opt, value: '', isCorrect: i === 0 })));
+      
     } catch (error) {
-      console.error(error);
-      alert("Lỗi lưu câu hỏi!");
+      console.error("Chi tiết lỗi:", error);
+      // Ép Frontend in ra bằng được lời "mắng" của Backend
+      const backendError = error.response?.data?.message || error.response?.data || error.message;
+      const errorString = typeof backendError === 'string' ? backendError : JSON.stringify(backendError);
+      
+      alert(`Lỗi từ máy chủ:\n${errorString}`);
     } finally {
       setIsSaving(false);
     }
@@ -62,21 +81,21 @@ const ManualAddCard = ({ onSaveSuccess }) => {
     <div className="gq-card">
       <div className="gq-card-header">
         <div className="gq-card-icon manual"><FileText size={20} /></div>
-        <h3 className="gq-card-title">Add Question Manually</h3>
+        <h3 className="gq-card-title">Tạo Câu Hỏi Thủ Công</h3>
       </div>
       
       <div className="gq-input-group">
-        <label className="gq-label">Question Text</label>
+        <label className="gq-label">Nội dung câu hỏi</label>
         <textarea 
           className="gq-textarea" 
-          placeholder="Enter your question here..." 
+          placeholder="Nhập nội dung câu hỏi vào đây..." 
           value={questionText}
           onChange={(e) => setQuestionText(e.target.value)}
         />
       </div>
 
       <div className="gq-input-group">
-        <label className="gq-label">Options (Tick the correct answer)</label>
+        <label className="gq-label">Đáp án (Tích chọn vào đáp án đúng)</label>
         {options.map((opt, index) => (
           <div className="gq-option-row" key={opt.id} style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '8px' }}>
             <input 
@@ -89,35 +108,16 @@ const ManualAddCard = ({ onSaveSuccess }) => {
             <input 
               type="text" 
               className="gq-input" 
-              placeholder={`Option ${String.fromCharCode(65 + index)}`} 
-              value={opt.text}
+              placeholder={`Đáp án ${String.fromCharCode(65 + index)} (Bỏ trống nếu không dùng)`} 
+              value={opt.value}
               onChange={(e) => handleOptionChange(opt.id, e.target.value)}
             />
           </div>
         ))}
       </div>
 
-      <div className="gq-row-2">
-        <div className="gq-input-group w-50">
-          <label className="gq-label">Subject</label>
-          <select className="gq-select-full" value={subject} onChange={(e) => setSubject(e.target.value)}>
-            <option value="Java Programming">Java Programming</option>
-            <option value="Networking">Networking</option>
-            <option value="Database">Database</option>
-          </select>
-        </div>
-        <div className="gq-input-group w-50">
-          <label className="gq-label">Difficulty</label>
-          <select className="gq-select-full" value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
-            <option value="Easy">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="Hard">Hard</option>
-          </select>
-        </div>
-      </div>
-
       <button className="gq-btn-save" onClick={handleSave} disabled={isSaving}>
-        {isSaving ? "Saving..." : "Save Question"}
+        {isSaving ? "Đang lưu..." : "Lưu Câu Hỏi"}
       </button>
     </div>
   );
