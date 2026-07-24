@@ -13,13 +13,13 @@ const CreateQuizModal = ({ onClose, onCreate }) => {
       alert("Please enter a Quiz Title");
       return;
     }
-    // Nếu chọn private thì bắt buộc nhập mật khẩu
+    // If private is selected, password is required
     if (visibility === 'private' && !password.trim()) {
       alert("Please enter an access password for the private quiz");
       return;
     }
 
-    // Đóng gói dữ liệu gửi ra ngoài
+    // Package data to send out
     const newQuizData = {
       title,
       description,
@@ -91,7 +91,7 @@ const CreateQuizModal = ({ onClose, onCreate }) => {
                 onClick={() => setVisibility('private')}
               >
                 <div className="gq-vis-icon-blue">
-                  {/* Đã thay đổi icon Network thành Lock ở đây */}
+                  {/* Changed Network icon to Lock here */}
                   <Lock size={22} />
                 </div>
                 <div className="gq-vis-text">
@@ -103,7 +103,7 @@ const CreateQuizModal = ({ onClose, onCreate }) => {
             </div>
           </div>
 
-          {/* Chỉ hiện Password khi chọn Private */}
+          {/* Only show Password when Private is selected */}
           {visibility === 'private' && (
             <div className="gq-input-group">
               <label className="gq-label">Access Password</label>
