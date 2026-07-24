@@ -1,7 +1,6 @@
 import React from 'react';
 import { Edit2, Trash2 } from 'lucide-react';
 
-// Nhận thêm selectedIds, onSelect, onSelectAll từ props
 const QuestionTable = ({ data, onEdit, onDelete, selectedIds = [], onSelect, onSelectAll }) => {
   if (!data || data.length === 0) {
     return <div style={{ padding: '20px', textAlign: 'center', color: '#6b7280' }}>No questions available.</div>;
@@ -27,7 +26,7 @@ const QuestionTable = ({ data, onEdit, onDelete, selectedIds = [], onSelect, onS
             <th>ID</th>
             <th>Content</th>
             <th>Subject</th>
-            <th>Difficulty</th>
+            {/* ĐÃ XÓA CỘT DIFFICULTY TẠI ĐÂY */}
             <th>Created</th>
             <th>Actions</th>
           </tr>
@@ -49,11 +48,9 @@ const QuestionTable = ({ data, onEdit, onDelete, selectedIds = [], onSelect, onS
                 <strong>{row.content}</strong>
               </td>
               <td>{row.subject}</td>
-              <td>
-                <span className={`gq-badge ${row.difficulty?.toLowerCase()}`}>
-                  {row.difficulty}
-                </span>
-              </td>
+              
+              {/* ĐÃ XÓA Ô HIỂN THỊ DIFFICULTY TẠI ĐÂY */}
+              
               <td>{row.created || 'Oct 24, 2023'}</td>
               <td className="gq-actions-cell">
                 <Edit2 
