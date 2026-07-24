@@ -60,7 +60,6 @@
   background-color: #fff;
 }
 
-/* Đổi viền Dropdown sang màu Cam khi focus */
 .gq-doc-select:focus {
   border-color: #f97316; 
 }
@@ -89,12 +88,10 @@
   transition: border-color 0.2s;
 }
 
-/* Đổi viền thanh tìm kiếm sang màu Cam khi focus */
 .gq-search-input:focus {
   border-color: #f97316; 
 }
 
-/* Đổi màu Nút TẠO ĐỀ THI sang Cam đậm đồng bộ */
 .gq-btn-create-quiz {
   display: flex;
   align-items: center;
@@ -195,16 +192,25 @@
 .gq-badge.medium { background: #ffedd5; color: #ea580c; }
 .gq-badge.hard { background: #fee2e2; color: #dc2626; }
 
+/* ĐÃ SỬA LỖI LỆCH DÒNG TẠI ĐÂY */
 .gq-actions-cell {
-  display: flex;
-  gap: 14px;
-  align-items: center;
+  vertical-align: middle;
+  white-space: nowrap; /* Tránh 2 icon bị rớt xuống 2 hàng */
 }
+
 .gq-icon-action {
   color: #9ca3af;
   cursor: pointer;
   transition: color 0.2s;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 14px; /* Dùng margin thay cho gap của flex */
 }
+
+.gq-icon-action:last-child {
+  margin-right: 0; /* Xóa khoảng cách ở icon cuối cùng */
+}
+
 .gq-icon-action:hover { color: #111827; }
 .gq-icon-action.delete:hover { color: #ef4444; }
 
