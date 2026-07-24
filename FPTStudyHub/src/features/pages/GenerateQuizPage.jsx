@@ -5,7 +5,6 @@ import { Search, Plus } from 'lucide-react';
 
 import QuestionTable from '../generate-quiz/components/QuestionTable';
 import ManualAddCard from '../generate-quiz/components/ManualAddCard';
-import AIGeneratorCard from '../generate-quiz/components/AIGeneratorCard';
 import Pagination from '../../shared/components/Pagination/Pagination'; 
 import EditQuestionModal from '../generate-quiz/components/EditQuestionModal'; 
 import CreateQuizModal from '../generate-quiz/components/CreateQuizModal'; 
@@ -27,8 +26,6 @@ const GenerateQuizPage = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
 
-  const [activeTab, setActiveTab] = useState('manual');
-
   useEffect(() => {
     const fetchInitialData = async () => {
       setIsLoading(true);
@@ -43,15 +40,14 @@ const GenerateQuizPage = () => {
         const formattedQuestions = questionsData.map(q => ({
           id: q.questionId || q.id,
           content: q.questionText || q.content,
-          subject: q.documentTitle || "Chung", 
+          subject: q.documentTitle || "General", 
           docId: q.documentId || q.docId, 
-          difficulty: q.difficulty || "Medium",
           created: q.createdAt ? new Date(q.createdAt).toLocaleDateString('en-GB') : 'N/A'
         }));
 
         setAllQuestions(formattedQuestions);
       } catch (error) {
-        console.error("Lỗi lấy dữ liệu:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setIsLoading(false);
       }
@@ -90,27 +86,13 @@ const GenerateQuizPage = () => {
       content: newQuestion.questionText || newQuestion.content,
       subject: newQuestion.documentTitle || "Manual Input",
       docId: "all",
-      difficulty: newQuestion.difficulty || "Medium",
       created: new Date().toLocaleDateString('en-GB')
     };
     setAllQuestions([formatted, ...allQuestions]);
   };
 
-  const handleAIGenerateSuccess = (newQuestions) => {
-    const formatted = newQuestions.map(q => ({
-      id: q.questionId,
-      content: q.questionText,
-      subject: "AI Free Prompt",
-      docId: "all",
-      difficulty: "Medium",
-      created: new Date().toLocaleDateString('en-GB')
-    }));
-    setAllQuestions([...formatted, ...allQuestions]);
-    setSelectedQuestionIds(prev => [...prev, ...formatted.map(q => q.id)]);
-  };
-
   const handleDeleteQuestion = (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa câu hỏi này không?")) {
+    if (window.confirm("Are you sure you want to delete this question?")) {
       setAllQuestions(allQuestions.filter(question => question.id !== id));
       setSelectedQuestionIds(selectedQuestionIds.filter(qId => qId !== id));
     }
@@ -128,7 +110,7 @@ const GenerateQuizPage = () => {
 
   const handleFinalCreateQuiz = async (modalData) => {
     if (selectedQuestionIds.length === 0) {
-      alert("Vui lòng chọn ít nhất 1 câu hỏi!");
+      alert("Please select at least 1 question!");
       return;
     }
 
@@ -144,15 +126,15 @@ const GenerateQuizPage = () => {
 
       await axiosClient.post('/api/v1/quizzes/create', payload);
 
-      alert("Tuyệt vời! Đề thi đã được lưu vào hệ thống.");
+      alert("Great! The quiz has been saved to the system.");
       setIsCreateModalOpen(false); 
       setSelectedQuestionIds([]); 
       
       navigate('/question-sets'); 
 
     } catch (error) {
-      console.error("Lỗi khi tạo bài thi:", error);
-      alert("Lưu đề thi thất bại. Vui lòng kiểm tra lại kết nối!");
+      console.error("Error creating quiz:", error);
+      alert("Failed to save the quiz. Please check your connection!");
     }
   };
 
@@ -161,7 +143,7 @@ const GenerateQuizPage = () => {
       
       <div className="gq-left-panel">
         
-        {/* THANH CÔNG CỤ ĐÃ ĐƯỢC LÀM SẠCH VÀ SỬ DỤNG CLASS CSS */}
+        {/* CLEANED TOOLBAR USING CSS CLASSES */}
         <div className="gq-top-toolbar">
           <div className="gq-toolbar-filters">
             
@@ -173,7 +155,7 @@ const GenerateQuizPage = () => {
                 setCurrentPage(1);
               }}
             >
-              <option value="all">📚 Tất cả tài liệu</option>
+              <option value="all">📚 All Documents</option>
               {documents.map(doc => (
                 <option key={doc.id} value={doc.id}>{doc.title}</option>
               ))}
@@ -184,7 +166,7 @@ const GenerateQuizPage = () => {
               <input 
                 type="text" 
                 className="gq-search-input"
-                placeholder="Tìm kiếm nội dung câu hỏi..." 
+                placeholder="Search question content..." 
                 value={searchKeyword}
                 onChange={(e) => {
                   setSearchKeyword(e.target.value);
@@ -198,20 +180,20 @@ const GenerateQuizPage = () => {
             className="gq-btn-create-quiz"
             onClick={() => {
               if (selectedQuestionIds.length === 0) {
-                alert("Bạn chưa chọn câu hỏi nào. Vui lòng tích chọn câu hỏi trước!");
+                alert("You haven't selected any questions. Please check the questions first!");
                 return;
               }
               setIsCreateModalOpen(true);
             }}
           >
             <Plus size={18} />
-            TẠO ĐỀ THI ({selectedQuestionIds.length})
+            CREATE QUIZ ({selectedQuestionIds.length})
           </button>
         </div>
 
         <div style={{ backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '10px 0', minHeight: '60vh' }}>
           {isLoading ? (
-            <p style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>Đang tải danh sách câu hỏi...</p>
+            <p style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>Loading question list...</p>
           ) : (
             <>
               <QuestionTable 
@@ -234,27 +216,9 @@ const GenerateQuizPage = () => {
         </div>
       </div>
 
+      {/* RIGHT PANEL - ONLY MANUAL ADD NOW */}
       <div className="gq-right-panel">
-        <div className="gq-tabs">
-          <button 
-            className={`gq-tab-btn ${activeTab === 'manual' ? 'active' : ''}`}
-            onClick={() => setActiveTab('manual')}
-          >
-            Manual Add
-          </button>
-          <button 
-            className={`gq-tab-btn ${activeTab === 'ai' ? 'active' : ''}`}
-            onClick={() => setActiveTab('ai')}
-          >
-            AI Generator
-          </button>
-        </div>
-
-        {activeTab === 'manual' ? (
-          <ManualAddCard onSaveSuccess={handleAddQuestion} />
-        ) : (
-          <AIGeneratorCard onGenerateSuccess={handleAIGenerateSuccess} />
-        )}
+        <ManualAddCard onSaveSuccess={handleAddQuestion} />
       </div>
 
       {editingQuestion && (
