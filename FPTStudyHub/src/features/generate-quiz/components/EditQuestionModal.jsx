@@ -8,17 +8,17 @@ const EditQuestionModal = ({ question, onClose, onSave }) => {
   const [options, setOptions] = useState([]);
   const [correctOptionId, setCorrectOptionId] = useState(null);
 
-  // Đổ dữ liệu của câu hỏi vào form khi mở Modal
+  // Populate question data into form when opening Modal
   useEffect(() => {
     if (question) {
       setContent(question.content || '');
       setSubject(question.subject || 'Java Programming');
       
-      // Viết hoa chữ cái đầu cho Difficulty
+      // Capitalize the first letter of Difficulty
       const diff = question.difficulty ? question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1).toLowerCase() : 'Easy';
       setDifficulty(diff);
       
-      // Tạo options mặc định nếu câu hỏi chưa có
+      // Create default options if the question doesn't have them
       const initialOptions = question.options && question.options.length > 0 
         ? question.options 
         : [
@@ -42,7 +42,7 @@ const EditQuestionModal = ({ question, onClose, onSave }) => {
   };
 
   const handleSave = () => {
-    // Đóng gói dữ liệu mới
+    // Package the updated data
     const updatedQuestion = {
       ...question,
       content,
