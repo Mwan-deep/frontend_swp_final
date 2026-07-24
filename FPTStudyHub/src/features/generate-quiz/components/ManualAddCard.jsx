@@ -5,7 +5,7 @@ import axiosClient from '../../../utils/axiosClient';
 const ManualAddCard = ({ onSaveSuccess }) => {
   const [questionText, setQuestionText] = useState('');
   
-  // Chỉ tập trung vào câu hỏi và đáp án, ĐÃ BỎ subject và difficulty
+  // Focus only on question and options, REMOVED subject and difficulty
   const [options, setOptions] = useState([
     { id: 1, value: '', isCorrect: true },
     { id: 2, value: '', isCorrect: false },
@@ -24,26 +24,26 @@ const ManualAddCard = ({ onSaveSuccess }) => {
   };
 
   const handleSave = async () => {
-    // 1. Tự động lọc ra những đáp án có điền chữ (bỏ qua ô trống)
+    // 1. Automatically filter out empty options
     const validOptions = options.filter(opt => opt.value.trim() !== '');
 
-    // 2. Kiểm tra điều kiện
+    // 2. Validate inputs
     if (!questionText.trim()) {
-      alert("Vui lòng nhập nội dung câu hỏi!");
+      alert("Please enter the question content!");
       return;
     }
     if (validOptions.length < 2) {
-      alert("Vui lòng điền ít nhất 2 đáp án để tạo thành câu hỏi trắc nghiệm!");
+      alert("Please provide at least 2 options for a multiple-choice question!");
       return;
     }
     if (!validOptions.some(opt => opt.isCorrect)) {
-      alert("Vui lòng chọn 1 đáp án đúng!");
+      alert("Please select 1 correct option!");
       return;
     }
 
     setIsSaving(true);
     try {
-      // 3. Payload SIÊU SẠCH: Chỉ gửi chính xác những gì Backend Java đang dùng
+      // 3. CLEAN PAYLOAD: Send exactly what the Backend expects
       const payload = {
         content: questionText.trim(),
         options: validOptions.map(opt => ({ 
@@ -59,19 +59,19 @@ const ManualAddCard = ({ onSaveSuccess }) => {
         onSaveSuccess(savedQuestion); 
       }
 
-      alert("Lưu câu hỏi thành công!");
+      alert("Question saved successfully!");
       
-      // Reset form sau khi lưu
+      // Reset form after saving
       setQuestionText('');
       setOptions(options.map((opt, i) => ({ ...opt, value: '', isCorrect: i === 0 })));
       
     } catch (error) {
-      console.error("Chi tiết lỗi:", error);
-      // Ép Frontend in ra bằng được lời "mắng" của Backend
+      console.error("Error details:", error);
+      // Force Frontend to display the Backend error message
       const backendError = error.response?.data?.message || error.response?.data || error.message;
       const errorString = typeof backendError === 'string' ? backendError : JSON.stringify(backendError);
       
-      alert(`Lỗi từ máy chủ:\n${errorString}`);
+      alert(`Server Error:\n${errorString}`);
     } finally {
       setIsSaving(false);
     }
@@ -81,21 +81,21 @@ const ManualAddCard = ({ onSaveSuccess }) => {
     <div className="gq-card">
       <div className="gq-card-header">
         <div className="gq-card-icon manual"><FileText size={20} /></div>
-        <h3 className="gq-card-title">Tạo Câu Hỏi Thủ Công</h3>
+        <h3 className="gq-card-title">Add Question Manually</h3>
       </div>
       
       <div className="gq-input-group">
-        <label className="gq-label">Nội dung câu hỏi</label>
+        <label className="gq-label">Question Text</label>
         <textarea 
           className="gq-textarea" 
-          placeholder="Nhập nội dung câu hỏi vào đây..." 
+          placeholder="Enter your question here..." 
           value={questionText}
           onChange={(e) => setQuestionText(e.target.value)}
         />
       </div>
 
       <div className="gq-input-group">
-        <label className="gq-label">Đáp án (Tích chọn vào đáp án đúng)</label>
+        <label className="gq-label">Options (Tick the correct answer)</label>
         {options.map((opt, index) => (
           <div className="gq-option-row" key={opt.id} style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '8px' }}>
             <input 
@@ -108,7 +108,7 @@ const ManualAddCard = ({ onSaveSuccess }) => {
             <input 
               type="text" 
               className="gq-input" 
-              placeholder={`Đáp án ${String.fromCharCode(65 + index)} (Bỏ trống nếu không dùng)`} 
+              placeholder={`Option ${String.fromCharCode(65 + index)} (Leave empty if not used)`} 
               value={opt.value}
               onChange={(e) => handleOptionChange(opt.id, e.target.value)}
             />
@@ -117,7 +117,7 @@ const ManualAddCard = ({ onSaveSuccess }) => {
       </div>
 
       <button className="gq-btn-save" onClick={handleSave} disabled={isSaving}>
-        {isSaving ? "Đang lưu..." : "Lưu Câu Hỏi"}
+        {isSaving ? "Saving..." : "Save Question"}
       </button>
     </div>
   );
