@@ -7,12 +7,12 @@ const DocumentDetail = () => {
   const { id } = useParams(); 
   const navigate = useNavigate();
   
-  // Đổi tên từ document sang material để tránh xung đột với document của trình duyệt
   const [material, setMaterial] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
   
-  // Chốt chặn chống React StrictMode gọi API 2 lần trùng lặp ở local
+  const [isLiked, setIsLiked] = useState(false);
+  
   const apiCalled = useRef(false);
 
   useEffect(() => {
@@ -23,6 +23,7 @@ const DocumentDetail = () => {
         setIsLoading(true);
         const token = localStorage.getItem('token');
         
+        // ĐÃ SỬA: Trỏ API về máy chủ Render
         const response = await fetch(`https://backend-swp-final.onrender.com/api/v1/documents/${id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -48,12 +49,13 @@ const DocumentDetail = () => {
     };
   }, [id, navigate]);
 
-  // Logic tải tệp tin nhị phân Blob từ Google Drive thông qua API Backend
   const handleDownload = async () => {
     if (isDownloading) return;
     setIsDownloading(true);
     try {
       const token = localStorage.getItem('token');
+      
+      // ĐÃ SỬA: Trỏ API tải file về máy chủ Render
       const response = await fetch(`https://backend-swp-final.onrender.com/api/v1/documents/download/${id}`, {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${token}` }
@@ -64,7 +66,6 @@ const DocumentDetail = () => {
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       
-      // Lúc này document.createElement đã hoạt động đúng vì không còn bị biến trùng tên che khuất
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', material.fileName || 'tai_lieu');
@@ -73,7 +74,6 @@ const DocumentDetail = () => {
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
       
-      // Cập nhật tăng số lượt tải trực tiếp trên màn hình
       setMaterial(prev => ({ ...prev, downloadCount: prev.downloadCount + 1 }));
 
     } catch (error) {
@@ -81,6 +81,16 @@ const DocumentDetail = () => {
     } finally {
       setIsDownloading(false);
     }
+  };
+
+  const handleShareClick = () => {
+    const docUrl = window.location.href;
+    navigator.clipboard.writeText(docUrl);
+    alert('Đã copy link tài liệu vào Clipboard: ' + docUrl);
+  };
+
+  const handleLikeClick = () => {
+    setIsLiked(!isLiked);
   };
 
   if (isLoading) {
@@ -93,13 +103,11 @@ const DocumentDetail = () => {
 
   if (!material) return null;
 
-  // Đường dẫn nhúng khung xem trước trực tiếp từ mã file vật lý Google Drive
   const googleDrivePreviewUrl = `https://drive.google.com/file/d/${material.fileUrl}/preview`;
 
   return (
     <div className="doc-detail-container" style={{ padding: '2rem', maxWidth: '1300px', margin: '0 auto' }}>
       
-      {/* Thanh điều hướng quay lại danh sách */}
       <button 
         onClick={() => navigate(-1)} 
         style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', color: '#4F46E5', cursor: 'pointer', marginBottom: '24px', fontWeight: '600', fontSize: '0.95rem' }}
@@ -107,7 +115,6 @@ const DocumentDetail = () => {
         <ArrowLeft size={18} /> Quay lại thư viện
       </button>
 
-      {/* Khu vực tiêu đề và siêu dữ liệu lưu trong hệ thống */}
       <div className="doc-detail-header" style={{ borderBottom: '1px solid #E5E7EB', paddingBottom: '20px', marginBottom: '28px' }}>
         <h1 style={{ fontSize: '2.2rem', fontWeight: '700', marginBottom: '12px', color: '#111827', lineHeight: '1.3' }}>
           {material.title}
@@ -121,13 +128,9 @@ const DocumentDetail = () => {
         </div>
       </div>
 
-      {/* Bố cục cấu trúc phân bổ nội dung */}
       <div className="doc-detail-layout" style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
         
-        {/* KHU VỰC HIỂN THỊ NỘI DUNG FILE (BÊN TRÁI) */}
         <div className="doc-main-content" style={{ flex: '3', minWidth: '350px' }}>
-          
-          {/* Khung nhúng tài liệu trực tuyến (Iframe Preview) */}
           <div className="doc-preview-card" style={{ width: '100%', height: '700px', backgroundColor: '#F3F4F6', borderRadius: '12px', overflow: 'hidden', border: '1px solid #D1D5DB', marginBottom: '24px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
             {material.fileUrl ? (
               <iframe 
@@ -146,7 +149,6 @@ const DocumentDetail = () => {
             )}
           </div>
 
-          {/* Hộp văn bản hiển thị mô tả ngắn */}
           <div className="doc-description-box" style={{ backgroundColor: '#FFF', padding: '24px', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
             <h3 style={{ fontSize: '1.25rem', color: '#1F2937', marginBottom: '12px', fontWeight: '600' }}>Mô tả tài liệu</h3>
             <p style={{ lineHeight: '1.7', color: '#4B5563', whiteSpace: 'pre-wrap', fontSize: '1rem' }}>
@@ -155,11 +157,9 @@ const DocumentDetail = () => {
           </div>
         </div>
 
-        {/* KHU VỰC Sidebar TƯƠNG TÁC CHỨC NĂNG (BÊN PHẢI) */}
         <div className="doc-sidebar-content" style={{ flex: '1', minWidth: '280px', height: 'fit-content' }}>
           <div style={{ backgroundColor: '#F9FAFB', padding: '24px', borderRadius: '12px', border: '1px solid #E5E7EB', position: 'sticky', top: '20px' }}>
             
-            {/* Thống kê định lượng tương tác từ database */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', color: '#374151', fontSize: '0.95rem', fontWeight: '500' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Eye size={20} color="#4F46E5" /> 
@@ -171,7 +171,6 @@ const DocumentDetail = () => {
               </div>
             </div>
 
-            {/* Nút tải tệp tin vật lý thực tế */}
             <button 
               onClick={handleDownload}
               disabled={isDownloading}
@@ -181,12 +180,19 @@ const DocumentDetail = () => {
               {isDownloading ? 'Đang khởi tạo tệp...' : 'Tải tài liệu xuống'}
             </button>
 
-            {/* Khối chức năng bổ trợ phụ */}
             <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
-              <button style={{ flex: 1, padding: '10px', border: '1px solid #D1D5DB', borderRadius: '8px', background: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px', cursor: 'pointer', color: '#374151', fontWeight: '600', fontSize: '0.9rem' }}>
-                <Heart size={18} /> Lưu lại
+              <button 
+                onClick={handleLikeClick}
+                style={{ flex: 1, padding: '10px', border: '1px solid #D1D5DB', borderRadius: '8px', background: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px', cursor: 'pointer', color: isLiked ? '#ff4b4b' : '#374151', fontWeight: '600', fontSize: '0.9rem' }}
+              >
+                <Heart size={18} fill={isLiked ? "#ff4b4b" : "none"} color={isLiked ? "#ff4b4b" : "currentColor"} /> 
+                {isLiked ? 'Đã lưu' : 'Lưu lại'}
               </button>
-              <button style={{ flex: 1, padding: '10px', border: '1px solid #D1D5DB', borderRadius: '8px', background: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px', cursor: 'pointer', color: '#374151', fontWeight: '600', fontSize: '0.9rem' }}>
+              
+              <button 
+                onClick={handleShareClick}
+                style={{ flex: 1, padding: '10px', border: '1px solid #D1D5DB', borderRadius: '8px', background: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px', cursor: 'pointer', color: '#374151', fontWeight: '600', fontSize: '0.9rem' }}
+              >
                 <Share2 size={18} /> Chia sẻ
               </button>
             </div>
