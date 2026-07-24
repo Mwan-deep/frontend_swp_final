@@ -6,7 +6,7 @@ const QuestionTable = ({ data, onEdit, onDelete, selectedIds = [], onSelect, onS
     return <div style={{ padding: '20px', textAlign: 'center', color: '#6b7280' }}>No questions available.</div>;
   }
 
-  // Kiểm tra xem tất cả câu hỏi có đang được tích chọn không
+  // Check if all questions are currently selected
   const isAllSelected = data.length > 0 && selectedIds.length === data.length;
 
   return (
@@ -15,7 +15,7 @@ const QuestionTable = ({ data, onEdit, onDelete, selectedIds = [], onSelect, onS
         <thead>
           <tr>
             <th style={{ width: '40px', textAlign: 'center' }}>
-              {/* Checkbox "Chọn tất cả" trên thanh tiêu đề */}
+              {/* "Select All" checkbox in the header */}
               <input 
                 type="checkbox" 
                 checked={isAllSelected}
@@ -26,7 +26,6 @@ const QuestionTable = ({ data, onEdit, onDelete, selectedIds = [], onSelect, onS
             <th>ID</th>
             <th>Content</th>
             <th>Subject</th>
-            {/* ĐÃ XÓA CỘT DIFFICULTY TẠI ĐÂY */}
             <th>Created</th>
             <th>Actions</th>
           </tr>
@@ -35,7 +34,7 @@ const QuestionTable = ({ data, onEdit, onDelete, selectedIds = [], onSelect, onS
           {data.map((row, idx) => (
             <tr key={idx}>
               <td style={{ textAlign: 'center' }}>
-                {/* Checkbox của từng dòng */}
+                {/* Checkbox for each row */}
                 <input 
                   type="checkbox" 
                   checked={selectedIds?.includes(row.id) || false}
@@ -48,9 +47,6 @@ const QuestionTable = ({ data, onEdit, onDelete, selectedIds = [], onSelect, onS
                 <strong>{row.content}</strong>
               </td>
               <td>{row.subject}</td>
-              
-              {/* ĐÃ XÓA Ô HIỂN THỊ DIFFICULTY TẠI ĐÂY */}
-              
               <td>{row.created || 'Oct 24, 2023'}</td>
               <td className="gq-actions-cell">
                 <Edit2 
