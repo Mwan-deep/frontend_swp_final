@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://backend-swp-final.onrender.com',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://departure-dig-broadways.ngrok-free.dev',
   headers: {
     'Content-Type': 'application/json',
   },
