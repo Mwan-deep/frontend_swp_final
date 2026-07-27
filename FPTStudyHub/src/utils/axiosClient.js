@@ -4,6 +4,8 @@ const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'https://departure-dig-broadways.ngrok-free.dev',
   headers: {
     'Content-Type': 'application/json',
+    // ĐÃ THÊM: Chìa khóa để Ngrok trả về dữ liệu JSON thay vì trang cảnh báo HTML
+    'ngrok-skip-browser-warning': 'true', 
   },
 });
 
@@ -25,7 +27,7 @@ axiosClient.interceptors.request.use(
       console.log("⏳ Token đã hết hạn! Đang chuyển hướng về trang chủ...");
       localStorage.clear();
       sessionStorage.clear();
-      // ĐỔI TẠI ĐÂY: Đá thẳng về '/'
+      // Đá thẳng về '/'
       window.location.replace('/'); 
       return Promise.reject(new axios.Cancel('Token expired'));
     }
@@ -48,7 +50,7 @@ axiosClient.interceptors.response.use(
       console.log("🚨 Phát hiện Token bị từ chối! Đang chuyển hướng về trang chủ...");
       localStorage.clear();
       sessionStorage.clear();
-      // ĐỔI TẠI ĐÂY: Đá thẳng về '/'
+      // Đá thẳng về '/'
       window.location.replace('/');
     }
     return Promise.reject(error);
