@@ -260,7 +260,7 @@ const Login = () => {
             />
             <LoginSocial
               onGoogleLogin={() => {
-                window.location.href = 'https://departure-dig-broadways.ngrok-free.dev/oauth2/authorization/google';
+                window.location.href = 'https://backend-swp-final.onrender.com/oauth2/authorization/google';
               }}
               onRegisterClick={() => navigate('/register')}
             />
