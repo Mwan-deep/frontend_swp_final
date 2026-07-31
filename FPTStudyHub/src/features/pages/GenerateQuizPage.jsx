@@ -118,7 +118,8 @@ const GenerateQuizPage = () => {
       const payload = {
         title: modalData.title,
         description: modalData.description,
-        durationMinutes: 15,
+        // Ép kiểu thành số và gán giá trị thời gian từ Modal
+        durationMinutes: parseInt(modalData.duration, 10),
         passScore: 50,
         visibility: modalData.visibility.toUpperCase(),
         questionIds: selectedQuestionIds 
