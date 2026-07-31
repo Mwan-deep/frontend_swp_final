@@ -4,6 +4,8 @@ import { X, Eye, EyeOff, Info, FileQuestion, Lock } from 'lucide-react';
 const CreateQuizModal = ({ onClose, onCreate }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  // Thêm state lưu thời gian mặc định là 15 phút
+  const [duration, setDuration] = useState(15); 
   const [visibility, setVisibility] = useState('public');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -13,16 +15,23 @@ const CreateQuizModal = ({ onClose, onCreate }) => {
       alert("Please enter a Quiz Title");
       return;
     }
-    // If private is selected, password is required
+    
+    // Kiểm tra tính hợp lệ của thời gian
+    if (!duration || duration <= 0) {
+      alert("Please enter a valid quiz duration (minutes)");
+      return;
+    }
+
     if (visibility === 'private' && !password.trim()) {
       alert("Please enter an access password for the private quiz");
       return;
     }
 
-    // Package data to send out
+    // Đóng gói dữ liệu gửi ra ngoài, bao gồm cả duration
     const newQuizData = {
       title,
       description,
+      duration, // Truyền thời gian ra component cha
       visibility,
       password
     };
@@ -68,6 +77,19 @@ const CreateQuizModal = ({ onClose, onCreate }) => {
             />
           </div>
 
+          {/* Ô nhập Thời gian (Duration) mới thêm vào */}
+          <div className="gq-input-group">
+            <label className="gq-label">Duration (Minutes)</label>
+            <input 
+              type="number" 
+              className="gq-input" 
+              placeholder="e.g., 15"
+              min="1"
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
+            />
+          </div>
+
           {/* Visibility Selection */}
           <div className="gq-input-group">
             <label className="gq-label">Visibility</label>
@@ -91,7 +113,6 @@ const CreateQuizModal = ({ onClose, onCreate }) => {
                 onClick={() => setVisibility('private')}
               >
                 <div className="gq-vis-icon-blue">
-                  {/* Changed Network icon to Lock here */}
                   <Lock size={22} />
                 </div>
                 <div className="gq-vis-text">
