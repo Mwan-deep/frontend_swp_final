@@ -9,10 +9,10 @@ import axiosClient from '../../utils/axiosClient';
 import { AlertTriangle, X } from 'lucide-react';
 
 const enrichDocument = (doc) => {
-  // ĐÃ SỬA: Thay vì lấy subjectName, giờ ta lấy majorName từ Backend
-  const category = doc.subject?.majorName || 'Chung (General)';
+  // FIXED: Instead of getting subjectName, we now get majorName from the Backend
+  const category = doc.subject?.majorName || 'General';
 
-  const semester = doc.semester?.displayName || doc.semester?.semesterName || 'Khác';
+  const semester = doc.semester?.displayName || doc.semester?.semesterName || 'Other';
   const format = doc.fileName ? doc.fileName.split('.').pop().toUpperCase() : 'DOC';
 
   return {
@@ -24,7 +24,7 @@ const enrichDocument = (doc) => {
     instructor: doc.account?.userName || 'Anonymous',
     views: doc.viewCount || 0,
     downloads: doc.downloadCount || 0,
-    date: doc.createdAt ? new Date(doc.createdAt).toLocaleDateString('vi-VN') : 'N/A'
+    date: doc.createdAt ? new Date(doc.createdAt).toLocaleDateString('en-US') : 'N/A'
   };
 };
 
@@ -72,7 +72,7 @@ const DocumentLibrary = () => {
         try {
           const docsRes = await axiosClient.get('/api/v1/documents');
           setDocuments(docsRes || []);
-        } catch (e) { console.error("Lỗi lấy tài liệu", e); }
+        } catch (e) { console.error("Error fetching documents", e); }
         
         try {
           const favRes = await axiosClient.get('/api/v1/favorites/my-favorites');
@@ -85,10 +85,10 @@ const DocumentLibrary = () => {
             });
             setFavoriteDocs(favMap);
           }
-        } catch (e) { console.warn("Lỗi tải yêu thích", e); }
+        } catch (e) { console.warn("Error loading favorites", e); }
 
       } catch (error) {
-        console.error("Lỗi tổng thể kết nối Server:", error);
+        console.error("General server connection error:", error);
       } finally {
         setIsLoading(false);
       }
@@ -102,7 +102,7 @@ const DocumentLibrary = () => {
       await axiosClient.post(`/api/v1/favorites/toggle?materialId=${id}`);
     } catch (error) {
       setFavoriteDocs(prev => ({ ...prev, [id]: !prev[id] }));
-      alert("Không thể cập nhật danh sách yêu thích lúc này.");
+      alert("Cannot update favorites list at this time.");
     }
   };
 
@@ -116,7 +116,7 @@ const DocumentLibrary = () => {
 
   const handleSubmitReport = async () => {
     if (!reportReason.trim()) {
-      alert("Vui lòng nhập lý do báo cáo!");
+      alert("Please enter a reason for reporting!");
       return;
     }
     setIsSubmittingReport(true);
@@ -125,23 +125,23 @@ const DocumentLibrary = () => {
         materialId: reportingDoc.materialId,
         description: reportReason
       });
-      alert(`Đã gửi báo cáo cho tài liệu: ${reportingDoc.title}. Cảm ơn bạn!`);
+      alert(`Report submitted for document: ${reportingDoc.title}. Thank you!`);
       setIsReportModalOpen(false);
     } catch (error) {
-      alert(error.response?.data?.message || 'Lỗi khi gửi báo cáo!');
+      alert(error.response?.data?.message || 'Error submitting report!');
     } finally {
       setIsSubmittingReport(false);
     }
   };
 
   const handleDeleteDocument = async (doc) => {
-    if (window.confirm(`Bạn có chắc chắn muốn xóa vĩnh viễn tài liệu "${doc.title}" không? Hành động này không thể hoàn tác.`)) {
+    if (window.confirm(`Are you sure you want to permanently delete the document "${doc.title}"? This action cannot be undone.`)) {
       try {
         await axiosClient.delete(`/api/v1/documents/${doc.materialId}`);
-        alert("Đã xóa tài liệu thành công!");
+        alert("Document deleted successfully!");
         setDocuments(prev => prev.filter(d => d.materialId !== doc.materialId));
       } catch (error) {
-        alert(error.response?.data?.message || "Lỗi khi xóa tài liệu!");
+        alert(error.response?.data?.message || "Error deleting document!");
       }
     }
   };
@@ -149,8 +149,8 @@ const DocumentLibrary = () => {
   const handleToggleVisibility = async (doc) => {
     const newVisibility = doc.visibility === 'PRIVATE' ? 'PUBLIC' : 'PRIVATE';
     const confirmMsg = newVisibility === 'PUBLIC' 
-      ? `Bạn muốn CÔNG KHAI tài liệu "${doc.title}" cho mọi người cùng xem?`
-      : `Bạn muốn ẨN tài liệu "${doc.title}" thành RIÊNG TƯ?`;
+      ? `Do you want to make the document "${doc.title}" PUBLIC for everyone to see?`
+      : `Do you want to make the document "${doc.title}" PRIVATE?`;
 
     if (window.confirm(confirmMsg)) {
       setDocuments(prev => prev.map(d => 
@@ -165,7 +165,7 @@ const DocumentLibrary = () => {
         setDocuments(prev => prev.map(d => 
           d.materialId === doc.materialId ? { ...d, visibility: doc.visibility } : d
         ));
-        alert(error.response?.data?.message || "Đã xảy ra lỗi khi cập nhật trạng thái!");
+        alert(error.response?.data?.message || "An error occurred while updating the status!");
       }
     }
   };
@@ -176,14 +176,14 @@ const DocumentLibrary = () => {
 
   const enrichedDocs = documents.map(enrichDocument);
 
-  // ĐÃ SỬA: Tự động trích xuất danh sách các Chuyên Ngành/Môn học hiện có từ dữ liệu tải về
+  // FIXED: Automatically extract the list of existing Majors/Subjects from downloaded data
   const categories = Array.from(new Set(enrichedDocs.map(doc => doc.category)));
   const instructors = Array.from(new Set(enrichedDocs.map(doc => doc.instructor)));
   const semesters = Array.from(new Set(enrichedDocs.map(doc => doc.semester)));
 
   let filtered = enrichedDocs;
   
-  // BỘ LỌC CHUYÊN NGÀNH HOẠT ĐỘNG
+  // ACTIVE MAJOR FILTERS
   if (selectedCategory !== 'All') filtered = filtered.filter(doc => doc.category === selectedCategory);
   
   if (selectedFormat !== 'All') {
@@ -214,7 +214,7 @@ const DocumentLibrary = () => {
     <div className="doc-library-container">
       <DocumentLibraryHeader viewType={viewType} setViewType={setViewType} />
       
-      {/* ĐÃ THÊM: Truyền mảng categories (Chuyên ngành động) xuống component con */}
+      {/* ADDED: Pass the categories array (dynamic majors) down to the child component */}
       <DocumentLibraryFilters 
         selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory}
         selectedFormat={selectedFormat} setSelectedFormat={setSelectedFormat}
@@ -243,9 +243,9 @@ const DocumentLibrary = () => {
             <label>Status</label>
             <select value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
               <option value="All">All Statuses</option>
-              <option value="Bookmarked">⭐ Tài liệu yêu thích</option>
-              <option value="Read">Tài liệu đã đọc</option>
-              <option value="Unread">Tài liệu chưa đọc</option>
+              <option value="Bookmarked">⭐ Favorite Documents</option>
+              <option value="Read">Read Documents</option>
+              <option value="Unread">Unread Documents</option>
             </select>
           </div>
         </div>
@@ -253,7 +253,7 @@ const DocumentLibrary = () => {
 
       {isLoading ? (
         <div className="loading-state" style={{ textAlign: 'center', padding: '50px 0' }}>
-          <h3>Đang tải thư viện tài liệu...</h3>
+          <h3>Loading document library...</h3>
         </div>
       ) : paginatedDocuments.length > 0 ? (
         viewType === 'grid' ? (
@@ -285,8 +285,8 @@ const DocumentLibrary = () => {
         )
       ) : (
         <div className="quizzes-empty-state" style={{ margin: '20px 0' }}>
-          <h3>Không tìm thấy tài liệu phù hợp</h3>
-          <p>Hãy thử thay đổi các bộ lọc hoặc chọn mục khác.</p>
+          <h3>No matching documents found</h3>
+          <p>Try changing the filters or selecting a different category.</p>
         </div>
       )}
 
@@ -294,7 +294,7 @@ const DocumentLibrary = () => {
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
       )}
 
-      {/* MODAL BÁO CÁO TÀI LIỆU */}
+      {/* REPORT DOCUMENT MODAL */}
       {isReportModalOpen && (
         <div className="modal-overlay" onClick={() => setIsReportModalOpen(false)}>
           <div className="modal-content report-modal" onClick={(e) => e.stopPropagation()}>
@@ -305,16 +305,16 @@ const DocumentLibrary = () => {
               <button className="close-btn" onClick={() => setIsReportModalOpen(false)}><X size={20}/></button>
             </div>
             
-            <h3 className="modal-title" style={{ textAlign: 'left', marginTop: '15px' }}>Báo cáo vi phạm</h3>
+            <h3 className="modal-title" style={{ textAlign: 'left', marginTop: '15px' }}>Report Violation</h3>
             <p className="modal-description" style={{ textAlign: 'left', marginBottom: '15px' }}>
-              Bạn đang báo cáo tài liệu: <strong>{reportingDoc?.title}</strong>.<br/>
-              Vui lòng cho quản trị viên biết lý do chi tiết (VD: Spam, sai kiến thức, bản quyền...).
+              You are reporting the document: <strong>{reportingDoc?.title}</strong>.<br/>
+              Please provide administrators with a detailed reason (e.g., Spam, incorrect information, copyright issues...).
             </p>
 
             <textarea 
               className="form-textarea" 
               rows="4" 
-              placeholder="Nhập lý do báo cáo của bạn..."
+              placeholder="Enter your reason for reporting..."
               value={reportReason}
               onChange={(e) => setReportReason(e.target.value)}
               style={{ width: '100%', marginBottom: '20px', padding: '10px', borderRadius: '8px', border: '1px solid #d0d5dd' }}
@@ -322,10 +322,10 @@ const DocumentLibrary = () => {
 
             <div className="modal-actions" style={{ justifyContent: 'flex-end', gap: '10px' }}>
               <button className="modal-btn btn-cancel" onClick={() => setIsReportModalOpen(false)} disabled={isSubmittingReport}>
-                Hủy
+                Cancel
               </button>
               <button className="modal-btn btn-confirm" style={{ backgroundColor: '#ef4444' }} onClick={handleSubmitReport} disabled={isSubmittingReport}>
-                {isSubmittingReport ? 'Đang gửi...' : 'Gửi Báo Cáo'}
+                {isSubmittingReport ? 'Submitting...' : 'Submit Report'}
               </button>
             </div>
           </div>
