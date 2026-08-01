@@ -42,7 +42,7 @@ const Community = () => {
       <div className="community-main-grid">
         <div className="leaderboard-section">
           {isLoading ? (
-            <div style={{ padding: '40px', textAlign: 'center', color: '#64748B' }}>Đang tính toán thứ hạng...</div>
+            <div style={{ padding: '40px', textAlign: 'center', color: '#64748B' }}>Calculating rankings...</div>
           ) : (
             <LeaderboardTable data={leaderboardData} />
           )}
