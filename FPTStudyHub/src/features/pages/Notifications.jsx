@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Info, FileText, Sparkles, MessageSquare, Check, Settings, Trash2 } from 'lucide-react'; // Đã thêm Trash2
+import { Info, FileText, Sparkles, MessageSquare, Check, Trash2 } from 'lucide-react'; // Removed Settings
 import axiosClient from '../../utils/axiosClient'; 
 import './Notifications.css';
 
-// Hàm tính thời gian trôi qua
+// Function to calculate time passed
 const calculateTimeAgo = (dateString) => {
-  if (!dateString) return 'Vừa xong';
+  if (!dateString) return 'Just now';
   const date = new Date(dateString);
   const now = new Date();
   const seconds = Math.floor((now - date) / 1000);
   
-  if (seconds < 60) return 'Vừa xong';
+  if (seconds < 60) return 'Just now';
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes} phút trước`;
+  if (minutes < 60) return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} giờ trước`;
+  if (hours < 24) return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
   const days = Math.floor(hours / 24);
-  return `${days} ngày trước`;
+  return `${days} day${days !== 1 ? 's' : ''} ago`;
 };
 
 const Notifications = () => {
@@ -24,7 +24,7 @@ const Notifications = () => {
   const [activeTab, setActiveTab] = useState('All');
   const [isLoading, setIsLoading] = useState(true);
 
-  // 1. LẤY DỮ LIỆU TỪ BACKEND
+  // 1. FETCH DATA FROM BACKEND
   const fetchNotifications = async () => {
     try {
       setIsLoading(true);
@@ -43,7 +43,7 @@ const Notifications = () => {
       setNotifications(mappedData);
       window.dispatchEvent(new Event('notificationsUpdated'));
     } catch (error) {
-      console.error("Lỗi khi tải thông báo:", error);
+      console.error("Error fetching notifications:", error);
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +53,7 @@ const Notifications = () => {
     fetchNotifications();
   }, []);
 
-  // 2. ĐÁNH DẤU ĐỌC 1 THÔNG BÁO
+  // 2. MARK 1 NOTIFICATION AS READ
   const handleMarkAsRead = async (id) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
     window.dispatchEvent(new Event('notificationsUpdated'));
@@ -65,7 +65,7 @@ const Notifications = () => {
     }
   };
 
-  // 3. ĐÁNH DẤU ĐỌC TẤT CẢ
+  // 3. MARK ALL AS READ
   const handleMarkAllRead = async () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
     window.dispatchEvent(new Event('notificationsUpdated'));
@@ -77,25 +77,25 @@ const Notifications = () => {
     }
   };
 
-  // ĐÃ THÊM: 4. XÓA THÔNG BÁO
+  // ADDED: 4. DELETE NOTIFICATION
   const handleDelete = async (id, e) => {
-    e.stopPropagation(); // Rất quan trọng: Ngăn không cho click trigger handleMarkAsRead của thẻ cha
+    e.stopPropagation(); // Very important: Prevent click from triggering handleMarkAsRead on the parent element
     
-    if (!window.confirm("Bạn có chắc chắn muốn xóa thông báo này?")) return;
+    if (!window.confirm("Are you sure you want to delete this notification?")) return;
 
-    // Optimistic UI: Xóa ngay lập tức trên giao diện cho mượt
+    // Optimistic UI: Delete immediately on the interface for a smooth experience
     setNotifications(prev => prev.filter(n => n.id !== id));
     window.dispatchEvent(new Event('notificationsUpdated'));
 
     try {
       await axiosClient.delete(`/api/notifications/${id}`);
     } catch (error) {
-      console.error("Lỗi khi xóa thông báo:", error);
-      fetchNotifications(); // Nếu lỗi thì load lại data gốc
+      console.error("Error deleting notification:", error);
+      fetchNotifications(); // If error, reload original data
     }
   };
 
-  // Lọc thông báo theo Tab đang chọn
+  // Filter notifications by selected Tab
   const getFilteredNotifications = () => {
     if (activeTab === 'All') return notifications;
     if (activeTab === 'System') return notifications.filter(n => n.type === 'system');
@@ -121,8 +121,8 @@ const Notifications = () => {
     <div className="notifications-container">
       <div className="notifications-header">
         <div className="header-title-section">
-          <h1>Thông báo (Notifications)</h1>
-          <p>Cập nhật những hoạt động mới nhất trên tài khoản của bạn.</p>
+          <h1>Notifications</h1>
+          <p>Stay updated with the latest activities on your account.</p>
         </div>
         <div className="header-actions">
           <button 
@@ -132,12 +132,7 @@ const Notifications = () => {
             disabled={notifications.every(n => n.read) || notifications.length === 0}
           >
             <Check size={16} />
-            <span>Đánh dấu đã đọc tất cả</span>
-          </button>
-          
-          <button type="button" className="action-btn-primary">
-            <Settings size={16} />
-            <span>Cài đặt thông báo</span>
+            <span>Mark all as read</span>
           </button>
         </div>
       </div>
@@ -159,7 +154,7 @@ const Notifications = () => {
 
       <div className="notifications-list">
         {isLoading ? (
-          <div style={{ padding: '40px', textAlign: 'center', color: '#6b7280' }}>Đang tải thông báo...</div>
+          <div style={{ padding: '40px', textAlign: 'center', color: '#6b7280' }}>Loading notifications...</div>
         ) : filteredNotifs.length > 0 ? (
           filteredNotifs.map((notif) => {
             const iconInfo = getIcon(notif.type);
@@ -184,11 +179,11 @@ const Notifications = () => {
                 <div className="notification-time-actions" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                   <div className="notification-time">{notif.timeAgo}</div>
                   
-                  {/* ĐÃ THÊM: Nút xóa thông báo */}
+                  {/* ADDED: Delete notification button */}
                   <button 
                     className="delete-notif-btn" 
                     onClick={(e) => handleDelete(notif.id, e)}
-                    title="Xóa thông báo"
+                    title="Delete notification"
                     style={{
                       background: 'none',
                       border: 'none',
@@ -212,8 +207,8 @@ const Notifications = () => {
           })
         ) : (
           <div className="notifications-empty-state">
-            <h3>Không có thông báo nào</h3>
-            <p>Bạn đã xem hết tất cả các thông báo rồi!</p>
+            <h3>No notifications yet</h3>
+            <p>You're all caught up!</p>
           </div>
         )}
       </div>
