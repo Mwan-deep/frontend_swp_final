@@ -21,7 +21,6 @@ const TimeInfoCard = ({ createdAt }) => {
           <span>CREATED DATE</span>
           <strong>{dateStr}</strong>
         </div>
-        <button className="qa-btn-edit">Edit Settings</button>
       </div>
     </div>
   );
