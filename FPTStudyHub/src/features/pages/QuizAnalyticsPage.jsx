@@ -10,14 +10,14 @@ import StatCard from '../questionset/components/StatCard';
 import './QuizAnalytics.css'; 
 
 const QuizAnalyticsPage = () => {
-  // BẮT LẤY ID CỦA BÀI QUIZ TỪ TRÊN ĐƯỜNG DẪN URL
+  // GET QUIZ ID FROM THE URL
   const { id } = useParams(); 
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // KÉO DỮ LIỆU TỪ BACKEND
+  // FETCH DATA FROM BACKEND
   useEffect(() => {
-    // NẾU KHÔNG CÓ ID TỪ URL -> Dừng Loading và thoát luôn
+    // IF NO ID IN URL -> Stop loading and exit
     if (!id) {
       setIsLoading(false);
       return;
@@ -29,7 +29,7 @@ const QuizAnalyticsPage = () => {
         const response = await axiosClient.get(`/api/v1/quizzes/${id}/analytics`);
         setData(response.result || response.data || response);
       } catch (error) {
-        console.error("Lỗi lấy dữ liệu thống kê:", error);
+        console.error("Error fetching analytics data:", error);
       } finally {
         setIsLoading(false);
       }
@@ -38,24 +38,24 @@ const QuizAnalyticsPage = () => {
     fetchAnalytics();
   }, [id]);
 
-  if (isLoading) return <div style={{padding: '50px', textAlign: 'center'}}>Đang tải dữ liệu phân tích hệ thống...</div>;
-  if (!data) return <div style={{padding: '50px', textAlign: 'center'}}>Không tìm thấy dữ liệu thống kê cho bài Quiz này.</div>;
+  if (isLoading) return <div style={{padding: '50px', textAlign: 'center'}}>Loading system analytics data...</div>;
+  if (!data) return <div style={{padding: '50px', textAlign: 'center'}}>No analytics data found for this Quiz.</div>;
 
   return (
     <div className="qa-container">
-      {/* 1. Header (Có tên bài Quiz thực tế) */}
+      {/* 1. Header (With actual Quiz title) */}
       <AnalyticsHeader title={data.title} />
       
-      {/* 2. Card Thời Gian */}
+      {/* 2. Time Card */}
       <TimeInfoCard createdAt={data.createdAt} />
 
-      {/* 3. Truyền dữ liệu động vào StatCards */}
+      {/* 3. Pass dynamic data to StatCards */}
       <div className="qa-stat-cards">
         <StatCard 
           icon={Users}
           value={data.totalAttempts}
           label="TOTAL ATTEMPTS"
-          subtext="Lượt nộp bài thành công"
+          subtext="Successful submissions"
           iconBg="#f3f4f6" iconColor="#4b5563"
         />
         <StatCard 
@@ -74,7 +74,7 @@ const QuizAnalyticsPage = () => {
         />
       </div>
 
-      {/* 4. Component Bảng Danh Sách Kết Quả THẬT */}
+      {/* 4. ACTUAL Results List Table Component */}
       <div className="qa-card">
         <div className="qa-card-header">
           <div className="qa-card-title">
@@ -85,7 +85,6 @@ const QuizAnalyticsPage = () => {
             <div className="qa-search-box">
               <Search size={16} /><input type="text" placeholder="Search students..." />
             </div>
-            <button className="qa-btn-outline"><Download size={16}/> Export Excel</button>
           </div>
         </div>
 
@@ -119,14 +118,14 @@ const QuizAnalyticsPage = () => {
                   </tr>
                 ))
               ) : (
-                <tr><td colSpan="5" style={{textAlign:'center', padding: '20px'}}>Chưa có ai làm bài thi này.</td></tr>
+                <tr><td colSpan="5" style={{textAlign:'center', padding: '20px'}}>No one has taken this quiz yet.</td></tr>
               )}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* 5. Phân phối điểm số */}
+      {/* 5. Score Distribution */}
       <div className="qa-bottom-section">
         <div className="qa-card qa-flex-1">
           <div className="qa-card-header space-between">
