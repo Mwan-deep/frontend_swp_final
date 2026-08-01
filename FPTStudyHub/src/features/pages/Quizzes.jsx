@@ -187,7 +187,7 @@ const Quizzes = () => {
   };
 
   if (isLoading) {
-    return <div className="quizzes-dashboard-wrapper"><p style={{padding: '20px'}}>Đang tải dữ liệu bài thi...</p></div>;
+    return <div className="quizzes-dashboard-wrapper"><p style={{padding: '20px'}}>Loading exam data...</p></div>;
   }
 
   if (quizFlowStage === 'auth' && activeQuiz) {
