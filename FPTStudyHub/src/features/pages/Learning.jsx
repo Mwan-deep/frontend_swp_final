@@ -263,7 +263,7 @@ const Learning = () => {
       </div>
       <div className="quizzes-grid-layout">
         {isLoading ? (
-          <div style={{ textAlign: 'center', width: '100%', padding: '40px', color: '#64748B' }}>Đang tải dữ liệu bài thi...</div>
+          <div style={{ textAlign: 'center', width: '100%', padding: '40px', color: '#64748B' }}>Loading Exam Data...</div>
         ) : paginatedQuizzes.length > 0 ? (
           paginatedQuizzes.map((quiz) => <QuizCard key={quiz.id} quiz={quiz} onAction={handleQuizAction} />)
         ) : (
